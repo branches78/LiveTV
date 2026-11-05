@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">فریم ریٹ میچ کریں</string>
+    <string name="livetv_match_frame_rate_auto">خودکار</string>
+    <string name="livetv_match_frame_rate_seamless">صرف بغیر رکاوٹ</string>
+    <string name="livetv_match_frame_rate_off">آف</string>
+    <string name="interactive_app_settings">انٹرایکٹو ایپ کی ترتیبات</string>
+    <string name="tv_iapp_on">آن</string>
+    <string name="tv_iapp_off">آف</string>
+    <string name="livetv_setup_category_incompatible">غیر مطابقت پذیر ذرائع</string>
+    <string name="livetv_setup_input_incompatible">اس کے چینلز LiveTV میں نہیں دکھائے جا سکتے</string>
+    <string name="livetv_iptv_input_label">IPTV فہرستیں</string>
+</resources>

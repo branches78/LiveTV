@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Узгодження частоти кадрів</string>
+    <string name="livetv_match_frame_rate_auto">Автоматично</string>
+    <string name="livetv_match_frame_rate_seamless">Лише без переривань</string>
+    <string name="livetv_match_frame_rate_off">Вимкнено</string>
+    <string name="interactive_app_settings">Налаштування інтерактивних додатків</string>
+    <string name="tv_iapp_on">Увімкнено</string>
+    <string name="tv_iapp_off">Вимкнено</string>
+    <string name="livetv_setup_category_incompatible">Несумісні джерела</string>
+    <string name="livetv_setup_input_incompatible">Його канали не можна показати в LiveTV</string>
+    <string name="livetv_iptv_input_label">Списки IPTV</string>
+</resources>

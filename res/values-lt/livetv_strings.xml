@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Kadrų dažnio derinimas</string>
+    <string name="livetv_match_frame_rate_auto">Automatiškai</string>
+    <string name="livetv_match_frame_rate_seamless">Tik be pertrūkių</string>
+    <string name="livetv_match_frame_rate_off">Išjungta</string>
+    <string name="interactive_app_settings">Interaktyviųjų programų nustatymai</string>
+    <string name="tv_iapp_on">Įjungta</string>
+    <string name="tv_iapp_off">Išjungta</string>
+    <string name="livetv_setup_category_incompatible">Nesuderinami šaltiniai</string>
+    <string name="livetv_setup_input_incompatible">Jos kanalų negalima rodyti „LiveTV“</string>
+    <string name="livetv_iptv_input_label">IPTV sąrašai</string>
+</resources>

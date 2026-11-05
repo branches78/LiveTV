@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Kadr tezliyini uyğunlaşdır</string>
+    <string name="livetv_match_frame_rate_auto">Avtomatik</string>
+    <string name="livetv_match_frame_rate_seamless">Yalnız fasiləsiz</string>
+    <string name="livetv_match_frame_rate_off">Deaktiv</string>
+    <string name="interactive_app_settings">İnteraktiv tətbiq ayarları</string>
+    <string name="tv_iapp_on">Aktiv</string>
+    <string name="tv_iapp_off">Deaktiv</string>
+    <string name="livetv_setup_category_incompatible">Uyğun olmayan mənbələr</string>
+    <string name="livetv_setup_input_incompatible">Kanalları LiveTV-də göstərilə bilməz</string>
+    <string name="livetv_iptv_input_label">IPTV siyahıları</string>
+</resources>

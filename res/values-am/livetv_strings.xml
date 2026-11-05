@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">የፍሬም ፍጥነትን አዛምድ</string>
+    <string name="livetv_match_frame_rate_auto">ራስ-ሰር</string>
+    <string name="livetv_match_frame_rate_seamless">ያለማቋረጥ ብቻ</string>
+    <string name="livetv_match_frame_rate_off">ጠፍቷል</string>
+    <string name="interactive_app_settings">የመስተጋብራዊ መተግበሪያ ቅንብሮች</string>
+    <string name="tv_iapp_on">በርቷል</string>
+    <string name="tv_iapp_off">ጠፍቷል</string>
+    <string name="livetv_setup_category_incompatible">ተኳሃኝ ያልሆኑ ምንጮች</string>
+    <string name="livetv_setup_input_incompatible">ሰርጦቹ በLiveTV ላይ ሊታዩ አይችሉም</string>
+    <string name="livetv_iptv_input_label">የIPTV ዝርዝሮች</string>
+</resources>

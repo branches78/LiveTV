@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Kadr chastotasini moslash</string>
+    <string name="livetv_match_frame_rate_auto">Avtomatik</string>
+    <string name="livetv_match_frame_rate_seamless">Faqat uzluksiz</string>
+    <string name="livetv_match_frame_rate_off">Oʻchiq</string>
+    <string name="interactive_app_settings">Interaktiv ilovalar sozlamalari</string>
+    <string name="tv_iapp_on">Yoqilgan</string>
+    <string name="tv_iapp_off">Oʻchiq</string>
+    <string name="livetv_setup_category_incompatible">Mos kelmaydigan manbalar</string>
+    <string name="livetv_setup_input_incompatible">Uning kanallarini LiveTV ilovasida koʻrsatib boʻlmaydi</string>
+    <string name="livetv_iptv_input_label">IPTV roʻyxatlari</string>
+</resources>

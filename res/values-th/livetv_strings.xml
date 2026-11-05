@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">จับคู่อัตราเฟรม</string>
+    <string name="livetv_match_frame_rate_auto">อัตโนมัติ</string>
+    <string name="livetv_match_frame_rate_seamless">ไม่สะดุดเท่านั้น</string>
+    <string name="livetv_match_frame_rate_off">ปิด</string>
+    <string name="interactive_app_settings">การตั้งค่าแอปแบบอินเทอร์แอกทีฟ</string>
+    <string name="tv_iapp_on">เปิด</string>
+    <string name="tv_iapp_off">ปิด</string>
+    <string name="livetv_setup_category_incompatible">แหล่งที่มาที่ใช้ร่วมกันไม่ได้</string>
+    <string name="livetv_setup_input_incompatible">แสดงช่องของแอปนี้ใน LiveTV ไม่ได้</string>
+    <string name="livetv_iptv_input_label">รายการ IPTV</string>
+</resources>

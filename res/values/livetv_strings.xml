@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <!-- Shown when Done is pressed in the sources screen and there are no channels. [CHAR LIMIT=NONE] -->
+    <string name="livetv_msg_no_channels">No channels yet. Set up a channel source to continue.</string>
+
+    <!-- Settings item that matches the TV output to the content frame rate. [CHAR LIMIT=30] -->
+    <string name="livetv_match_frame_rate">Match framerate</string>
+    <string name="livetv_match_frame_rate_auto">Automatic</string>
+    <string name="livetv_match_frame_rate_auto_description">Seamless switch on HDMI 2.1 TVs with Quick Media Switching (QMS). On HDMI 2.0 TVs the output mode changes and the screen may go black for a moment.</string>
+    <string name="livetv_match_frame_rate_seamless">Seamless only</string>
+    <string name="livetv_match_frame_rate_seamless_description">Only switches when the TV allows it without interruption (HDMI 2.1 QMS / VRR).</string>
+    <string name="livetv_match_frame_rate_off">Off</string>
+    <string name="livetv_match_frame_rate_off_description">Keeps the current output frame rate.</string>
+    <string name="livetv_match_frame_rate_display">Connected TV</string>
+    <string name="livetv_match_frame_rate_display_seamless">Supports seamless switching (HDMI 2.1 QMS / VRR)</string>
+    <string name="livetv_match_frame_rate_display_mode_switch">Supports switching with an output mode change (auto framerate, HDMI 2.0)</string>
+    <string name="livetv_match_frame_rate_display_none">Only offers the current refresh rate</string>
+    <string name="livetv_match_frame_rate_system_off">Turned off in the system settings</string>
+    <string name="livetv_match_frame_rate_system_off_description">Enable "Match content frame rate" in Settings &gt; Display &amp; Sound for this option to work.</string>
+
+    <!-- Number of channel sources, shown under "Channel sources" in Settings. [CHAR LIMIT=30] -->
+    <plurals name="livetv_source_count">
+        <item quantity="one">%d source</item>
+        <item quantity="other">%d sources</item>
+    </plurals>
+
+    <!-- "Group by" option of "Customize channel list" that shows every channel in one list. [CHAR LIMIT=30] -->
+    <string name="livetv_group_by_all">All</string>
+    <!-- Shown under a channel of the "All" list while the user moves it with up/down. [CHAR LIMIT=60] -->
+    <string name="livetv_channel_move_hint">Up/down to move · OK to drop</string>
+    <!-- Program guide list, below "All channels", with only the favorite channels. [CHAR LIMIT=30] -->
+    <string name="livetv_favorites">Favorites</string>
+    <!-- Menu card that adds the channel being watched to the favorites. [CHAR LIMIT=40] -->
+    <string name="livetv_favorites_add">Add to favorites</string>
+    <!-- Menu card that removes the channel being watched from the favorites. [CHAR LIMIT=40] -->
+    <string name="livetv_favorites_remove">Remove from favorites</string>
+    <!-- Program guide item, above "All channels", that opens the channel search. [CHAR LIMIT=30] -->
+    <string name="livetv_search">Search</string>
+    <!-- Menu card that opens the channel search. [CHAR LIMIT=40] -->
+    <string name="livetv_search_channel">Search channel</string>
+    <!-- Hint of the text field of the channel search. [CHAR LIMIT=40] -->
+    <string name="livetv_search_hint">Channel name or number</string>
+    <string name="livetv_search_empty_query">Say or type the name or the number of a channel.</string>
+    <string name="livetv_search_no_results">No channels found.</string>
+    <!-- Description of the microphone button of the channel search. [CHAR LIMIT=40] -->
+    <string name="livetv_search_voice">Search by voice</string>
+    <string name="livetv_search_listening">Speak now: say a channel number or name…</string>
+    <string name="livetv_search_voice_not_understood">Didn\'t catch that. Press the microphone to try again, or type.</string>
+    <string name="livetv_search_voice_unavailable">Voice search isn\'t working right now. Type the name or the number of a channel.</string>
+    <!-- %1$s is the channel number that was said. [CHAR LIMIT=NONE] -->
+    <string name="livetv_search_channel_not_found">There\'s no channel %1$s.</string>
+    <!-- Number of channels found by the channel search. [CHAR LIMIT=40] -->
+    <plurals name="livetv_search_results">
+        <item quantity="one">%d channel</item>
+        <item quantity="other">%d channels</item>
+    </plurals>
+
+    <!-- Number of channels under a collapsible source in "Customize channel list". [CHAR LIMIT=30] -->
+    <plurals name="livetv_channel_group_count">
+        <item quantity="one">%d channel</item>
+        <item quantity="other">%d channels</item>
+    </plurals>
+
+    <!-- Name of the IPTV channel source. [CHAR LIMIT=40] -->
+    <string name="livetv_iptv_input_label">IPTV lists</string>
+    <!-- Explanation on the IPTV setup screen. [CHAR LIMIT=NONE] -->
+    <string name="livetv_iptv_description">Enter the URL of an M3U channel list. Use only lists you are allowed to watch.</string>
+    <string name="livetv_iptv_url_hint" translatable="false">https://example.com/list.m3u</string>
+    <string name="livetv_iptv_import">Import channels</string>
+    <!-- Button that opens a file manager to pick an M3U file. [CHAR LIMIT=40] -->
+    <string name="livetv_iptv_open_file">Open M3U file</string>
+    <string name="livetv_iptv_reading_file">Reading file…</string>
+    <string name="livetv_iptv_no_file_manager">No file manager installed. Install one to open M3U files.</string>
+    <!-- Button that imports the public iptv-org list of Spanish language channels. [CHAR LIMIT=25] -->
+    <string name="livetv_iptv_use_default">Use free channels</string>
+    <!-- Short name of the list of "Use free channels", shown next to its channels in the search. [CHAR LIMIT=30] -->
+    <string name="livetv_iptv_free_channels">Free channels</string>
+    <string name="livetv_iptv_delete_failed">Could not delete the channels.</string>
+    <plurals name="livetv_iptv_deleted">
+        <item quantity="one">%d channel deleted</item>
+        <item quantity="other">%d channels deleted</item>
+    </plurals>
+    <string name="livetv_iptv_importing">Downloading list…</string>
+    <string name="livetv_iptv_empty">The list has no channels.</string>
+    <!-- %1$s is the error message. [CHAR LIMIT=NONE] -->
+    <string name="livetv_iptv_failed">Could not import the list: %1$s</string>
+    <!-- %1$d channels imported out of %2$d in the list. [CHAR LIMIT=NONE] -->
+    <string name="livetv_iptv_imported">%1$d of %2$d channels imported</string>
+    <!-- Title of an imported list on the IPTV setup screen; %1$d is its position. [CHAR LIMIT=30] -->
+    <string name="livetv_iptv_list_title">List %1$d</string>
+    <!-- Number of channels of an imported list. [CHAR LIMIT=30] -->
+    <plurals name="livetv_iptv_list_channels">
+        <item quantity="one">%d channel</item>
+        <item quantity="other">%d channels</item>
+    </plurals>
+    <!-- Button next to an imported list that deletes it with its channels. [CHAR LIMIT=20] -->
+    <string name="livetv_iptv_list_delete">Delete</string>
+    <string name="livetv_iptv_list_delete_title">Delete list</string>
+    <!-- %1$s is the list title, %2$d its number of channels. [CHAR LIMIT=NONE] -->
+    <plurals name="livetv_iptv_list_delete_confirm">
+        <item quantity="one">Delete %1$s and its %2$d channel?</item>
+        <item quantity="other">Delete %1$s and its %2$d channels?</item>
+    </plurals>
+    <!-- %1$d is the maximum number of IPTV channels. [CHAR LIMIT=NONE] -->
+    <string name="livetv_iptv_limit_reached">You already have %1$d channels, the maximum. Delete a list to import another one.</string>
+    <!-- Button that imports a list from a provider that asks for a username and a password. [CHAR LIMIT=25] -->
+    <string name="livetv_iptv_login">With username</string>
+    <string name="livetv_iptv_login_title">List with username and password</string>
+    <string name="livetv_iptv_login_description">Enter the details your IPTV provider gave you.</string>
+    <!-- Address of the IPTV provider, such as http://example.com:8080. [CHAR LIMIT=30] -->
+    <string name="livetv_iptv_login_server">Server</string>
+    <string name="livetv_iptv_login_server_hint" translatable="false">http://example.com:8080</string>
+    <string name="livetv_iptv_login_username">Username</string>
+    <string name="livetv_iptv_login_password">Password</string>
+    <string name="livetv_iptv_login_show_password">Show password</string>
+    <string name="livetv_iptv_login_failed">Wrong username or password, or the account has expired.</string>
+    <!-- Shown when a provider that asks for a username and a password sends an empty list. [CHAR LIMIT=NONE] -->
+    <string name="livetv_iptv_login_empty">The list is empty. Check the username and the password, or whether the account is still active.</string>
+    <string name="livetv_iptv_too_large">The list is too large (20 MB at most).</string>
+    <!-- Button next to an imported list that sets its XMLTV program guide. [CHAR LIMIT=20] -->
+    <string name="livetv_iptv_guide">Guide</string>
+    <!-- %1$s is the list title, such as "List 1". [CHAR LIMIT=50] -->
+    <string name="livetv_iptv_guide_title">Program guide of %1$s</string>
+    <string name="livetv_iptv_guide_description">Address of the list\'s XMLTV guide (.xml or .xml.gz). You can enter several, separated by spaces. Lists that name their guide get it on their own. iptv-epg.org has a guide per country, such as https://iptv-epg.org/files/epg-co.xml</string>
+    <string name="livetv_iptv_guide_hint" translatable="false">https://example.com/guide.xml.gz</string>
+    <string name="livetv_iptv_guide_save">Save</string>
+    <!-- Guide status of an imported list. [CHAR LIMIT=40] -->
+    <string name="livetv_iptv_guide_none">No guide</string>
+    <string name="livetv_iptv_guide_updating">Guide: updating…</string>
+    <string name="livetv_iptv_guide_pending">Guide: not read yet</string>
+    <string name="livetv_iptv_guide_failed">Guide: could not be downloaded</string>
+    <plurals name="livetv_iptv_guide_channels">
+        <item quantity="one">Guide: %d channel with programs</item>
+        <item quantity="other">Guide: %d channels with programs</item>
+    </plurals>
+    <!-- Button of the guide dialog that opens "Assign channels". [CHAR LIMIT=30] -->
+    <string name="livetv_assign_button">Assign channels</string>
+    <!-- %1$s is the list title, such as "List 2". [CHAR LIMIT=50] -->
+    <string name="livetv_assign_title">Assign channels · %1$s</string>
+    <string name="livetv_assign_loading">Loading…</string>
+    <string name="livetv_assign_reading_guide">Reading the list\'s guide, it can take a minute…</string>
+    <string name="livetv_assign_description">Choose from which guide channel each channel takes its programs. Changes apply when you leave this screen.</string>
+    <string name="livetv_assign_no_guide">The list\'s guide has not been read yet. Add it with the Guide button and wait until it is downloaded.</string>
+    <!-- Tags of a guide channel in "Assign channels". [CHAR LIMIT=30] -->
+    <string name="livetv_assign_automatic">automatic</string>
+    <string name="livetv_assign_manual">chosen by hand</string>
+    <string name="livetv_assign_none">No programs</string>
+    <string name="livetv_assign_choice_automatic">Automatic (LiveTV chooses)</string>
+    <!-- %1$s is the channel name. [CHAR LIMIT=60] -->
+    <string name="livetv_assign_picker_title">Programs for \"%1$s\"</string>
+    <string name="livetv_assign_picker_description">Choose the guide channel, or search for it by name.</string>
+    <string name="livetv_assign_search_hint">Search the guide\'s channels</string>
+    <!-- Header of the sources of other apps whose channels LiveTV cannot read. [CHAR LIMIT=40] -->
+    <string name="livetv_setup_category_incompatible">Incompatible sources</string>
+    <string name="livetv_setup_input_incompatible">Its channels can’t be shown in LiveTV</string>
+</resources>

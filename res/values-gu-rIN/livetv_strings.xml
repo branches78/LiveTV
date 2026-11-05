@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">ફ્રેમ રેટ મેચ કરો</string>
+    <string name="livetv_match_frame_rate_auto">ઑટોમૅટિક</string>
+    <string name="livetv_match_frame_rate_seamless">ફક્ત વિક્ષેપ વિના</string>
+    <string name="livetv_match_frame_rate_off">બંધ</string>
+    <string name="interactive_app_settings">ઇન્ટરૅક્ટિવ ઍપ સેટિંગ</string>
+    <string name="tv_iapp_on">ચાલુ</string>
+    <string name="tv_iapp_off">બંધ</string>
+    <string name="livetv_setup_category_incompatible">અસંગત સ્રોતો</string>
+    <string name="livetv_setup_input_incompatible">તેની ચૅનલ LiveTVમાં બતાવી શકાતી નથી</string>
+    <string name="livetv_iptv_input_label">IPTV સૂચિઓ</string>
+</resources>

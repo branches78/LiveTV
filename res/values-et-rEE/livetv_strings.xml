@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Kaadrisageduse sobitamine</string>
+    <string name="livetv_match_frame_rate_auto">Automaatne</string>
+    <string name="livetv_match_frame_rate_seamless">Ainult sujuvalt</string>
+    <string name="livetv_match_frame_rate_off">Väljas</string>
+    <string name="interactive_app_settings">Interaktiivsete rakenduste seaded</string>
+    <string name="tv_iapp_on">Sees</string>
+    <string name="tv_iapp_off">Väljas</string>
+    <string name="livetv_setup_category_incompatible">Ühildumatud allikad</string>
+    <string name="livetv_setup_input_incompatible">Selle kanaleid ei saa LiveTV-s näidata</string>
+    <string name="livetv_iptv_input_label">IPTV-loendid</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">مطابقة معدل الإطارات</string>
+    <string name="livetv_match_frame_rate_auto">تلقائي</string>
+    <string name="livetv_match_frame_rate_seamless">دون انقطاع فقط</string>
+    <string name="livetv_match_frame_rate_off">إيقاف</string>
+    <string name="interactive_app_settings">إعدادات التطبيقات التفاعلية</string>
+    <string name="tv_iapp_on">مفعّل</string>
+    <string name="tv_iapp_off">غير مفعّل</string>
+    <string name="livetv_setup_category_incompatible">مصادر غير متوافقة</string>
+    <string name="livetv_setup_input_incompatible">لا يمكن عرض قنواته في LiveTV</string>
+    <string name="livetv_iptv_input_label">قوائم IPTV</string>
+</resources>

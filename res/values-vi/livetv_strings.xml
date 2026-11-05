@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Khớp tốc độ khung hình</string>
+    <string name="livetv_match_frame_rate_auto">Tự động</string>
+    <string name="livetv_match_frame_rate_seamless">Chỉ khi liền mạch</string>
+    <string name="livetv_match_frame_rate_off">Tắt</string>
+    <string name="interactive_app_settings">Cài đặt ứng dụng tương tác</string>
+    <string name="tv_iapp_on">Bật</string>
+    <string name="tv_iapp_off">Tắt</string>
+    <string name="livetv_setup_category_incompatible">Nguồn không tương thích</string>
+    <string name="livetv_setup_input_incompatible">Không thể hiển thị các kênh của ứng dụng này trong LiveTV</string>
+    <string name="livetv_iptv_input_label">Danh sách IPTV</string>
+</resources>

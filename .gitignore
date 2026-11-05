@@ -1,0 +1,26 @@
+# Samples
+samples/SampleTvInput/
+
+# Eclipse
+bin/
+gen/
+obj/
+.metadata/
+.settings/
+.project
+.classpath
+project.properties
+
+# Intellij
+out/
+.idea/
+*.iml
+*.iws
+build/
+
+# Gradle
+.gradle/
+local.properties
+
+# Internal notes
+docs/livetv-pendientes.md

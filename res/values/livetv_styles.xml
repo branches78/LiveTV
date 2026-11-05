@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Styles added by LiveTV. -->
+<resources>
+    <style name="LiveTv.IptvButton" parent="@android:style/Widget.DeviceDefault.Button">
+        <item name="android:background">@drawable/livetv_iptv_button_background</item>
+        <item name="android:textColor">@color/livetv_iptv_button_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+</resources>

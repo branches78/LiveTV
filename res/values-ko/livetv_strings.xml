@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">프레임 레이트 맞추기</string>
+    <string name="livetv_match_frame_rate_auto">자동</string>
+    <string name="livetv_match_frame_rate_seamless">끊김 없이만</string>
+    <string name="livetv_match_frame_rate_off">사용 안함</string>
+    <string name="interactive_app_settings">양방향 앱 설정</string>
+    <string name="tv_iapp_on">사용</string>
+    <string name="tv_iapp_off">사용 안함</string>
+    <string name="livetv_setup_category_incompatible">호환되지 않는 소스</string>
+    <string name="livetv_setup_input_incompatible">이 앱의 채널은 LiveTV에 표시할 수 없습니다</string>
+    <string name="livetv_iptv_input_label">IPTV 목록</string>
+</resources>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LiveTV channel search: the results change with every letter typed. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F20B0B0B"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:paddingStart="96dp"
+    android:paddingTop="48dp"
+    android:paddingEnd="96dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Starts listening when the search opens; OK listens again. -->
+        <ImageView
+            android:id="@+id/livetv_search_voice"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/livetv_search_voice_background"
+            android:clickable="true"
+            android:contentDescription="@string/livetv_search_voice"
+            android:focusable="true"
+            android:padding="12dp"
+            android:src="@drawable/ic_livetv_mic" />
+
+        <EditText
+            android:id="@+id/livetv_search_query"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:hint="@string/livetv_search_hint"
+            android:imeOptions="actionSearch|flagNoExtractUi"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#80FFFFFF"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/livetv_search_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="#B3FFFFFF"
+        android:textSize="16sp" />
+
+    <androidx.leanback.widget.VerticalGridView
+        android:id="@+id/livetv_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="48dp" />
+</LinearLayout>

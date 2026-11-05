@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A channel in the LiveTV channel search results. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/livetv_search_result_background"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="6dp">
+
+    <ImageView
+        android:id="@+id/livetv_search_item_logo"
+        android:layout_width="@dimen/livetv_search_logo_width"
+        android:layout_height="@dimen/livetv_search_logo_height"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/livetv_search_item_number"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:singleLine="true"
+        android:textColor="#B3FFFFFF"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/livetv_search_item_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/livetv_search_item_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ellipsize="middle"
+        android:maxWidth="420dp"
+        android:singleLine="true"
+        android:textColor="#B3FFFFFF"
+        android:textSize="14sp" />
+</LinearLayout>

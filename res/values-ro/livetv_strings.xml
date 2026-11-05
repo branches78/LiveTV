@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Potrivește rata de cadre</string>
+    <string name="livetv_match_frame_rate_auto">Automat</string>
+    <string name="livetv_match_frame_rate_seamless">Doar fără întreruperi</string>
+    <string name="livetv_match_frame_rate_off">Dezactivat</string>
+    <string name="interactive_app_settings">Setări pentru aplicații interactive</string>
+    <string name="tv_iapp_on">Activat</string>
+    <string name="tv_iapp_off">Dezactivat</string>
+    <string name="livetv_setup_category_incompatible">Surse incompatibile</string>
+    <string name="livetv_setup_input_incompatible">Canalele sale nu pot fi afișate în LiveTV</string>
+    <string name="livetv_iptv_input_label">Liste IPTV</string>
+</resources>

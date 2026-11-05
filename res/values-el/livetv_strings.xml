@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Αντιστοίχιση ρυθμού καρέ</string>
+    <string name="livetv_match_frame_rate_auto">Αυτόματα</string>
+    <string name="livetv_match_frame_rate_seamless">Μόνο χωρίς διακοπή</string>
+    <string name="livetv_match_frame_rate_off">Ανενεργό</string>
+    <string name="interactive_app_settings">Ρυθμίσεις διαδραστικών εφαρμογών</string>
+    <string name="tv_iapp_on">Ενεργό</string>
+    <string name="tv_iapp_off">Ανενεργό</string>
+    <string name="livetv_setup_category_incompatible">Μη συμβατές πηγές</string>
+    <string name="livetv_setup_input_incompatible">Τα κανάλια της δεν μπορούν να εμφανιστούν στο LiveTV</string>
+    <string name="livetv_iptv_input_label">Λίστες IPTV</string>
+</resources>

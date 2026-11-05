@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Ujemanje hitrosti sličic</string>
+    <string name="livetv_match_frame_rate_auto">Samodejno</string>
+    <string name="livetv_match_frame_rate_seamless">Samo brez prekinitev</string>
+    <string name="livetv_match_frame_rate_off">Izklopljeno</string>
+    <string name="interactive_app_settings">Nastavitve interaktivnih aplikacij</string>
+    <string name="tv_iapp_on">Vklopljeno</string>
+    <string name="tv_iapp_off">Izklopljeno</string>
+    <string name="livetv_setup_category_incompatible">Nezdružljivi viri</string>
+    <string name="livetv_setup_input_incompatible">Njenih kanalov ni mogoče prikazati v LiveTV</string>
+    <string name="livetv_iptv_input_label">Seznami IPTV</string>
+</resources>

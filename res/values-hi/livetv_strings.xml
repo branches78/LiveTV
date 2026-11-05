@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">फ़्रेम रेट मिलाएं</string>
+    <string name="livetv_match_frame_rate_auto">अपने-आप</string>
+    <string name="livetv_match_frame_rate_seamless">सिर्फ़ बिना रुकावट</string>
+    <string name="livetv_match_frame_rate_off">बंद</string>
+    <string name="interactive_app_settings">इंटरैक्टिव ऐप्लिकेशन की सेटिंग</string>
+    <string name="tv_iapp_on">चालू</string>
+    <string name="tv_iapp_off">बंद</string>
+    <string name="livetv_setup_category_incompatible">असंगत स्रोत</string>
+    <string name="livetv_setup_input_incompatible">इसके चैनल LiveTV में नहीं दिखाए जा सकते</string>
+    <string name="livetv_iptv_input_label">IPTV सूचियां</string>
+</resources>

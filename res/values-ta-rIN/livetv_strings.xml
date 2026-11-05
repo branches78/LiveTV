@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">ஃப்ரேம் வீதத்தைப் பொருத்து</string>
+    <string name="livetv_match_frame_rate_auto">தானியங்கு</string>
+    <string name="livetv_match_frame_rate_seamless">தடையின்றி மட்டும்</string>
+    <string name="livetv_match_frame_rate_off">முடக்கு</string>
+    <string name="interactive_app_settings">ஊடாடும் ஆப்ஸ் அமைப்புகள்</string>
+    <string name="tv_iapp_on">ஆன்</string>
+    <string name="tv_iapp_off">ஆஃப்</string>
+    <string name="livetv_setup_category_incompatible">இணக்கமில்லாத மூலங்கள்</string>
+    <string name="livetv_setup_input_incompatible">இதன் சேனல்களை LiveTV இல் காட்ட முடியாது</string>
+    <string name="livetv_iptv_input_label">IPTV பட்டியல்கள்</string>
+</resources>

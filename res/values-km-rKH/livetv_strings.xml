@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">ផ្គូផ្គងអត្រាស៊ុម</string>
+    <string name="livetv_match_frame_rate_auto">ស្វ័យប្រវត្តិ</string>
+    <string name="livetv_match_frame_rate_seamless">តែគ្មានការរំខាន</string>
+    <string name="livetv_match_frame_rate_off">បិទ</string>
+    <string name="interactive_app_settings">ការកំណត់កម្មវិធីអន្តរកម្ម</string>
+    <string name="tv_iapp_on">បើក</string>
+    <string name="tv_iapp_off">បិទ</string>
+    <string name="livetv_setup_category_incompatible">ប្រភពមិនត្រូវគ្នា</string>
+    <string name="livetv_setup_input_incompatible">មិនអាចបង្ហាញប៉ុស្តិ៍របស់វានៅក្នុង LiveTV បានទេ</string>
+    <string name="livetv_iptv_input_label">បញ្ជី IPTV</string>
+</resources>

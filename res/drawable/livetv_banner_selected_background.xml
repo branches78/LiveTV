@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Channel banner selected from the menu (up from the first row): a lighter info_banner_background. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#5E7A88"/>
+    <corners android:radius="2dp" />
+</shape>

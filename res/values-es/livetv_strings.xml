@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="livetv_msg_no_channels">No hay canales. Configura una fuente de canales para continuar.</string>
+
+    <string name="livetv_match_frame_rate">Ajustar frecuencia de fotogramas</string>
+    <string name="livetv_match_frame_rate_auto">Automático</string>
+    <string name="livetv_match_frame_rate_auto_description">Cambio sin interrupciones en TVs HDMI 2.1 con Quick Media Switching (QMS). En TVs HDMI 2.0 cambia el modo de salida y la pantalla puede quedar en negro un momento.</string>
+    <string name="livetv_match_frame_rate_seamless">Solo sin interrupciones</string>
+    <string name="livetv_match_frame_rate_seamless_description">Solo cambia cuando el TV lo permite sin cortes (HDMI 2.1 QMS / VRR).</string>
+    <string name="livetv_match_frame_rate_off">Desactivado</string>
+    <string name="livetv_match_frame_rate_off_description">Mantiene la frecuencia de salida actual.</string>
+    <string name="livetv_match_frame_rate_display">TV conectado</string>
+    <string name="livetv_match_frame_rate_display_seamless">Admite cambio sin interrupciones (HDMI 2.1 QMS / VRR)</string>
+    <string name="livetv_match_frame_rate_display_mode_switch">Admite cambio con cambio de modo de salida (auto framerate, HDMI 2.0)</string>
+    <string name="livetv_match_frame_rate_display_none">Solo ofrece la frecuencia actual</string>
+    <string name="livetv_match_frame_rate_system_off">Desactivado en los ajustes del sistema</string>
+    <string name="livetv_match_frame_rate_system_off_description">Activa \"Ajustar a la frecuencia de fotogramas del contenido\" en Ajustes &gt; Pantalla y sonido para que esta opción funcione.</string>
+
+    <string name="livetv_group_by_all">Todos</string>
+    <string name="livetv_channel_move_hint">Arriba/abajo para mover · OK para soltar</string>
+    <string name="livetv_favorites">Favoritos</string>
+    <string name="livetv_favorites_add">Agregar a favoritos</string>
+    <string name="livetv_favorites_remove">Quitar de favoritos</string>
+    <string name="livetv_search">Buscar</string>
+    <string name="livetv_search_channel">Buscar canal</string>
+    <string name="livetv_search_hint">Nombre o número del canal</string>
+    <string name="livetv_search_empty_query">Di o escribe el nombre o el número de un canal.</string>
+    <string name="livetv_search_no_results">No se encontraron canales.</string>
+    <string name="livetv_search_voice">Buscar por voz</string>
+    <string name="livetv_search_listening">Habla ahora: di el número o el nombre de un canal…</string>
+    <string name="livetv_search_voice_not_understood">No se entendió. Pulsa el micrófono para repetir, o escribe.</string>
+    <string name="livetv_search_voice_unavailable">La búsqueda por voz no funciona ahora. Escribe el nombre o el número de un canal.</string>
+    <string name="livetv_search_channel_not_found">No hay ningún canal %1$s.</string>
+    <plurals name="livetv_search_results">
+        <item quantity="one">%d canal</item>
+        <item quantity="many">%d canales</item>
+        <item quantity="other">%d canales</item>
+    </plurals>
+
+    <plurals name="livetv_source_count">
+        <item quantity="one">%d fuente</item>
+        <item quantity="many">%d fuentes</item>
+        <item quantity="other">%d fuentes</item>
+    </plurals>
+
+    <plurals name="livetv_channel_group_count">
+        <item quantity="one">%d canal</item>
+        <item quantity="many">%d canales</item>
+        <item quantity="other">%d canales</item>
+    </plurals>
+
+    <string name="livetv_iptv_input_label">Listas IPTV</string>
+    <string name="livetv_iptv_description">Introduce la URL de una lista de canales M3U. Usa solo listas que tengas derecho a ver.</string>
+    <string name="livetv_iptv_import">Importar canales</string>
+    <string name="livetv_iptv_open_file">Abrir archivo M3U</string>
+    <string name="livetv_iptv_reading_file">Leyendo archivo…</string>
+    <string name="livetv_iptv_no_file_manager">No hay un administrador de archivos instalado. Instala uno para abrir archivos M3U.</string>
+    <string name="livetv_iptv_use_default">Usar canales gratuitos</string>
+    <string name="livetv_iptv_free_channels">Canales gratuitos</string>
+    <string name="livetv_iptv_delete_failed">No se pudieron borrar los canales.</string>
+    <plurals name="livetv_iptv_deleted">
+        <item quantity="one">Se borró %d canal</item>
+        <item quantity="many">Se borraron %d canales</item>
+        <item quantity="other">Se borraron %d canales</item>
+    </plurals>
+    <string name="livetv_iptv_importing">Descargando lista…</string>
+    <string name="livetv_iptv_empty">La lista no tiene canales.</string>
+    <string name="livetv_iptv_failed">No se pudo importar la lista: %1$s</string>
+    <string name="livetv_iptv_imported">%1$d de %2$d canales importados</string>
+    <string name="livetv_iptv_list_title">Lista %1$d</string>
+    <plurals name="livetv_iptv_list_channels">
+        <item quantity="one">%d canal</item>
+        <item quantity="many">%d canales</item>
+        <item quantity="other">%d canales</item>
+    </plurals>
+    <string name="livetv_iptv_list_delete">Eliminar</string>
+    <string name="livetv_iptv_list_delete_title">Eliminar lista</string>
+    <plurals name="livetv_iptv_list_delete_confirm">
+        <item quantity="one">¿Eliminar %1$s y su %2$d canal?</item>
+        <item quantity="many">¿Eliminar %1$s y sus %2$d canales?</item>
+        <item quantity="other">¿Eliminar %1$s y sus %2$d canales?</item>
+    </plurals>
+    <string name="livetv_iptv_limit_reached">Ya tienes %1$d canales, el máximo. Elimina una lista para importar otra.</string>
+    <string name="livetv_iptv_login">Con usuario</string>
+    <string name="livetv_iptv_login_title">Lista con usuario y contraseña</string>
+    <string name="livetv_iptv_login_description">Introduce los datos que te dio tu proveedor de IPTV.</string>
+    <string name="livetv_iptv_login_server">Servidor</string>
+    <string name="livetv_iptv_login_username">Usuario</string>
+    <string name="livetv_iptv_login_password">Contraseña</string>
+    <string name="livetv_iptv_login_show_password">Mostrar contraseña</string>
+    <string name="livetv_iptv_login_failed">Usuario o contraseña incorrectos, o la cuenta ha caducado.</string>
+    <string name="livetv_iptv_login_empty">La lista está vacía. Revisa el usuario y la contraseña, o si la cuenta sigue activa.</string>
+    <string name="livetv_iptv_too_large">La lista es demasiado grande (máximo 20 MB).</string>
+    <string name="livetv_iptv_guide">Guía</string>
+    <string name="livetv_iptv_guide_title">Guía de programación de %1$s</string>
+    <string name="livetv_iptv_guide_description">Dirección de la guía XMLTV de la lista (.xml o .xml.gz). Puedes poner varias, separadas por espacios. Las listas que indican su guía la reciben solas. iptv-epg.org tiene una guía por país, como https://iptv-epg.org/files/epg-co.xml</string>
+    <string name="livetv_iptv_guide_save">Guardar</string>
+    <string name="livetv_iptv_guide_none">Sin guía</string>
+    <string name="livetv_iptv_guide_updating">Guía: actualizando…</string>
+    <string name="livetv_iptv_guide_pending">Guía: aún sin leer</string>
+    <string name="livetv_iptv_guide_failed">Guía: no se pudo descargar</string>
+    <plurals name="livetv_iptv_guide_channels">
+        <item quantity="one">Guía: %d canal con programación</item>
+        <item quantity="many">Guía: %d canales con programación</item>
+        <item quantity="other">Guía: %d canales con programación</item>
+    </plurals>
+    <string name="livetv_assign_button">Asignar canales</string>
+    <string name="livetv_assign_title">Asignar canales · %1$s</string>
+    <string name="livetv_assign_loading">Cargando…</string>
+    <string name="livetv_assign_reading_guide">Leyendo la guía de la lista, puede tardar un minuto…</string>
+    <string name="livetv_assign_description">Elige de qué canal de la guía toma la programación cada canal. Los cambios se aplican al salir de esta pantalla.</string>
+    <string name="livetv_assign_no_guide">La guía de la lista aún no se ha leído. Añádela con el botón Guía y espera a que se descargue.</string>
+    <string name="livetv_assign_automatic">automático</string>
+    <string name="livetv_assign_manual">elegido a mano</string>
+    <string name="livetv_assign_none">Sin programación</string>
+    <string name="livetv_assign_choice_automatic">Automático (LiveTV elige)</string>
+    <string name="livetv_assign_picker_title">Programación para «%1$s»</string>
+    <string name="livetv_assign_picker_description">Elige el canal de la guía, o búscalo por su nombre.</string>
+    <string name="livetv_assign_search_hint">Buscar entre los canales de la guía</string>
+
+    <!-- Live TV strings without an upstream Spanish translation. -->
+    <string name="tv_app_dialog_title">Se encontró una app interactiva. ¿Quieres activar las apps interactivas?</string>
+    <string name="interactive_app_settings">Configuración de apps interactivas</string>
+    <string name="tv_iapp_on">Activado</string>
+    <string name="tv_iapp_off">Desactivado</string>
+    <string name="channels_item_up">Canal siguiente</string>
+    <string name="channels_item_down">Canal anterior</string>
+    <string name="select_inputs">Entradas</string>
+    <string name="option_attribution">Fuentes de las descripciones de clasificación</string>
+    <string name="setup_sources_description2"><xliff:g id="app_name">LiveTV</xliff:g> combina la experiencia de los canales de TV tradicionales con los canales de streaming que ofrecen las apps.\n\nPara empezar, configura las fuentes de canales que ya tienes instaladas.</string>
+    <string name="msg_channel_unavailable_not_connected">No hay señal. Comprueba la conexión de la fuente.</string>
+    <string name="empty_input_status_info">Comprueba la conexión o selecciona otra fuente de entrada</string>
+    <string name="empty_input_status_title_format"><xliff:g id="input_label" example="HDMI 1">%1$s</xliff:g>: sin señal</string>
+    <string name="input_banner_v2_active_input">Entrada activa</string>
+    <string name="input_banner_v2_input_label_format"><xliff:g example="HDMI 1" id="label">%1$s</xliff:g> • <xliff:g example="Play Station" id="custom_label">%2$s</xliff:g></string>
+    <string name="tvview_channel_locked_talkback">Para ver este canal, pulsa Seleccionar e introduce tu PIN</string>
+    <string name="tvview_content_locked_talkback">Para ver este programa, pulsa Seleccionar e introduce tu PIN</string>
+    <string name="tvview_content_locked_format_talkback">Este programa tiene la clasificación <xliff:g id="rating" example="TV_MA">%1$s</xliff:g>.\nPara verlo, pulsa Seleccionar e introduce tu PIN.</string>
+    <string name="tvview_content_locked_unrated_talkback">Este programa no tiene clasificación.\nPara verlo, pulsa Seleccionar e introduce tu PIN</string>
+    <string name="write_storage_permission_rationale_title">Solicitar permiso</string>
+    <string name="write_storage_permission_rationale_description">Se te preguntará: \"¿Permitir que <xliff:g id="app_name">LiveTV</xliff:g> acceda a fotos, contenido multimedia y archivos de tu dispositivo?\"\nSi seleccionas \"Permitir\", <xliff:g id="app_name">LiveTV</xliff:g> podrá liberar espacio de inmediato al eliminar programas grabados, y así habrá más espacio para nuevas grabaciones.</string>
+
+    <!-- Recording (DVR) -->
+    <string name="dvr_action_record_program">Grabar programa</string>
+    <string name="dvr_action_delete_schedule">Eliminar programación</string>
+    <string name="dvr_action_error_storage_settings">Abrir ajustes de almacenamiento</string>
+    <string name="dvr_detail_schedule_recording">Programar grabación</string>
+    <string name="dvr_epg_channel_watch_conflict_dialog_title">Próximas grabaciones</string>
+    <string name="dvr_epg_channel_watch_conflict_dialog_description">El programa no se grabará si sigues viendo este canal. Cancela la grabación o el canal actual se bloqueará cuando empiece a grabar.</string>
+    <string name="dvr_error_missing_storage_description">Falta parte del almacenamiento usado para grabar. Conecta la unidad externa que usabas para volver a activar las grabaciones, o elimina ese almacenamiento en los ajustes de almacenamiento si ya no está disponible.</string>
+    <string name="dvr_history_card_view_title">Historial de grabaciones</string>
+    <string name="dvr_history_empty_state">No hay historial de grabaciones.\nPuedes programar grabaciones desde la guía de programas.</string>
+    <string name="dvr_notification_channel_name">Grabaciones de <xliff:g id="app_name">LiveTV</xliff:g></string>
+    <string name="dvr_notification_content_title">Grabaciones de <xliff:g id="app_name">LiveTV</xliff:g></string>
+    <string name="dvr_notification_content_text_loading"><xliff:g id="app_name">LiveTV</xliff:g> está actualizando las grabaciones programadas.</string>
+    <string name="dvr_notification_content_text_recording"><xliff:g id="app_name">LiveTV</xliff:g> está grabando.</string>
+    <string name="dvr_recording_conflict">Conflicto de grabación</string>
+    <string name="dvr_recording_failed">Error en la grabación.</string>
+    <string name="dvr_recording_failed_no_period">Error en la grabación</string>
+    <string name="dvr_recording_failed_short">Error.</string>
+    <string name="dvr_recording_failed_input_dvr_unsupported">No se puede grabar este canal.</string>
+    <string name="dvr_recording_failed_input_dvr_unsupported_short">Grabación no disponible.</string>
+    <string name="dvr_recording_failed_input_unavailable"><xliff:g id="inputId" example="com.example.partnersupportsampletvinput/.SampleTvInputService">%1$s</xliff:g> no está disponible.</string>
+    <string name="dvr_recording_failed_input_unavailable_short"><xliff:g id="inputId" example="com.example.partnersupportsampletvinput/.SampleTvInputService">%1$s</xliff:g> no disponible.</string>
+    <string name="dvr_recording_failed_insufficient_space">No hay espacio suficiente. Conecta un dispositivo de almacenamiento externo o elimina algunas grabaciones.</string>
+    <string name="dvr_recording_failed_insufficient_space_short">No hay espacio suficiente.</string>
+    <string name="dvr_recording_failed_not_started">La grabación no se inició. Comprueba las conexiones de la antena y del disco duro (si los hay).</string>
+    <string name="dvr_recording_failed_not_started_short">No se pudo iniciar la grabación.</string>
+    <string name="dvr_recording_failed_resource_busy">No se pudo sintonizar el canal. Posibles causas: señal débil, mala conexión de la antena o conflicto de grabación.</string>
+    <string name="dvr_recording_failed_resource_busy_short">No se pudo sintonizar el canal.</string>
+    <string name="dvr_recording_failed_system_failure">Error del sistema. (Código de error: <xliff:g id="errorCode" example="0">%1$d</xliff:g>)</string>
+    <string name="dvr_recording_till_format">Grabando hasta las <xliff:g id="recordingEndTime" example="9:00pm">%1$s</xliff:g></string>
+    <string name="dvr_series_settings_title">Ajustes de grabación</string>
+    <string name="dvr_toast_recording_deleted">No se encontró la grabación.</string>
+    <string name="livetv_setup_category_incompatible">Fuentes incompatibles</string>
+    <string name="livetv_setup_input_incompatible">Sus canales no se pueden ver en LiveTV</string>
+</resources>

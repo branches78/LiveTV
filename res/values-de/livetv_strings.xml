@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Bildrate anpassen</string>
+    <string name="livetv_match_frame_rate_auto">Automatisch</string>
+    <string name="livetv_match_frame_rate_seamless">Nur nahtlos</string>
+    <string name="livetv_match_frame_rate_off">Aus</string>
+    <string name="interactive_app_settings">Einstellungen für interaktive Apps</string>
+    <string name="tv_iapp_on">An</string>
+    <string name="tv_iapp_off">Aus</string>
+    <string name="livetv_setup_category_incompatible">Inkompatible Quellen</string>
+    <string name="livetv_setup_input_incompatible">Die Kanäle können in LiveTV nicht angezeigt werden</string>
+    <string name="livetv_iptv_input_label">IPTV-Listen</string>
+</resources>

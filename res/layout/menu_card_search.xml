@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LiveTV: menu card that opens the channel search. -->
+<com.android.tv.menu.SimpleCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/card_layout_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:elevation="@dimen/card_elevation_normal"
+    android:focusable="true"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/livetv_search_icon"
+        android:layout_width="@dimen/card_image_layout_width"
+        android:layout_height="@dimen/card_image_layout_height"
+        android:background="@color/channel_card_guide"
+        android:paddingBottom="16dp"
+        android:paddingEnd="30dp"
+        android:paddingStart="30dp"
+        android:paddingTop="16dp"
+        android:src="@drawable/ic_livetv_search" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/guide_card_meta_background">
+        <include layout="@layout/menu_card_text" />
+    </FrameLayout>
+</com.android.tv.menu.SimpleCardView>

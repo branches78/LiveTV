@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Genre icon of the program guide side panel. Lifestyle: a heart. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,20c0,0 -8,-4.6 -8,-10a4.5,4.5 0 0,1 8,-2.8a4.5,4.5 0 0,1 8,2.8c0,5.4 -8,10 -8,10z"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2" />
+</vector>

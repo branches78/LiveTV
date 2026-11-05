@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Setup screen of the LiveTV IPTV input. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/livetv_icon_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingStart="96dp"
+        android:paddingTop="48dp"
+        android:paddingEnd="96dp"
+        android:paddingBottom="48dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/livetv_iptv_input_label"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/livetv_iptv_description"
+            android:textColor="#B3FFFFFF"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/livetv_iptv_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:hint="@string/livetv_iptv_url_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textUri"
+            android:singleLine="true"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#80FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/livetv_iptv_import"
+                style="@style/LiveTv.IptvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/livetv_iptv_import" />
+
+            <Button
+                android:id="@+id/livetv_iptv_open_file"
+                style="@style/LiveTv.IptvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/livetv_iptv_open_file" />
+
+            <Button
+                android:id="@+id/livetv_iptv_login"
+                style="@style/LiveTv.IptvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/livetv_iptv_login" />
+
+            <Button
+                android:id="@+id/livetv_iptv_use_default"
+                style="@style/LiveTv.IptvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/livetv_iptv_use_default" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/livetv_iptv_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/livetv_iptv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- One livetv_iptv_list_item per imported list. -->
+        <LinearLayout
+            android:id="@+id/livetv_iptv_lists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

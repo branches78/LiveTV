@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Sesuaikan kecepatan frame</string>
+    <string name="livetv_match_frame_rate_auto">Otomatis</string>
+    <string name="livetv_match_frame_rate_seamless">Hanya tanpa jeda</string>
+    <string name="livetv_match_frame_rate_off">Nonaktif</string>
+    <string name="interactive_app_settings">Setelan aplikasi interaktif</string>
+    <string name="tv_iapp_on">Aktif</string>
+    <string name="tv_iapp_off">Nonaktif</string>
+    <string name="livetv_setup_category_incompatible">Sumber yang tidak kompatibel</string>
+    <string name="livetv_setup_input_incompatible">Salurannya tidak dapat ditampilkan di LiveTV</string>
+    <string name="livetv_iptv_input_label">Daftar IPTV</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Кадр жыштыгын шайкештирүү</string>
+    <string name="livetv_match_frame_rate_auto">Автоматтык</string>
+    <string name="livetv_match_frame_rate_seamless">Үзгүлтүксүз гана</string>
+    <string name="livetv_match_frame_rate_off">Өчүк</string>
+    <string name="interactive_app_settings">Интерактивдүү колдонмолордун параметрлери</string>
+    <string name="tv_iapp_on">Күйүк</string>
+    <string name="tv_iapp_off">Өчүк</string>
+    <string name="livetv_setup_category_incompatible">Шайкеш келбеген булактар</string>
+    <string name="livetv_setup_input_incompatible">Анын каналдарын LiveTV\'де көрсөтүүгө болбойт</string>
+    <string name="livetv_iptv_input_label">IPTV тизмелери</string>
+</resources>

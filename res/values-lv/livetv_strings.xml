@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Kadru nomaiņas ātruma pielāgošana</string>
+    <string name="livetv_match_frame_rate_auto">Automātiski</string>
+    <string name="livetv_match_frame_rate_seamless">Tikai bez pārtraukumiem</string>
+    <string name="livetv_match_frame_rate_off">Izslēgts</string>
+    <string name="interactive_app_settings">Interaktīvo lietotņu iestatījumi</string>
+    <string name="tv_iapp_on">Ieslēgts</string>
+    <string name="tv_iapp_off">Izslēgts</string>
+    <string name="livetv_setup_category_incompatible">Nesaderīgi avoti</string>
+    <string name="livetv_setup_input_incompatible">Tās kanālus nevar rādīt lietotnē LiveTV</string>
+    <string name="livetv_iptv_input_label">IPTV saraksti</string>
+</resources>

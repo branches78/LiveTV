@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A row of "Assign channels": the list channel, an arrow and its guide channel. The picker uses
+     it too, with only the first text. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/livetv_search_result_background"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/livetv_assign_item_channel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/livetv_assign_item_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:importantForAccessibility="no"
+        android:text="→"
+        android:textColor="#80FFFFFF"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/livetv_assign_item_guide"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+</LinearLayout>

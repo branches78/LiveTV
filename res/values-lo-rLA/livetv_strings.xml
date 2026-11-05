@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">ຈັບຄູ່ອັດຕາເຟຣມ</string>
+    <string name="livetv_match_frame_rate_auto">ອັດຕະໂນມັດ</string>
+    <string name="livetv_match_frame_rate_seamless">ບໍ່ມີການຂັດຈັງຫວະເທົ່ານັ້ນ</string>
+    <string name="livetv_match_frame_rate_off">ປິດ</string>
+    <string name="interactive_app_settings">ການຕັ້ງຄ່າແອັບແບບໂຕ້ຕອບ</string>
+    <string name="tv_iapp_on">ເປີດ</string>
+    <string name="tv_iapp_off">ປິດ</string>
+    <string name="livetv_setup_category_incompatible">ແຫຼ່ງທີ່ບໍ່ເຂົ້າກັນໄດ້</string>
+    <string name="livetv_setup_input_incompatible">ບໍ່ສາມາດສະແດງຊ່ອງຂອງມັນໃນ LiveTV ໄດ້</string>
+    <string name="livetv_iptv_input_label">ລາຍຊື່ IPTV</string>
+</resources>

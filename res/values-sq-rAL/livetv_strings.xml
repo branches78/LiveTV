@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Përputh shpejtësinë e kuadrove</string>
+    <string name="livetv_match_frame_rate_auto">Automatike</string>
+    <string name="livetv_match_frame_rate_seamless">Vetëm pa ndërprerje</string>
+    <string name="livetv_match_frame_rate_off">Joaktive</string>
+    <string name="interactive_app_settings">Cilësimet e aplikacioneve interaktive</string>
+    <string name="tv_iapp_on">Aktiv</string>
+    <string name="tv_iapp_off">Joaktiv</string>
+    <string name="livetv_setup_category_incompatible">Burime të papërputhshme</string>
+    <string name="livetv_setup_input_incompatible">Kanalet e tij nuk mund të shfaqen në LiveTV</string>
+    <string name="livetv_iptv_input_label">Lista IPTV</string>
+</resources>

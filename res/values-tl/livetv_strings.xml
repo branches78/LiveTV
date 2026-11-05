@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by LiveTV. -->
+<resources>
+    <string name="livetv_match_frame_rate">Itugma ang frame rate</string>
+    <string name="livetv_match_frame_rate_auto">Awtomatiko</string>
+    <string name="livetv_match_frame_rate_seamless">Walang patid lang</string>
+    <string name="livetv_match_frame_rate_off">Naka-off</string>
+    <string name="interactive_app_settings">Mga setting ng interactive na app</string>
+    <string name="tv_iapp_on">Naka-on</string>
+    <string name="tv_iapp_off">Naka-off</string>
+    <string name="livetv_setup_category_incompatible">Mga hindi compatible na source</string>
+    <string name="livetv_setup_input_incompatible">Hindi maipapakita sa LiveTV ang mga channel nito</string>
+    <string name="livetv_iptv_input_label">Mga listahan ng IPTV</string>
+</resources>

@@ -121,15 +121,17 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:${versions.dagger}"
 }
 
-// Every packaged APK is also copied to "APK Builds", next to the project folder.
-def apkBuildsDir = file("${rootDir}/../APK Builds")
+// Every packaged APK is also copied to "Releases", next to the project folder: the ones published
+// on GitHub to "APK-Releases", the debug ones to "APK-Debug-Releases".
 tasks.withType(com.android.build.gradle.tasks.PackageApplication).configureEach { task ->
+    def apkReleasesDir = file(
+            "${rootDir}/../Releases/" + (task.name == 'packageRelease' ? 'APK-Releases' : 'APK-Debug-Releases'))
     task.doLast {
         copy {
             from(task.outputDirectory) {
                 include '*.apk'
             }
-            into apkBuildsDir
+            into apkReleasesDir
         }
     }
 }

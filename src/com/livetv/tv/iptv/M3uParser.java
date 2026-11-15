@@ -28,11 +28,14 @@ import java.util.regex.Pattern;
 /**
  * Parses extended M3U playlists ({@code #EXTM3U} / {@code #EXTINF}). Only web addresses (http and
  * https) are kept for streams and logos: a list must not make the player read files of the device.
+ * Movies and episodes of series are left out: only live channels are imported.
  */
 final class M3uParser {
     private static final String EXTINF = "#EXTINF:";
     private static final String EXTM3U = "#EXTM3U";
     private static final Pattern ATTRIBUTE = Pattern.compile("([\\w-]+)=\"([^\"]*)\"");
+    /** What is kept of a line, so that a list without line breaks cannot fill the memory. */
+    private static final int MAX_LINE_CHARS = 64 * 1024;
 
     /** One channel of the playlist. */
     static final class Entry {
@@ -54,26 +57,40 @@ final class M3uParser {
 
     /** The channels of a playlist and the XMLTV guide it names. */
     static final class Result {
+        /** The first channels of the list, as many as were asked for. */
         final List<Entry> entries;
+        /** How many channels the whole list has. */
+        final int total;
+        /** How many movies and episodes the list has: they are not channels and are left out. */
+        final int videos;
         /** The guide addresses of the header (url-tvg, x-tvg-url), separated by spaces. */
         final String guideUrls;
 
-        Result(List<Entry> entries, String guideUrls) {
+        Result(List<Entry> entries, int total, int videos, String guideUrls) {
             this.entries = entries;
+            this.total = total;
+            this.videos = videos;
             this.guideUrls = guideUrls;
         }
     }
 
-    static Result parse(Reader input) throws IOException {
+    /**
+     * @param maxEntries how many channels to keep. The rest are only counted: a list can be much
+     *     larger than the memory of the app.
+     */
+    static Result parse(Reader input, int maxEntries) throws IOException {
         List<Entry> entries = new ArrayList<>();
+        int total = 0;
+        int videos = 0;
         StringBuilder guideUrls = new StringBuilder();
         BufferedReader reader = new BufferedReader(input);
+        StringBuilder lineBuffer = new StringBuilder();
         String name = null;
         String logo = null;
         String group = null;
         String guideId = null;
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = readLine(reader, lineBuffer)) != null) {
             line = line.trim();
             if (line.isEmpty()) {
                 continue;
@@ -114,13 +131,38 @@ final class M3uParser {
                 }
             } else if (!line.startsWith("#")) {
                 if (name != null && isWebUrl(line)) {
-                    entries.add(
-                            new Entry(name.isEmpty() ? line : name, line, logo, group, guideId));
+                    if (isVideoFile(line)) {
+                        videos++;
+                        name = null;
+                        continue;
+                    }
+                    total++;
+                    if (entries.size() < maxEntries) {
+                        entries.add(
+                                new Entry(
+                                        name.isEmpty() ? line : name, line, logo, group, guideId));
+                    }
                 }
                 name = null;
             }
         }
-        return new Result(entries, guideUrls.toString());
+        return new Result(entries, total, videos, guideUrls.toString());
+    }
+
+    /** Returns the next line, cut to {@link #MAX_LINE_CHARS}, or null at the end of the list. */
+    private static String readLine(Reader reader, StringBuilder buffer) throws IOException {
+        buffer.setLength(0);
+        int c = reader.read();
+        if (c == -1) {
+            return null;
+        }
+        while (c != -1 && c != '\n' && c != '\r') {
+            if (buffer.length() < MAX_LINE_CHARS) {
+                buffer.append((char) c);
+            }
+            c = reader.read();
+        }
+        return buffer.toString();
     }
 
     /** Returns the index of the first comma outside quotes, which precedes the channel name. */
@@ -135,6 +177,30 @@ final class M3uParser {
             }
         }
         return -1;
+    }
+
+    private static final Pattern VIDEO_FILE =
+            Pattern.compile(
+                    "\\.(mp4|mkv|avi|mov|wmv|flv|webm|mpg|mpeg|m4v|divx|vob|3gp|rmvb)$");
+
+    /**
+     * Whether an address is a movie or an episode of a series (video on demand) instead of a live
+     * channel: a video file, or the "/movie/" and "/series/" paths of the Xtream servers. Some
+     * servers hide the address and put the extension after it ("/play/TOKEN#.mkv").
+     */
+    static boolean isVideoFile(String url) {
+        String lowerCase = url.toLowerCase(Locale.ROOT);
+        int hash = lowerCase.indexOf('#');
+        String fragment = hash >= 0 ? lowerCase.substring(hash + 1) : "";
+        String path = hash >= 0 ? lowerCase.substring(0, hash) : lowerCase;
+        int query = path.indexOf('?');
+        if (query >= 0) {
+            path = path.substring(0, query);
+        }
+        return path.contains("/movie/")
+                || path.contains("/series/")
+                || VIDEO_FILE.matcher(path).find()
+                || VIDEO_FILE.matcher(fragment).find();
     }
 
     private static boolean isWebUrl(String url) {

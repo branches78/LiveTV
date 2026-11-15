@@ -215,6 +215,10 @@ public final class IptvGuide {
         final Map<String, String> guideChannels = new LinkedHashMap<>();
         /** Channel key -> guide channel reference, of the automatic matches. */
         final Map<String, String> automaticMatches = new HashMap<>();
+        /** The channels and programs of the list's own guides, matched or not. */
+        int ownGuideItems;
+        /** Channel id -> the icon of its guide channel, for the channels without a logo. */
+        final Map<Long, String> icons = new HashMap<>();
     }
 
     /** What the last guide update found, for the "Assign channels" screen. */
@@ -422,7 +426,16 @@ public final class IptvGuide {
             return;
         }
         saveGuideInfo(context, playlistId, collected);
+        // The logo of the list comes first: the guide only gives one to the channels without.
+        for (Map.Entry<Long, String> icon : collected.icons.entrySet()) {
+            IptvChannels.storeLogoIfMissing(context, icon.getKey(), icon.getValue());
+        }
         int channelCount = collected.channelsWithPrograms.size();
+        // Servers can offer a guide and send it empty: say so, instead of "0 channels".
+        int guideResult =
+                channelCount == 0 && collected.ownGuideItems == 0
+                        ? IptvChannels.Playlist.GUIDE_EMPTY
+                        : channelCount;
         Log.i(
                 TAG,
                 "List "
@@ -442,7 +455,7 @@ public final class IptvGuide {
                                 ? p.withGuideResult(IptvChannels.Playlist.GUIDE_NOT_READ, 0)
                                 // Applying assignments again does not make the guide newer.
                                 : p.withGuideResult(
-                                        channelCount, useCache ? p.guideUpdatedMs : now));
+                                        guideResult, useCache ? p.guideUpdatedMs : now));
     }
 
     /** Downloads a guide as it comes (maybe compressed) to {@code file}. */
@@ -575,6 +588,11 @@ public final class IptvGuide {
                 if (event != XmlPullParser.START_TAG) {
                     continue;
                 }
+                if (own
+                        && ("channel".equals(parser.getName())
+                                || "programme".equals(parser.getName()))) {
+                    collected.ownGuideItems++;
+                }
                 if ("channel".equals(parser.getName())) {
                     readChannel(parser, url, own, channels, guideChannels, collected);
                 } else if ("programme".equals(parser.getName())) {
@@ -616,12 +634,18 @@ public final class IptvGuide {
             }
         }
         List<String> names = new ArrayList<>();
+        String icon = null;
         int depth = parser.getDepth();
         int event;
         while ((event = parser.next()) != XmlPullParser.END_DOCUMENT
                 && !(event == XmlPullParser.END_TAG && parser.getDepth() == depth)) {
             if (event == XmlPullParser.START_TAG && "display-name".equals(parser.getName())) {
                 names.add(parser.nextText());
+            } else if (event == XmlPullParser.START_TAG
+                    && "icon".equals(parser.getName())
+                    && icon == null) {
+                String src = parser.getAttributeValue(null, "src");
+                icon = src != null && IptvChannels.isWebUrl(src.trim()) ? src.trim() : null;
             }
         }
         // By id, else by exact name, else by loose name; only with the list's own guides.
@@ -656,6 +680,14 @@ public final class IptvGuide {
         addAssigned(matches, channels, url, own, guideId);
         if (!matches.isEmpty()) {
             guideChannels.put(guideId, matches);
+            if (icon != null) {
+                for (long channelId : matches) {
+                    // The first guide of the list wins, as with the programs.
+                    if (!collected.icons.containsKey(channelId)) {
+                        collected.icons.put(channelId, icon);
+                    }
+                }
+            }
         }
     }
 
@@ -718,6 +750,8 @@ public final class IptvGuide {
         String title = null;
         String episodeTitle = null;
         String description = null;
+        // The picture of the program, shown on the channel cards of the menu.
+        String image = null;
         List<String> genres = new ArrayList<>();
         int depth = parser.getDepth();
         int event;
@@ -737,6 +771,12 @@ public final class IptvGuide {
                 case "desc":
                     description = description == null ? parser.nextText().trim() : description;
                     break;
+                case "icon":
+                    String src = parser.getAttributeValue(null, "src");
+                    if (image == null && src != null && IptvChannels.isWebUrl(src.trim())) {
+                        image = src.trim();
+                    }
+                    break;
                 case "category":
                     String genre = toCanonicalGenre(parser.nextText());
                     if (genre != null && !genres.contains(genre)) {
@@ -747,7 +787,8 @@ public final class IptvGuide {
                     break;
             }
         }
-        if (title == null || title.isEmpty()) {
+        // Some public guides fill the channels they know nothing about with "No Data".
+        if (title == null || title.isEmpty() || title.equalsIgnoreCase("No Data")) {
             return;
         }
         for (long channelId : targets) {
@@ -762,6 +803,9 @@ public final class IptvGuide {
             }
             if (description != null && !description.isEmpty()) {
                 values.put(Programs.COLUMN_SHORT_DESCRIPTION, description);
+            }
+            if (image != null) {
+                values.put(Programs.COLUMN_POSTER_ART_URI, image);
             }
             values.put(Programs.COLUMN_START_TIME_UTC_MILLIS, startMs);
             values.put(Programs.COLUMN_END_TIME_UTC_MILLIS, endMs);

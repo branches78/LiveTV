@@ -23,4 +23,22 @@
         android:imeOptions="actionDone"
         android:inputType="textUri|textMultiLine"
         android:maxLines="4" />
+
+    <!-- Shown when the server of the list sends an empty guide. -->
+    <TextView
+        android:id="@+id/livetv_iptv_guide_empty_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/livetv_iptv_guide_empty_hint"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
+
+    <!-- Adds the public guide of a country to those of the list. -->
+    <Button
+        android:id="@+id/livetv_iptv_guide_country"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/livetv_iptv_guide_country" />
 </LinearLayout>

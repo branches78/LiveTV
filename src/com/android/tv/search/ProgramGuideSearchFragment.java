@@ -17,6 +17,7 @@
 package com.android.tv.search;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +42,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -87,6 +89,10 @@ public class ProgramGuideSearchFragment extends Fragment {
      * without hearing a word, listening starts again.
      */
     private static final long VOICE_WAIT_FOR_SPEECH_MS = 12000;
+    /** Voice levels reported by the recognizer, in dB, for the smallest and largest circle. */
+    private static final float VOICE_QUIET_DB = 0f;
+    private static final float VOICE_LOUD_DB = 10f;
+    private static final long VOICE_PULSE_PERIOD_MS = 1400;
     /** Set when the user refused the microphone: the search starts with the keyboard then. */
     private static final String PREF_KEY_VOICE_DENIED = "voice_denied";
     /** Words said before a channel number or name, such as "pon el canal". */
@@ -97,6 +103,11 @@ public class ProgramGuideSearchFragment extends Fragment {
     private MainActivity mMainActivity;
     private EditText mQueryView;
     private ImageView mVoiceView;
+    private View mVoicePulseView;
+    @Nullable private ValueAnimator mVoicePulseAnimator;
+    /** How loud the voice is now, from 0 to 1, and the value shown, which follows it smoothly. */
+    private float mVoiceTargetLevel;
+    private float mVoiceLevel;
     @Nullable private SpeechRecognizer mSpeechRecognizer;
     private boolean mListening;
     /** What the recognizer understood so far, used if it ends without a final result. */
@@ -135,6 +146,7 @@ public class ProgramGuideSearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.livetv_channel_search, container, false);
         mQueryView = view.findViewById(R.id.livetv_search_query);
         mVoiceView = view.findViewById(R.id.livetv_search_voice);
+        mVoicePulseView = view.findViewById(R.id.livetv_search_voice_pulse);
         // Going to the text field to type stops listening, so a late voice result cannot replace
         // what is typed.
         mQueryView.setOnFocusChangeListener(
@@ -344,6 +356,49 @@ public class ProgramGuideSearchFragment extends Fragment {
     private void setListening(boolean listening) {
         mListening = listening;
         mVoiceView.setActivated(listening);
+        if (listening) {
+            startVoicePulse();
+        } else {
+            stopVoicePulse();
+        }
+    }
+
+    /**
+     * The circle behind the microphone breathes while listening and grows with the voice. The
+     * breathing shows it is listening also with recognizers that do not report the voice level.
+     */
+    private void startVoicePulse() {
+        if (mVoicePulseAnimator != null) {
+            return;
+        }
+        mVoiceTargetLevel = 0;
+        mVoiceLevel = 0;
+        mVoicePulseView.setVisibility(View.VISIBLE);
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+        animator.setDuration(VOICE_PULSE_PERIOD_MS);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setInterpolator(new LinearInterpolator());
+        animator.addUpdateListener(
+                animation -> {
+                    float breath =
+                            (1 - (float) Math.cos(2 * Math.PI * animation.getAnimatedFraction()))
+                                    / 2;
+                    mVoiceTargetLevel *= 0.96f;
+                    mVoiceLevel += (mVoiceTargetLevel - mVoiceLevel) * 0.3f;
+                    float scale = 1.1f + 0.1f * breath + 0.6f * mVoiceLevel;
+                    mVoicePulseView.setScaleX(scale);
+                    mVoicePulseView.setScaleY(scale);
+                });
+        animator.start();
+        mVoicePulseAnimator = animator;
+    }
+
+    private void stopVoicePulse() {
+        if (mVoicePulseAnimator != null) {
+            mVoicePulseAnimator.cancel();
+            mVoicePulseAnimator = null;
+        }
+        mVoicePulseView.setVisibility(View.GONE);
     }
 
     private final RecognitionListener mRecognitionListener =
@@ -355,7 +410,11 @@ public class ProgramGuideSearchFragment extends Fragment {
                 public void onBeginningOfSpeech() {}
 
                 @Override
-                public void onRmsChanged(float rmsdB) {}
+                public void onRmsChanged(float rmsdB) {
+                    float level = (rmsdB - VOICE_QUIET_DB) / (VOICE_LOUD_DB - VOICE_QUIET_DB);
+                    mVoiceTargetLevel =
+                            Math.max(mVoiceTargetLevel, Math.max(0f, Math.min(1f, level)));
+                }
 
                 @Override
                 public void onBufferReceived(byte[] buffer) {}
@@ -406,7 +465,11 @@ public class ProgramGuideSearchFragment extends Fragment {
                                     SpeechRecognizer.RESULTS_RECOGNITION);
                     if (texts != null && !texts.isEmpty() && !texts.get(0).trim().isEmpty()) {
                         mLastPartialResult = texts.get(0);
-                        mStatusView.setText("\u201C" + texts.get(0) + "\u201D");
+                        // New words were heard, also if the recognizer reports no voice level.
+                        mVoiceTargetLevel = 1f;
+                        // The text field shows the words as they are said; its results follow.
+                        mQueryView.setText(texts.get(0));
+                        mQueryView.setSelection(mQueryView.length());
                     }
                 }
 
@@ -584,7 +647,9 @@ public class ProgramGuideSearchFragment extends Fragment {
             }
         }
         mAdapter.setResults(results);
-        if (normalizedQuery.isEmpty()) {
+        if (mListening) {
+            mStatusView.setText(R.string.livetv_search_listening);
+        } else if (normalizedQuery.isEmpty()) {
             mStatusView.setText(R.string.livetv_search_empty_query);
         } else if (results.isEmpty()) {
             mStatusView.setText(R.string.livetv_search_no_results);

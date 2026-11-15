@@ -67,6 +67,12 @@
     <string name="livetv_iptv_empty">La lista no tiene canales.</string>
     <string name="livetv_iptv_failed">No se pudo importar la lista: %1$s</string>
     <string name="livetv_iptv_imported">%1$d de %2$d canales importados</string>
+    <plurals name="livetv_iptv_videos_skipped">
+        <item quantity="one">%d película o episodio omitido</item>
+        <item quantity="many">%d películas y episodios omitidos</item>
+        <item quantity="other">%d películas y episodios omitidos</item>
+    </plurals>
+    <string name="livetv_iptv_only_videos">La lista solo tiene películas y series, no canales en vivo</string>
     <string name="livetv_iptv_list_title">Lista %1$d</string>
     <plurals name="livetv_iptv_list_channels">
         <item quantity="one">%d canal</item>
@@ -90,15 +96,21 @@
     <string name="livetv_iptv_login_show_password">Mostrar contraseña</string>
     <string name="livetv_iptv_login_failed">Usuario o contraseña incorrectos, o la cuenta ha caducado.</string>
     <string name="livetv_iptv_login_empty">La lista está vacía. Revisa el usuario y la contraseña, o si la cuenta sigue activa.</string>
-    <string name="livetv_iptv_too_large">La lista es demasiado grande (máximo 20 MB).</string>
+    <string name="livetv_iptv_too_large">La lista es demasiado grande (máximo 300 MB).</string>
     <string name="livetv_iptv_guide">Guía</string>
     <string name="livetv_iptv_guide_title">Guía de programación de %1$s</string>
-    <string name="livetv_iptv_guide_description">Dirección de la guía XMLTV de la lista (.xml o .xml.gz). Puedes poner varias, separadas por espacios. Las listas que indican su guía la reciben solas. iptv-epg.org tiene una guía por país, como https://iptv-epg.org/files/epg-co.xml</string>
+    <string name="livetv_iptv_guide_description">Dirección de la guía XMLTV de la lista (.xml o .xml.gz). Puedes poner varias, separadas por espacios. Las listas que indican su guía la reciben solas. \"Guías públicas\" añade guías por país.</string>
     <string name="livetv_iptv_guide_save">Guardar</string>
     <string name="livetv_iptv_guide_none">Sin guía</string>
     <string name="livetv_iptv_guide_updating">Guía: actualizando…</string>
     <string name="livetv_iptv_guide_pending">Guía: aún sin leer</string>
     <string name="livetv_iptv_guide_failed">Guía: no se pudo descargar</string>
+    <string name="livetv_iptv_guide_empty">Guía: el servidor no tiene programación</string>
+    <string name="livetv_iptv_guide_empty_hint">El servidor de esta lista no tiene programación. Puedes añadir guías públicas.</string>
+    <string name="livetv_iptv_guide_country">Guías públicas</string>
+    <string name="livetv_iptv_guide_country_title">Guías públicas, por orden de prioridad</string>
+    <string name="livetv_iptv_guide_country_added">Guías cambiadas. Pulsa Guardar para conservarlas.</string>
+    <string name="livetv_iptv_guide_no_matches">Guía: ningún canal coincide. Usa \"Asignar canales\"</string>
     <plurals name="livetv_iptv_guide_channels">
         <item quantity="one">Guía: %d canal con programación</item>
         <item quantity="many">Guía: %d canales con programación</item>

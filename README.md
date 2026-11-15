@@ -27,7 +27,8 @@ any channels: you add your own sources.
 ./gradlew assembleDebug
 ```
 
-The APK is also copied to an `APK Builds` folder next to the project folder. Install it with:
+The APK is also copied to `Releases/APK-Debug-Releases`, next to the project folder (release builds
+go to `Releases/APK-Releases`). Install it with:
 
 ```bash
 adb install -r <path-to-apk>

@@ -87,6 +87,12 @@
     <string name="livetv_iptv_failed">Could not import the list: %1$s</string>
     <!-- %1$d channels imported out of %2$d in the list. [CHAR LIMIT=NONE] -->
     <string name="livetv_iptv_imported">%1$d of %2$d channels imported</string>
+    <!-- Movies and episodes of a list, which are not live channels. -->
+    <plurals name="livetv_iptv_videos_skipped">
+        <item quantity="one">%d movie or episode left out</item>
+        <item quantity="other">%d movies and episodes left out</item>
+    </plurals>
+    <string name="livetv_iptv_only_videos">The list only has movies and series, not live channels</string>
     <!-- Title of an imported list on the IPTV setup screen; %1$d is its position. [CHAR LIMIT=30] -->
     <string name="livetv_iptv_list_title">List %1$d</string>
     <!-- Number of channels of an imported list. [CHAR LIMIT=30] -->
@@ -117,12 +123,12 @@
     <string name="livetv_iptv_login_failed">Wrong username or password, or the account has expired.</string>
     <!-- Shown when a provider that asks for a username and a password sends an empty list. [CHAR LIMIT=NONE] -->
     <string name="livetv_iptv_login_empty">The list is empty. Check the username and the password, or whether the account is still active.</string>
-    <string name="livetv_iptv_too_large">The list is too large (20 MB at most).</string>
+    <string name="livetv_iptv_too_large">The list is too large (300 MB at most).</string>
     <!-- Button next to an imported list that sets its XMLTV program guide. [CHAR LIMIT=20] -->
     <string name="livetv_iptv_guide">Guide</string>
     <!-- %1$s is the list title, such as "List 1". [CHAR LIMIT=50] -->
     <string name="livetv_iptv_guide_title">Program guide of %1$s</string>
-    <string name="livetv_iptv_guide_description">Address of the list\'s XMLTV guide (.xml or .xml.gz). You can enter several, separated by spaces. Lists that name their guide get it on their own. iptv-epg.org has a guide per country, such as https://iptv-epg.org/files/epg-co.xml</string>
+    <string name="livetv_iptv_guide_description">Address of the list\'s XMLTV guide (.xml or .xml.gz). You can enter several, separated by spaces. Lists that name their guide get it on their own. \"Public guides\" adds guides by country.</string>
     <string name="livetv_iptv_guide_hint" translatable="false">https://example.com/guide.xml.gz</string>
     <string name="livetv_iptv_guide_save">Save</string>
     <!-- Guide status of an imported list. [CHAR LIMIT=40] -->
@@ -130,6 +136,12 @@
     <string name="livetv_iptv_guide_updating">Guide: updating…</string>
     <string name="livetv_iptv_guide_pending">Guide: not read yet</string>
     <string name="livetv_iptv_guide_failed">Guide: could not be downloaded</string>
+    <string name="livetv_iptv_guide_empty">Guide: the server has no programs</string>
+    <string name="livetv_iptv_guide_empty_hint">The server of this list has no programs. You can add public guides.</string>
+    <string name="livetv_iptv_guide_country">Public guides</string>
+    <string name="livetv_iptv_guide_country_title">Public guides, in order of priority</string>
+    <string name="livetv_iptv_guide_country_added">Guides changed. Select Save to keep them.</string>
+    <string name="livetv_iptv_guide_no_matches">Guide: no channel matches. Use \"Assign channels\"</string>
     <plurals name="livetv_iptv_guide_channels">
         <item quantity="one">Guide: %d channel with programs</item>
         <item quantity="other">Guide: %d channels with programs</item>

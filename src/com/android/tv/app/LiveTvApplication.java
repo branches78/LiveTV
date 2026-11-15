@@ -66,6 +66,7 @@ public class LiveTvApplication extends TvApplication implements HasSingletons<Tv
         STARTUP_MEASURE.onAppCreate(this);
         // After "Clear data" the IPTV channels are still in the TV provider: start without them.
         IptvChannels.deleteOrphanedChannels(this);
+        IptvChannels.deleteVideoChannels(this);
     }
 
     @Override

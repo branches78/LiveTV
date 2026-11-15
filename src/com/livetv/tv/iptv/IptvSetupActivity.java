@@ -39,11 +39,16 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.android.tv.R;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -268,6 +273,10 @@ public class IptvSetupActivity extends Activity {
             return getString(R.string.livetv_iptv_guide_failed);
         } else if (playlist.guideChannelCount == IptvChannels.Playlist.GUIDE_NOT_READ) {
             return getString(R.string.livetv_iptv_guide_pending);
+        } else if (playlist.guideChannelCount == IptvChannels.Playlist.GUIDE_EMPTY) {
+            return getString(R.string.livetv_iptv_guide_empty);
+        } else if (playlist.guideChannelCount == 0) {
+            return getString(R.string.livetv_iptv_guide_no_matches);
         }
         return getResources()
                 .getQuantityString(
@@ -285,6 +294,8 @@ public class IptvSetupActivity extends Activity {
         EditText urlsView = view.findViewById(R.id.livetv_iptv_guide_urls);
         String shownUrls = maskPasswords(playlist.guideUrls);
         urlsView.setText(shownUrls);
+        // Whether the public guides were chosen while the dialog was open.
+        boolean[] guidesChosen = {false};
         AlertDialog dialog =
                 new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.livetv_iptv_guide_title, title))
@@ -296,6 +307,10 @@ public class IptvSetupActivity extends Activity {
                                     if (!typed.equals(normalizeUrls(shownUrls))) {
                                         saveGuideUrls(
                                                 playlist.id, unmaskPasswords(typed, playlist));
+                                    } else if (guidesChosen[0]) {
+                                        // Already the guide of the list: read it again.
+                                        updateGuide(playlist.id);
+                                        loadPlaylists(-1);
                                     }
                                 })
                         .setNegativeButton(android.R.string.cancel, null)
@@ -321,6 +336,132 @@ public class IptvSetupActivity extends Activity {
                 };
         urlsView.addTextChangedListener(new AfterTextChangedWatcher(updateSaveButton));
         updateSaveButton.run();
+        if (playlist.guideChannelCount == IptvChannels.Playlist.GUIDE_EMPTY) {
+            view.findViewById(R.id.livetv_iptv_guide_empty_hint).setVisibility(View.VISIBLE);
+        }
+        view.findViewById(R.id.livetv_iptv_guide_country)
+                .setOnClickListener(
+                        v ->
+                                showPublicGuidesDialog(
+                                        normalizeUrls(urlsView.getText().toString()),
+                                        urls -> {
+                                            // The dialog stays open: "Save" keeps the choice
+                                            // and "Cancel" drops it.
+                                            guidesChosen[0] = true;
+                                            urlsView.setText(urls);
+                                            urlsView.setSelection(urlsView.length());
+                                            saveButton.requestFocus();
+                                            Toast.makeText(
+                                                            this,
+                                                            R.string.livetv_iptv_guide_country_added,
+                                                            Toast.LENGTH_LONG)
+                                                    .show();
+                                        }));
+    }
+
+    /** Receives the guides of the list after {@link #showPublicGuidesDialog}. */
+    private interface GuideUrlsListener {
+        void onGuideUrls(String urls);
+    }
+
+    /**
+     * Countries with a public guide at epgshare01.online, and the name of their file there
+     * ("epg_ripper_CO1.xml.gz").
+     */
+    private static final String[][] GUIDE_COUNTRIES = {
+        {"ar", "AR1"}, {"br", "BR1"}, {"ca", "CA2"}, {"cl", "CL1"}, {"co", "CO1"},
+        {"cr", "CR1"}, {"de", "DE1"}, {"do", "DO1"}, {"ec", "EC1"}, {"es", "ES1"},
+        {"fr", "FR1"}, {"gb", "UK1"}, {"it", "IT1"}, {"mx", "MX1"}, {"pa", "PA1"},
+        {"pe", "PE1"}, {"pt", "PT1"}, {"sv", "SV1"}, {"us", "US2"}, {"uy", "UY1"}
+    };
+    /** The guide of the Plex channels, which are not of one country. */
+    private static final String PLEX_GUIDE = "PLEX1";
+
+    private static String publicGuideUrl(String file) {
+        return "https://epgshare01.online/epgshare01/epg_ripper_" + file + ".xml.gz";
+    }
+
+    /**
+     * Lets the user check the public guides of the list: the country of the device first, then
+     * Plex, then the other countries. That is also their priority: a guide only gives programs to
+     * the channels the guides before it left without.
+     *
+     * @param currentUrls the guides of the list now, separated by spaces. The guides that are not
+     *     public ones (the one of the server, those typed) stay first.
+     */
+    private void showPublicGuidesDialog(String currentUrls, GuideUrlsListener listener) {
+        String deviceCountry = Locale.getDefault().getCountry().toLowerCase(Locale.ROOT);
+        List<String[]> countries = new ArrayList<>(Arrays.asList(GUIDE_COUNTRIES));
+        Collator collator = Collator.getInstance();
+        Collections.sort(
+                countries, (a, b) -> collator.compare(countryName(a[0]), countryName(b[0])));
+        List<String> names = new ArrayList<>();
+        List<String> urls = new ArrayList<>();
+        // Guides an earlier build added: for many countries they only have "No Data" programs.
+        List<String> oldUrls = new ArrayList<>();
+        for (String[] country : countries) {
+            int index = country[0].equals(deviceCountry) ? 0 : names.size();
+            names.add(index, countryName(country[0]));
+            urls.add(index, publicGuideUrl(country[1]));
+            oldUrls.add("https://iptv-epg.org/files/epg-" + country[0] + ".xml.gz");
+        }
+        int plexIndex = Math.min(1, names.size());
+        if (!urls.get(0).equals(publicGuideUrl(findGuideFile(deviceCountry)))) {
+            // The country of the device has no guide: Plex goes first.
+            plexIndex = 0;
+        }
+        names.add(plexIndex, "Plex");
+        urls.add(plexIndex, publicGuideUrl(PLEX_GUIDE));
+
+        List<String> current = new ArrayList<>();
+        for (String url : currentUrls.split(" ")) {
+            if (!url.isEmpty()) {
+                current.add(url);
+            }
+        }
+        boolean[] checked = new boolean[urls.size()];
+        for (int i = 0; i < checked.length; i++) {
+            checked[i] = current.contains(urls.get(i));
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.livetv_iptv_guide_country_title)
+                .setMultiChoiceItems(
+                        names.toArray(new String[0]),
+                        checked,
+                        (d, which, isChecked) -> checked[which] = isChecked)
+                .setPositiveButton(
+                        android.R.string.ok,
+                        (d, which) -> {
+                            StringBuilder result = new StringBuilder();
+                            for (String url : current) {
+                                if (!urls.contains(url) && !oldUrls.contains(url)) {
+                                    result.append(result.length() > 0 ? " " : "").append(url);
+                                }
+                            }
+                            for (int i = 0; i < checked.length; i++) {
+                                if (checked[i]) {
+                                    result.append(result.length() > 0 ? " " : "")
+                                            .append(urls.get(i));
+                                }
+                            }
+                            listener.onGuideUrls(result.toString());
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    /** Returns the guide file of a country, or an empty text if it has none. */
+    private static String findGuideFile(String countryCode) {
+        for (String[] country : GUIDE_COUNTRIES) {
+            if (country[0].equals(countryCode)) {
+                return country[1];
+            }
+        }
+        return "";
+    }
+
+    private static String countryName(String code) {
+        return new Locale("", code.toUpperCase(Locale.ROOT)).getDisplayCountry();
     }
 
     private static String normalizeUrls(String urls) {
@@ -557,6 +698,8 @@ public class IptvSetupActivity extends Activity {
             if (result.total > 0) {
                 mStatusView.setText(
                         getString(R.string.livetv_iptv_limit_reached, IptvChannels.MAX_CHANNELS));
+            } else if (result.videos > 0) {
+                mStatusView.setText(R.string.livetv_iptv_only_videos);
             } else {
                 // Some providers answer a wrong password with an empty list.
                 mStatusView.setText(
@@ -565,8 +708,17 @@ public class IptvSetupActivity extends Activity {
             loadPlaylists(-1);
             return;
         }
-        mStatusView.setText(
-                getString(R.string.livetv_iptv_imported, result.imported, result.total));
+        String imported = getString(R.string.livetv_iptv_imported, result.imported, result.total);
+        if (result.videos > 0) {
+            imported +=
+                    "  \u00B7  "
+                            + getResources()
+                                    .getQuantityString(
+                                            R.plurals.livetv_iptv_videos_skipped,
+                                            result.videos,
+                                            result.videos);
+        }
+        mStatusView.setText(imported);
         // Stay on this screen, ready for another list. "Import channels" turns disabled with the
         // URL gone, so its focus goes to the URL.
         View focus = getCurrentFocus();

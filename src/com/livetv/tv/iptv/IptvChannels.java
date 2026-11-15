@@ -71,6 +71,8 @@ public final class IptvChannels {
     /** The imported lists, as a JSON array of {@link Playlist}. */
     private static final String KEY_PLAYLISTS = "playlists";
     private static final String KEY_NEXT_PLAYLIST_ID = "next_playlist_id";
+    /** Whether the movies and episodes imported as channels by older builds were deleted. */
+    private static final String KEY_VIDEOS_DELETED = "videos_deleted_2";
     /** URL of the single list imported before LiveTV supported several lists. */
     private static final String KEY_LEGACY_PLAYLIST_URL = "playlist_url";
     /** Start of the source of a list imported with a username and a password. */
@@ -82,7 +84,7 @@ public final class IptvChannels {
 
     private static final int BATCH_SIZE = 200;
     /** Largest list accepted, so a huge file cannot run the app out of memory. */
-    private static final long MAX_PLAYLIST_BYTES = 20L * 1024 * 1024;
+    private static final long MAX_PLAYLIST_BYTES = 300L * 1024 * 1024;
     /** Largest logo accepted, so a huge image cannot fill the storage. */
     private static final int MAX_LOGO_BYTES = 2 * 1024 * 1024;
     /** Start of the source of a list imported from a file (followed by a hash of its URI). */
@@ -98,6 +100,8 @@ public final class IptvChannels {
         final int total;
         /** The imported list, or -1 if nothing was imported. */
         final long playlistId;
+        /** Movies and episodes of the list, which are not imported. */
+        int videos;
 
         ImportResult(int imported, int total) {
             this(imported, total, -1);
@@ -116,6 +120,8 @@ public final class IptvChannels {
         static final int GUIDE_NOT_READ = -1;
         /** {@link #guideChannelCount} when reading the guide failed. */
         static final int GUIDE_FAILED = -2;
+        /** {@link #guideChannelCount} when the list's guides have no channels nor programs. */
+        static final int GUIDE_EMPTY = -3;
 
         final long id;
         /** The URL, or the URI of the file; importing the same source again updates the list. */
@@ -458,16 +464,22 @@ public final class IptvChannels {
         HttpURLConnection connection = open(playlistUrl, TIMEOUT_MS);
         try (InputStream in =
                 new LimitedInputStream(connection.getInputStream(), MAX_PLAYLIST_BYTES)) {
-            result = M3uParser.parse(new InputStreamReader(in, StandardCharsets.UTF_8));
+            result =
+                    M3uParser.parse(
+                            new InputStreamReader(in, StandardCharsets.UTF_8), MAX_CHANNELS);
         } finally {
             connection.disconnect();
         }
-        return storeChannels(
-                context,
-                result.entries,
-                source,
-                label,
-                guideUrl != null ? guideUrl : result.guideUrls);
+        ImportResult imported =
+                storeChannels(
+                        context,
+                        result.entries,
+                        result.total,
+                        source,
+                        label,
+                        guideUrl != null ? guideUrl : result.guideUrls);
+        imported.videos = result.videos;
+        return imported;
     }
 
     /** Like {@link #importPlaylist} for an M3U file picked with a file manager. */
@@ -481,14 +493,19 @@ public final class IptvChannels {
                     M3uParser.parse(
                             new InputStreamReader(
                                     new LimitedInputStream(in, MAX_PLAYLIST_BYTES),
-                                    StandardCharsets.UTF_8));
+                                    StandardCharsets.UTF_8),
+                            MAX_CHANNELS);
         }
-        return storeChannels(
-                context,
-                result.entries,
-                getFileSource(fileUri),
-                getFileName(context, fileUri),
-                result.guideUrls);
+        ImportResult imported =
+                storeChannels(
+                        context,
+                        result.entries,
+                        result.total,
+                        getFileSource(fileUri),
+                        getFileName(context, fileUri),
+                        result.guideUrls);
+        imported.videos = result.videos;
+        return imported;
     }
 
     /**
@@ -631,6 +648,91 @@ public final class IptvChannels {
                 .start();
     }
 
+    /**
+     * Deletes, once, the movies and episodes that older builds imported as channels. Call when
+     * the app starts.
+     */
+    public static void deleteVideoChannels(Context context) {
+        if (prefs(context).getBoolean(KEY_VIDEOS_DELETED, false)) {
+            return;
+        }
+        Context appContext = context.getApplicationContext();
+        new Thread(
+                        () -> {
+                            try {
+                                deleteVideoChannelsNow(appContext);
+                                prefs(appContext)
+                                        .edit()
+                                        .putBoolean(KEY_VIDEOS_DELETED, true)
+                                        .apply();
+                            } catch (Exception e) {
+                                // Tried again the next time the app starts.
+                                Log.w(TAG, "Cannot delete the movies and series", e);
+                            }
+                        },
+                        TAG)
+                .start();
+    }
+
+    private static synchronized void deleteVideoChannelsNow(Context context) throws Exception {
+        ContentResolver resolver = context.getContentResolver();
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        // List ID -> channels left in the list.
+        Map<Long, Integer> left = new HashMap<>();
+        try (Cursor cursor =
+                resolver.query(
+                        TvContract.buildChannelsUriForInput(getInputId(context)),
+                        new String[] {
+                            Channels._ID,
+                            Channels.COLUMN_INTERNAL_PROVIDER_FLAG1,
+                            Channels.COLUMN_INTERNAL_PROVIDER_DATA
+                        },
+                        null,
+                        null,
+                        null)) {
+            while (cursor != null && cursor.moveToNext()) {
+                boolean video =
+                        !cursor.isNull(2)
+                                && M3uParser.isVideoFile(
+                                        new String(cursor.getBlob(2), StandardCharsets.UTF_8));
+                if (video) {
+                    ops.add(
+                            ContentProviderOperation.newDelete(
+                                            TvContract.buildChannelUri(cursor.getLong(0)))
+                                    .build());
+                } else if (!cursor.isNull(1)) {
+                    Integer count = left.get(cursor.getLong(1));
+                    left.put(cursor.getLong(1), count == null ? 1 : count + 1);
+                }
+            }
+        }
+        if (ops.isEmpty()) {
+            return;
+        }
+        for (int start = 0; start < ops.size(); start += BATCH_SIZE) {
+            resolver.applyBatch(
+                    TvContract.AUTHORITY,
+                    new ArrayList<>(ops.subList(start, Math.min(start + BATCH_SIZE, ops.size()))));
+        }
+        Log.i(TAG, "Deleted " + ops.size() + " movies and episodes imported as channels");
+        List<Playlist> playlists = getPlaylists(context);
+        for (int i = 0; i < playlists.size(); i++) {
+            Playlist p = playlists.get(i);
+            Integer count = left.get(p.id);
+            playlists.set(
+                    i,
+                    new Playlist(
+                            p.id,
+                            p.source,
+                            p.label,
+                            count == null ? 0 : count,
+                            p.guideUrls,
+                            p.guideChannelCount,
+                            p.guideUpdatedMs));
+        }
+        savePlaylists(context, playlists);
+    }
+
     private static SharedPreferences prefs(Context context) {
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
     }
@@ -642,6 +744,7 @@ public final class IptvChannels {
     private static synchronized ImportResult storeChannels(
             Context context,
             List<M3uParser.Entry> entries,
+            int total,
             String source,
             String label,
             String guideUrls)
@@ -695,7 +798,7 @@ public final class IptvChannels {
         int count = Math.max(0, Math.min(entries.size(), MAX_CHANNELS - otherChannels));
         if (count == 0) {
             // No room left: the lists stay as they are.
-            return new ImportResult(0, entries.size());
+            return new ImportResult(0, total);
         }
 
         List<Uri> channelUris = new ArrayList<>(count);
@@ -746,7 +849,7 @@ public final class IptvChannels {
                 LOGO_EXECUTOR.execute(() -> storeLogo(appContext, channelUri, logoUrl));
             }
         }
-        return new ImportResult(count, entries.size(), playlistId);
+        return new ImportResult(count, total, playlistId);
     }
 
     /** Inserts the first {@code count} entries as channels of the list, in batches. */
@@ -791,6 +894,35 @@ public final class IptvChannels {
                 ops.clear();
             }
         }
+    }
+
+    /** Whether {@code url} is a web address (http or https). */
+    static boolean isWebUrl(String url) {
+        String lowerCase = url.toLowerCase(Locale.ROOT);
+        return lowerCase.startsWith("http://") || lowerCase.startsWith("https://");
+    }
+
+    /**
+     * Downloads, in the background, a logo for a channel that has none: the icon of its channel
+     * in the program guide.
+     */
+    static void storeLogoIfMissing(Context context, long channelId, String logoUrl) {
+        Context appContext = context.getApplicationContext();
+        Uri channelUri = TvContract.buildChannelUri(channelId);
+        LOGO_EXECUTOR.execute(
+                () -> {
+                    try (InputStream in =
+                            appContext
+                                    .getContentResolver()
+                                    .openInputStream(TvContract.buildChannelLogoUri(channelUri))) {
+                        if (in != null && in.read() != -1) {
+                            return;
+                        }
+                    } catch (Exception e) {
+                        // No logo yet.
+                    }
+                    storeLogo(appContext, channelUri, logoUrl);
+                });
     }
 
     private static void storeLogo(Context context, Uri channelUri, String logoUrl) {

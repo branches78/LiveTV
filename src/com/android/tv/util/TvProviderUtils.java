@@ -19,7 +19,6 @@ package com.android.tv.util;
 import static java.lang.Boolean.TRUE;
 
 import android.content.Context;
-import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,6 +53,15 @@ public final class TvProviderUtils {
     private static boolean sProgramHasSeriesIdColumn;
     private static boolean sRecordedProgramHasSeriesIdColumn;
     private static boolean sRecordedProgramHasStateColumn;
+    /**
+     * LiveTV: whether each column was checked already. The TV provider only lets system apps read
+     * and add columns, so for LiveTV the check fails every time; retried on every program query,
+     * it held the lock of this class for ~200 ms each time and froze the screen (the program
+     * guide took seconds to open). Checked once per process now.
+     */
+    private static boolean sProgramSeriesIdChecked;
+    private static boolean sRecordedProgramSeriesIdChecked;
+    private static boolean sRecordedProgramStateChecked;
 
     /**
      * Checks whether a table contains a series ID column.
@@ -81,7 +89,8 @@ public final class TvProviderUtils {
 
     @WorkerThread
     private static synchronized boolean checkProgramTableSeriesIdColumn(Context context, Uri uri) {
-        if (!sProgramHasSeriesIdColumn) {
+        if (!sProgramHasSeriesIdColumn && !sProgramSeriesIdChecked) {
+            sProgramSeriesIdChecked = true;
             if (getExistingColumns(context, uri).contains(EXTRA_PROGRAM_COLUMN_SERIES_ID)) {
                 sProgramHasSeriesIdColumn = true;
             } else if (addColumnToTable(context, uri, EXTRA_PROGRAM_COLUMN_SERIES_ID)) {
@@ -94,7 +103,8 @@ public final class TvProviderUtils {
     @WorkerThread
     private static synchronized boolean checkRecordedProgramTableSeriesIdColumn(
             Context context, Uri uri) {
-        if (!sRecordedProgramHasSeriesIdColumn) {
+        if (!sRecordedProgramHasSeriesIdColumn && !sRecordedProgramSeriesIdChecked) {
+            sRecordedProgramSeriesIdChecked = true;
             if (getExistingColumns(context, uri).contains(EXTRA_PROGRAM_COLUMN_SERIES_ID)) {
                 sRecordedProgramHasSeriesIdColumn = true;
             } else if (addColumnToTable(context, uri, EXTRA_PROGRAM_COLUMN_SERIES_ID)) {
@@ -129,7 +139,8 @@ public final class TvProviderUtils {
     @WorkerThread
     private static synchronized boolean checkRecordedProgramTableStateColumn(
             Context context, Uri uri) {
-        if (!sRecordedProgramHasStateColumn) {
+        if (!sRecordedProgramHasStateColumn && !sRecordedProgramStateChecked) {
+            sRecordedProgramStateChecked = true;
             if (getExistingColumns(context, uri).contains(EXTRA_PROGRAM_COLUMN_STATE)) {
                 sRecordedProgramHasStateColumn = true;
             } else if (addColumnToTable(context, uri, EXTRA_PROGRAM_COLUMN_STATE)) {

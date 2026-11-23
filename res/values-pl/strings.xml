@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"mono"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"stereo"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"Sterowanie odtwarzaniem"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"Kanały"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"Opcje TV"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"Elementy sterujące Play są niedostępne dla tego kanału"</string>
@@ -133,8 +133,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"Źródła kanałów"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"Dostępne są nowe kanały"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"Kontrola rodzicielska"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"Przesunięcie w czasie"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"Nagrywaj podczas oglądania, by móc wstrzymywać i przewijać programy na żywo.\nOstrzeżenie: funkcja ta intensywnie korzysta z pamięci wewnętrznej, co może skrócić jej żywotność."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"Licencje open source"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"Prześlij opinię"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"Wersja"</string>
@@ -160,7 +158,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"Bez tytułu"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"Kanał zablokowany"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"Nowe"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"Źródła"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="few">%1$d kanały</item>

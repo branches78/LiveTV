@@ -25,13 +25,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.GuardedBy;
-import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
 import android.util.Log;
 import com.android.tv.common.CommonPreferenceProvider.Preferences;
 import com.android.tv.common.util.CommonUtils;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,35 +36,18 @@ import java.util.Map;
 public class CommonPreferences {
     private static final String TAG = "CommonPreferences";
 
-    private static final String PREFS_KEY_LAUNCH_SETUP = "launch_setup";
     private static final String PREFS_KEY_STORE_TS_STREAM = "store_ts_stream";
-    private static final String PREFS_KEY_TRICKPLAY_SETTING = "trickplay_setting";
     private static final String PREFS_KEY_LAST_POSTAL_CODE = "last_postal_code";
 
     private static final Map<String, Class> sPref2TypeMapping = new HashMap<>();
 
     static {
-        sPref2TypeMapping.put(PREFS_KEY_TRICKPLAY_SETTING, int.class);
         sPref2TypeMapping.put(PREFS_KEY_STORE_TS_STREAM, boolean.class);
-        sPref2TypeMapping.put(PREFS_KEY_LAUNCH_SETUP, boolean.class);
         sPref2TypeMapping.put(PREFS_KEY_LAST_POSTAL_CODE, String.class);
     }
 
     private static final String SHARED_PREFS_NAME =
             CommonConstants.BASE_PACKAGE + ".common.preferences";
-
-    @IntDef({TRICKPLAY_SETTING_NOT_SET, TRICKPLAY_SETTING_DISABLED, TRICKPLAY_SETTING_ENABLED})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface TrickplaySetting {}
-
-    /** Trickplay setting is not changed by a user. Trickplay will be enabled in this case. */
-    public static final int TRICKPLAY_SETTING_NOT_SET = -1;
-
-    /** Trickplay setting is disabled. */
-    public static final int TRICKPLAY_SETTING_DISABLED = 0;
-
-    /** Trickplay setting is enabled. */
-    public static final int TRICKPLAY_SETTING_ENABLED = 1;
 
     @GuardedBy("CommonPreferences.class")
     private static final Bundle sPreferenceValues = new Bundle();
@@ -147,48 +127,6 @@ public class CommonPreferences {
         return CommonUtils.isPackagedWithLiveChannels(context);
     }
 
-    public static synchronized boolean shouldShowSetupActivity(Context context) {
-        SoftPreconditions.checkState(sInitialized);
-        if (useContentProvider(context)) {
-            return sPreferenceValues.getBoolean(PREFS_KEY_LAUNCH_SETUP);
-        } else {
-            return getSharedPreferences(context).getBoolean(PREFS_KEY_LAUNCH_SETUP, false);
-        }
-    }
-
-    public static synchronized void setShouldShowSetupActivity(Context context, boolean need) {
-        if (useContentProvider(context)) {
-            setPreference(context, PREFS_KEY_LAUNCH_SETUP, need);
-        } else {
-            getSharedPreferences(context).edit().putBoolean(PREFS_KEY_LAUNCH_SETUP, need).apply();
-        }
-    }
-
-    @TrickplaySetting
-    public static synchronized int getTrickplaySetting(Context context) {
-        SoftPreconditions.checkState(sInitialized);
-        if (useContentProvider(context)) {
-            return sPreferenceValues.getInt(PREFS_KEY_TRICKPLAY_SETTING, TRICKPLAY_SETTING_NOT_SET);
-        } else {
-            return getSharedPreferences(context)
-                    .getInt(PREFS_KEY_TRICKPLAY_SETTING, TRICKPLAY_SETTING_NOT_SET);
-        }
-    }
-
-    public static synchronized void setTrickplaySetting(
-            Context context, @TrickplaySetting int trickplaySetting) {
-        SoftPreconditions.checkState(sInitialized);
-        SoftPreconditions.checkArgument(trickplaySetting != TRICKPLAY_SETTING_NOT_SET);
-        if (useContentProvider(context)) {
-            setPreference(context, PREFS_KEY_TRICKPLAY_SETTING, trickplaySetting);
-        } else {
-            getSharedPreferences(context)
-                    .edit()
-                    .putInt(PREFS_KEY_TRICKPLAY_SETTING, trickplaySetting)
-                    .apply();
-        }
-    }
-
     public static synchronized boolean getStoreTsStream(Context context) {
         SoftPreconditions.checkState(sInitialized);
         if (useContentProvider(context)) {
@@ -236,11 +174,6 @@ public class CommonPreferences {
     private static synchronized void setPreference(Context context, String key, String value) {
         sPreferenceValues.putString(key, value);
         savePreference(context, key, value);
-    }
-
-    private static synchronized void setPreference(Context context, String key, int value) {
-        sPreferenceValues.putInt(key, value);
-        savePreference(context, key, Integer.toString(value));
     }
 
     private static synchronized void setPreference(Context context, String key, long value) {

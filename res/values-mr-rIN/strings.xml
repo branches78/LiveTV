@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"एक"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"स्टिरिओ"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"प्ले नियंत्रणे"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"चॅनेल"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"टीव्‍ही पर्याय"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"या चॅनेलसाठी अनुपलब्ध असलेली नियंत्रणे प्ले करा"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"चॅनेल स्त्रोत"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"नवीन चॅनेल उपलब्ध आहेत"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"पालक नियंत्रणे"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"Timeshift"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"पहात असताना रेकॉर्ड करा ज्यामुळे आपण थेट प्रोग्रामांना विराम देऊ किंवा ते रिवाइंड करू शकता.\nचेतावणी: हे संचयाचा अत्याधिक वापर करून कदाचित अंतर्गत संचयाचे आयुष्य कमी करू शकते."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"मुक्त स्त्रोत परवाने"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"अभिप्राय पाठवा"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"आवृत्ती"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"शीर्षक नाही"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"चॅनेल अवरोधित केले"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"नवीन"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"स्त्रोत"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="one">%1$d चॅनेल</item>

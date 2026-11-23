@@ -23,6 +23,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/guide_card_meta_background">
-        <include layout="@layout/menu_card_text" />
+        <include layout="@layout/livetv_menu_card_text_centered" />
     </FrameLayout>
 </com.android.tv.menu.SimpleCardView>

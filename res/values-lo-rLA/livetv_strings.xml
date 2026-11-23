@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">ແຫຼ່ງທີ່ບໍ່ເຂົ້າກັນໄດ້</string>
     <string name="livetv_setup_input_incompatible">ບໍ່ສາມາດສະແດງຊ່ອງຂອງມັນໃນ LiveTV ໄດ້</string>
     <string name="livetv_iptv_input_label">ລາຍຊື່ IPTV</string>
+    <string name="livetv_vod_row">ວິດີໂອຕາມຄວາມຕ້ອງການ</string>
+    <string name="livetv_vod_movies">ຮູບເງົາ</string>
+    <string name="livetv_vod_series">ຊີຣີ</string>
 </resources>

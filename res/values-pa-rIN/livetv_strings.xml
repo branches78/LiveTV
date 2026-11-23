@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">ਗੈਰ-ਅਨੁਰੂਪ ਸਰੋਤ</string>
     <string name="livetv_setup_input_incompatible">ਇਸਦੇ ਚੈਨਲ LiveTV ਵਿੱਚ ਨਹੀਂ ਦਿਖਾਏ ਜਾ ਸਕਦੇ</string>
     <string name="livetv_iptv_input_label">IPTV ਸੂਚੀਆਂ</string>
+    <string name="livetv_vod_row">ਵੀਡੀਓ ਆਨ ਡਿਮਾਂਡ</string>
+    <string name="livetv_vod_movies">ਫ਼ਿਲਮਾਂ</string>
+    <string name="livetv_vod_series">ਸੀਰੀਜ਼</string>
 </resources>

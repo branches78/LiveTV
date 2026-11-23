@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">مصادر غير متوافقة</string>
     <string name="livetv_setup_input_incompatible">لا يمكن عرض قنواته في LiveTV</string>
     <string name="livetv_iptv_input_label">قوائم IPTV</string>
+    <string name="livetv_vod_row">الفيديو عند الطلب</string>
+    <string name="livetv_vod_movies">أفلام</string>
+    <string name="livetv_vod_series">مسلسلات</string>
 </resources>

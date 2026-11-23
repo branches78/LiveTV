@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Sumber yang tidak serasi</string>
     <string name="livetv_setup_input_incompatible">Salurannya tidak dapat dipaparkan dalam LiveTV</string>
     <string name="livetv_iptv_input_label">Senarai IPTV</string>
+    <string name="livetv_vod_row">Video atas permintaan</string>
+    <string name="livetv_vod_movies">Filem</string>
+    <string name="livetv_vod_series">Siri</string>
 </resources>

@@ -1034,7 +1034,28 @@ public class TvOverlayManager implements AccessibilityStateChangeListener {
         }
         // Handle media key here because it is related to the menu.
         if (isMediaStartKey(keyCode)) {
+            // LiveTV: holding rewind or fast forward rewinds or fast forwards (a press jumps ten
+            // seconds, on key up), like the Video on Demand player.
+            if ((keyCode == KeyEvent.KEYCODE_MEDIA_REWIND
+                            || keyCode == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD)
+                    && canHandleTimeShiftMediaKey()) {
+                boolean rewind = keyCode == KeyEvent.KEYCODE_MEDIA_REWIND;
+                if (mMainActivity.getTimeShiftManager().onSeekKey(event, rewind)) {
+                    showMenu(
+                            rewind
+                                    ? Menu.REASON_PLAY_CONTROLS_REWIND
+                                    : Menu.REASON_PLAY_CONTROLS_FAST_FORWARD);
+                }
+            }
             // Consumes the keys which may trigger system's default music player.
+            return MainActivity.KEY_EVENT_HANDLER_RESULT_HANDLED;
+        }
+        // LiveTV: the number keys go to a channel of the program guide.
+        if (mProgramGuide.isActive()
+                && !mSideFragmentManager.isActive()
+                && !mMenu.isActive()
+                && KeypadChannelSwitchView.isChannelNumberKey(keyCode)) {
+            mProgramGuide.onNumberKey(keyCode - KeyEvent.KEYCODE_0);
             return MainActivity.KEY_EVENT_HANDLER_RESULT_HANDLED;
         }
         if (mMenu.isActive()
@@ -1097,11 +1118,12 @@ public class TvOverlayManager implements AccessibilityStateChangeListener {
                     showMenu(Menu.REASON_PLAY_CONTROLS_PLAY_PAUSE);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_REWIND:
-                    timeShiftManager.rewind();
+                    // LiveTV: a press jumps back, the end of holding plays normally again.
+                    timeShiftManager.onSeekKey(event, true);
                     showMenu(Menu.REASON_PLAY_CONTROLS_REWIND);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
-                    timeShiftManager.fastForward();
+                    timeShiftManager.onSeekKey(event, false);
                     showMenu(Menu.REASON_PLAY_CONTROLS_FAST_FORWARD);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
@@ -1201,6 +1223,20 @@ public class TvOverlayManager implements AccessibilityStateChangeListener {
             return MainActivity.KEY_EVENT_HANDLER_RESULT_DISPATCH_TO_OVERLAY;
         }
         return MainActivity.KEY_EVENT_HANDLER_RESULT_PASSTHROUGH;
+    }
+
+    /** LiveTV: like the checks of {@link #onKeyUp} before it handles a media key. */
+    private boolean canHandleTimeShiftMediaKey() {
+        return mCurrentDialog == null
+                && !mProgramGuide.isActive()
+                && !mSideFragmentManager.isActive()
+                && !mSearchFragment.isVisible()
+                && !mTransitionManager.isKeypadChannelSwitchActive()
+                && !mTransitionManager.isSelectInputActive()
+                && !mSetupFragmentActive
+                && !mNewSourcesFragmentActive
+                && !mTvView.isScreenBlocked()
+                && mMainActivity.getTimeShiftManager().isAvailable();
     }
 
     /** Checks whether the given {@code keyCode} can start the system's music app or not. */

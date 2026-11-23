@@ -38,6 +38,8 @@ public class ChannelsRowItem {
     public static final int FAVORITE_ITEM_ID = -7;
     /** LiveTV: the item ID for the channel search item. */
     public static final int SEARCH_ITEM_ID = -8;
+    /** LiveTV: the item ID for the multiview item. */
+    public static final int MULTIVIEW_ITEM_ID = -9;
 
     /** The item which represents the guide. */
     public static final ChannelsRowItem GUIDE_ITEM =
@@ -58,6 +60,9 @@ public class ChannelsRowItem {
     /** LiveTV: the item which opens the channel search. */
     public static final ChannelsRowItem SEARCH_ITEM =
             new ChannelsRowItem(SEARCH_ITEM_ID, R.layout.menu_card_search);
+    /** LiveTV: the item which opens the multiview, with several IPTV channels at once. */
+    public static final ChannelsRowItem MULTIVIEW_ITEM =
+            new ChannelsRowItem(MULTIVIEW_ITEM_ID, R.layout.menu_card_multiview);
 
     /** The item which represents the channel up. */
     public static final ChannelsRowItem UP_ITEM = new ChannelsRowItem(UP_ID, R.layout.menu_card_up);

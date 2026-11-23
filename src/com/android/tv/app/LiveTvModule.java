@@ -21,7 +21,6 @@ import com.android.tv.data.epg.StubEpgReader;
 import com.android.tv.modules.TvApplicationModule;
 import com.android.tv.perf.PerformanceMonitor;
 import com.android.tv.perf.stub.StubPerformanceMonitor;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 import com.android.tv.ui.sidepanel.DeveloperOptionFragment;
 import com.android.tv.util.account.AccountHelper;
 import com.android.tv.util.account.AccountHelperImpl;
@@ -42,11 +41,6 @@ class LiveTvModule {
     @Provides
     static Optional<DeveloperOptionFragment.AdditionalDeveloperItemsFactory>
             providesAdditionalDeveloperItemsFactory() {
-        return Optional.absent();
-    }
-
-    @Provides
-    Optional<BuiltInTunerManager> providesBuiltInTunerManager() {
         return Optional.absent();
     }
 

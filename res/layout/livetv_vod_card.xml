@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2026 The LiveTV Authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- A movie, a series or an episode of the Video on Demand grid. The picture is sized in code:
+     a poster for movies and series, a still for episodes. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:stateListAnimator="@animator/livetv_vod_card_state_animator">
+
+    <FrameLayout
+        android:id="@+id/livetv_vod_card_frame"
+        android:layout_width="@dimen/livetv_vod_poster_width"
+        android:layout_height="@dimen/livetv_vod_poster_height"
+        android:background="@drawable/livetv_vod_card_background"
+        android:duplicateParentState="true"
+        android:foreground="@drawable/livetv_vod_card_focus">
+
+        <!-- The name, while there is no picture. -->
+        <TextView
+            android:id="@+id/livetv_vod_card_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:fontFamily="@string/condensed_font"
+            android:gravity="center"
+            android:maxLines="4"
+            android:padding="8dp"
+            android:textColor="#80EEEEEE"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/livetv_vod_card_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop" />
+
+        <!-- How much was watched, for titles left before their end. -->
+        <ProgressBar
+            android:id="@+id/livetv_vod_card_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_gravity="bottom"
+            android:max="1000"
+            android:progressBackgroundTint="#80000000"
+            android:progressTint="@color/livetv_vod_progress"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/livetv_vod_card_name"
+        android:layout_width="@dimen/livetv_vod_poster_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:duplicateParentState="true"
+        android:ellipsize="end"
+        android:fontFamily="@string/condensed_font"
+        android:lines="2"
+        android:textColor="@color/livetv_vod_card_name"
+        android:textSize="14sp" />
+</LinearLayout>

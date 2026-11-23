@@ -32,6 +32,5 @@ dependencyResolutionManagement {
 rootProject.name = 'LiveTV'
 
 include ':common'
-include ':tuner'
 include ':partner_support'
 include ':systemstubs'

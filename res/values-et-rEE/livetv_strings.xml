@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Ühildumatud allikad</string>
     <string name="livetv_setup_input_incompatible">Selle kanaleid ei saa LiveTV-s näidata</string>
     <string name="livetv_iptv_input_label">IPTV-loendid</string>
+    <string name="livetv_vod_row">Tellitav video</string>
+    <string name="livetv_vod_movies">Filmid</string>
+    <string name="livetv_vod_series">Sarjad</string>
 </resources>

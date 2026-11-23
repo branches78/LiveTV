@@ -35,6 +35,8 @@ import com.android.tv.recommendation.Recommender;
 import com.android.tv.ui.TvOverlayManager;
 import com.android.tv.util.TvInputManagerHelper;
 import com.livetv.tv.channels.Favorites;
+import com.livetv.tv.iptv.IptvChannels;
+import com.livetv.tv.multiview.MultiviewActivity;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +103,9 @@ public class ChannelsRowAdapter extends ItemListRowView.ItemListAdapter<Channels
         } else if (viewType == R.layout.menu_card_search) {
             viewHolder.itemView.setOnClickListener(this::onSearchClicked);
             ((SimpleCardView) viewHolder.itemView).setText(R.string.livetv_search_channel);
+        } else if (viewType == R.layout.menu_card_multiview) {
+            viewHolder.itemView.setOnClickListener(this::onMultiviewClicked);
+            ((SimpleCardView) viewHolder.itemView).setText(R.string.livetv_multiview);
         } else if (viewType == R.layout.menu_card_up) {
             viewHolder.itemView.setOnClickListener(this::onChannelUpClicked);
         } else if (viewType == R.layout.menu_card_down) {
@@ -151,6 +156,28 @@ public class ChannelsRowAdapter extends ItemListRowView.ItemListAdapter<Channels
                 .getOverlayManager()
                 .hideOverlays(TvOverlayManager.FLAG_HIDE_OVERLAYS_DEFAULT);
         getMainActivity().showProgramGuideSearchFragment();
+    }
+
+    /** LiveTV: opens the multiview, which plays several IPTV channels at once. */
+    private void onMultiviewClicked(View unused) {
+        getMainActivity()
+                .getOverlayManager()
+                .hideOverlays(TvOverlayManager.FLAG_HIDE_OVERLAYS_DEFAULT);
+        getMainActivity().startActivitySafe(new Intent(mContext, MultiviewActivity.class));
+    }
+
+    /** LiveTV: the multiview plays only the channels of the IPTV lists. */
+    private boolean needToShowMultiviewItem() {
+        String inputId = IptvChannels.getInputId(mContext);
+        for (Channel channel :
+                TvSingletons.getSingletons(mContext)
+                        .getChannelDataManager()
+                        .getBrowsableChannelList()) {
+            if (inputId.equals(channel.getInputId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** LiveTV: shows "Add to favorites" or "Remove from favorites" for the current channel. */
@@ -210,6 +237,9 @@ public class ChannelsRowAdapter extends ItemListRowView.ItemListAdapter<Channels
             items.add(ChannelsRowItem.FAVORITE_ITEM);
         }
         items.add(ChannelsRowItem.SEARCH_ITEM);
+        if (needToShowMultiviewItem()) {
+            items.add(ChannelsRowItem.MULTIVIEW_ITEM);
+        }
         if (mShowChannelUpDown) {
             items.add(ChannelsRowItem.UP_ITEM);
             items.add(ChannelsRowItem.DOWN_ITEM);
@@ -243,6 +273,9 @@ public class ChannelsRowAdapter extends ItemListRowView.ItemListAdapter<Channels
             ++currentIndex;
         }
         if (updateItem(true, ChannelsRowItem.SEARCH_ITEM, currentIndex)) {
+            ++currentIndex;
+        }
+        if (updateItem(needToShowMultiviewItem(), ChannelsRowItem.MULTIVIEW_ITEM, currentIndex)) {
             ++currentIndex;
         }
         if (updateItem(mShowChannelUpDown, ChannelsRowItem.UP_ITEM, currentIndex)) {

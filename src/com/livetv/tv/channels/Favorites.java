@@ -18,6 +18,7 @@ package com.livetv.tv.channels;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +44,15 @@ public final class Favorites {
             ids.add(String.valueOf(channelId));
         } else {
             ids.remove(String.valueOf(channelId));
+        }
+        getPrefs(context).edit().putStringSet(PREF_KEY_CHANNEL_IDS, ids).apply();
+    }
+
+    /** Marks several channels as favorites at once (a restored backup). */
+    public static void addAll(Context context, Collection<Long> channelIds) {
+        Set<String> ids = new HashSet<>(getIds(context));
+        for (long id : channelIds) {
+            ids.add(String.valueOf(id));
         }
         getPrefs(context).edit().putStringSet(PREF_KEY_CHANNEL_IDS, ids).apply();
     }

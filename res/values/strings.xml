@@ -64,7 +64,7 @@
 
     <!-- Title of the play controls row in the main menu.
          The play means a playback of video and audio. [CHAR LIMIT=NONE] -->
-    <string name="menu_title_play_controls">Play controls</string>
+    <string name="menu_title_play_controls">Timeshift</string>
     <!-- Title of the channels row in the main menu. [CHAR LIMIT=NONE] -->
     <string name="menu_title_channels">Channels</string>
     <!-- Title of the TV option row in the main menu. [CHAR LIMIT=NONE] -->
@@ -349,12 +349,6 @@
     <string name="settings_channel_source_item_setup_new_inputs">New channels available</string>
     <!-- Label of "Parental controls" item. [CHAR LIMIT=30] -->
     <string name="settings_parental_controls">Parental controls</string>
-    <!-- Label of "Timeshift" item. Record while watching so you can pause or rewind live
-         programs.-->
-    <string name="settings_trickplay">Timeshift</string>
-    <!-- Description of "Timeshift" item. This explains what is 'Timeshift' to users. Also warns of
-         the effect of enabling the option. -->
-    <string name="settings_trickplay_description">Record while watching so you can pause or rewind live programs.\nWarning: This may decrease the life of the internal storage by the intensive use of the storage.</string>
     <!-- Menu item to show licenses for open source code used in the app [CHAR LIMIT=35] -->
     <string name="settings_menu_licenses">Open source licenses</string>
     <!-- Menu item to send feedback [CHAR LIMIT=30] -->
@@ -443,8 +437,6 @@
 
     <!-- Setup Sources Fragment -->
     <eat-comment />
-    <!-- Category name for the newly installed channel sources(inputs).-->
-    <string name="setup_category_new">New</string>
     <!-- Category name for the installed channel sources(inputs). -->
     <string name="setup_category_done">Sources</string>
     <!-- Description of an input to describe its channel count. [CHAR LIMIT=40] -->
@@ -544,12 +536,6 @@
     <!-- Content text of DVR recording service's notification during updating schedules. [CHAR LIMIT=NONE] -->
     <string name="dvr_notification_content_text_loading" ><xliff:g id="app_name">Live TV</xliff:g> are updating recording schedules.</string>
 
-    <!-- Default content title of tuner installing notifications. -->
-    <string name="tuner_install_notification_content_title" translatable="false">Install <xliff:g id="tuner_package" example="Tuner package">%s</xliff:g></string>
-    <!-- Default application name for tuner installing notifications. -->
-    <string name="tuner_install_default_application_name" translatable="false">Tuner Package</string>
-    <!-- Default content text of tuner installing notifications. -->
-    <string name="tuner_install_notification_content_text" translatable="false">Install tuner package to watch tuner channels.</string>
 
     <!-- EPG Search strings. -->
     <!-- Remove translatable="false" once UI is finalized -->

@@ -60,9 +60,6 @@ import java.util.concurrent.Callable;
  */
 public class IptvSetupActivity extends Activity {
     private static final String TAG = "IptvSetupActivity";
-    /** Public list of free-to-air Spanish language channels, see https://github.com/iptv-org/iptv. */
-    static final String DEFAULT_PLAYLIST_URL =
-            "https://iptv-org.github.io/iptv/languages/spa.m3u";
     private static final int REQUEST_CODE_PICK_FILE = 1;
     /**
      * Apps that answer file requests but cannot browse files on Android TV: the photo picker and
@@ -74,11 +71,9 @@ public class IptvSetupActivity extends Activity {
         "com.android.tv.frameworkpackagestubs",
     };
 
-    private EditText mUrlView;
-    private Button mImportButton;
     private Button mOpenFileButton;
+    /** "Import channels": a list's address, with or without username and password. */
     private Button mLoginButton;
-    private Button mDefaultButton;
     private ProgressBar mProgressView;
     private TextView mStatusView;
     private ViewGroup mListsView;
@@ -91,30 +86,18 @@ public class IptvSetupActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.livetv_iptv_setup);
-        // The URL gets the focus, but the keyboard only opens when the user clicks it.
+        // The keyboard only opens when the user clicks a text field.
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        mUrlView = findViewById(R.id.livetv_iptv_url);
-        mImportButton = findViewById(R.id.livetv_iptv_import);
         mOpenFileButton = findViewById(R.id.livetv_iptv_open_file);
         mLoginButton = findViewById(R.id.livetv_iptv_login);
-        mDefaultButton = findViewById(R.id.livetv_iptv_use_default);
         mProgressView = findViewById(R.id.livetv_iptv_progress);
         mStatusView = findViewById(R.id.livetv_iptv_status);
         mListsView = findViewById(R.id.livetv_iptv_lists);
 
-        mUrlView.addTextChangedListener(new AfterTextChangedWatcher(this::updateImportButton));
-        mImportButton.setOnClickListener(v -> startImport(mUrlView.getText().toString().trim()));
         mOpenFileButton.setOnClickListener(v -> pickFile());
         mLoginButton.setOnClickListener(v -> showLoginDialog());
-        mDefaultButton.setOnClickListener(v -> startImport(DEFAULT_PLAYLIST_URL));
-        updateImportButton();
-        mUrlView.requestFocus();
+        mLoginButton.requestFocus();
         loadPlaylists(-1);
-    }
-
-    /** "Import channels" can only be pressed with a valid URL. */
-    private void updateImportButton() {
-        mImportButton.setEnabled(!mBusy && isValidUrl(mUrlView.getText().toString().trim()));
     }
 
     private static boolean isValidUrl(String url) {
@@ -128,8 +111,9 @@ public class IptvSetupActivity extends Activity {
     }
 
     /**
-     * Asks for the server, username and password of a provider that needs them (the Xtream Codes
-     * API that most IPTV providers use).
+     * Asks for a list: the server, username and password of a provider that needs them (the
+     * Xtream Codes API that most IPTV providers use), or, without username and password, the
+     * address of an M3U list.
      */
     private void showLoginDialog() {
         View view = getLayoutInflater().inflate(R.layout.livetv_iptv_login_dialog, null);
@@ -151,26 +135,33 @@ public class IptvSetupActivity extends Activity {
                         .setTitle(R.string.livetv_iptv_login_title)
                         .setView(view)
                         .setPositiveButton(
-                                R.string.livetv_iptv_import,
-                                (d, which) ->
-                                        startLoginImport(
-                                                serverView.getText().toString().trim(),
-                                                usernameView.getText().toString().trim(),
-                                                passwordView.getText().toString()))
+                                R.string.livetv_iptv_import_short,
+                                (d, which) -> {
+                                    String server = serverView.getText().toString().trim();
+                                    String username = usernameView.getText().toString().trim();
+                                    String password = passwordView.getText().toString();
+                                    if (username.isEmpty() && password.isEmpty()) {
+                                        startImport(server);
+                                    } else {
+                                        startLoginImport(server, username, password);
+                                    }
+                                })
                         .setNegativeButton(android.R.string.cancel, null)
                         .create();
         dialog.getWindow()
                 .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         dialog.show();
-        // Like "Import channels" on this screen, the dialog's one needs every field.
+        // A valid address, with both username and password or with neither (an M3U list).
         Button importButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         Runnable updateImportButton =
-                () ->
-                        importButton.setEnabled(
-                                isValidServer(serverView.getText().toString().trim())
-                                        && !TextUtils.isEmpty(
-                                                usernameView.getText().toString().trim())
-                                        && passwordView.length() > 0);
+                () -> {
+                    boolean hasUsername =
+                            !TextUtils.isEmpty(usernameView.getText().toString().trim());
+                    boolean hasPassword = passwordView.length() > 0;
+                    importButton.setEnabled(
+                            isValidServer(serverView.getText().toString().trim())
+                                    && hasUsername == hasPassword);
+                };
         AfterTextChangedWatcher watcher = new AfterTextChangedWatcher(updateImportButton);
         serverView.addTextChangedListener(watcher);
         usernameView.addTextChangedListener(watcher);
@@ -239,7 +230,8 @@ public class IptvSetupActivity extends Activity {
                 description +=
                         "  \u00B7  "
                                 + (playlist.hasLogin() ? "\uD83D\uDD12 " : "")
-                                + playlist.label;
+                                // Also for lists imported before the label hid it.
+                                + maskPasswords(playlist.label);
             }
             ((TextView) item.findViewById(R.id.livetv_iptv_list_description))
                     .setText(description);
@@ -253,7 +245,7 @@ public class IptvSetupActivity extends Activity {
         }
         if (focusIndex >= 0) {
             if (mPlaylists.isEmpty()) {
-                mUrlView.requestFocus();
+                mLoginButton.requestFocus();
             } else {
                 int index = Math.min(focusIndex, mPlaylists.size() - 1);
                 mListsView
@@ -468,9 +460,8 @@ public class IptvSetupActivity extends Activity {
         return urls.trim().replaceAll("[\\s,]+", " ");
     }
 
-    /** Hides the value of "password=" in the addresses. */
     private static String maskPasswords(String urls) {
-        return urls.replaceAll("(?i)(password=)[^&\\s]*", "$1\u2022\u2022\u2022\u2022");
+        return IptvChannels.maskPasswords(urls);
     }
 
     /** Puts back the hidden passwords of the addresses the user kept. */
@@ -549,6 +540,8 @@ public class IptvSetupActivity extends Activity {
                             int deleted;
                             try {
                                 deleted = IptvChannels.deletePlaylist(this, playlist.id);
+                                // Its account no longer limits the recordings.
+                                IptvRecording.updateInputInfo(getApplicationContext());
                             } catch (RuntimeException e) {
                                 Log.w(TAG, "Deleting the list failed", e);
                                 deleted = -1;
@@ -597,7 +590,7 @@ public class IptvSetupActivity extends Activity {
      * supported". Real file managers are listed instead and started explicitly.
      */
     private void pickFile() {
-        List<Intent> fileManagers = findFileManagers();
+        List<Intent> fileManagers = findFileManagers(getPackageManager());
         if (fileManagers.isEmpty()) {
             mStatusView.setText(R.string.livetv_iptv_no_file_manager);
         } else if (fileManagers.size() == 1) {
@@ -615,9 +608,11 @@ public class IptvSetupActivity extends Activity {
         }
     }
 
-    /** Returns one explicit intent per file manager app, preferring GET_CONTENT. */
-    private List<Intent> findFileManagers() {
-        PackageManager pm = getPackageManager();
+    /**
+     * Returns one explicit intent per file manager app, preferring GET_CONTENT. Also used by
+     * {@link IptvBackupActivity}.
+     */
+    static List<Intent> findFileManagers(PackageManager pm) {
         Map<String, Intent> byPackage = new LinkedHashMap<>();
         for (String action : new String[] {Intent.ACTION_GET_CONTENT, Intent.ACTION_OPEN_DOCUMENT}) {
             Intent query =
@@ -655,7 +650,7 @@ public class IptvSetupActivity extends Activity {
         }
     }
 
-    private static CharSequence getAppLabel(PackageManager pm, String packageName) {
+    static CharSequence getAppLabel(PackageManager pm, String packageName) {
         try {
             return pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0));
         } catch (PackageManager.NameNotFoundException e) {
@@ -663,9 +658,27 @@ public class IptvSetupActivity extends Activity {
         }
     }
 
-    private void startImport(String url) {
+    /**
+     * Imports an M3U list from its address. Without "http://" or "https://", the encrypted https
+     * is tried first, then http.
+     */
+    private void startImport(String address) {
         mStatusView.setText(R.string.livetv_iptv_importing);
-        runImport(() -> IptvChannels.importPlaylist(this, url), false);
+        runImport(
+                () -> {
+                    if (address.contains("://")) {
+                        return IptvChannels.importPlaylist(this, address);
+                    }
+                    try {
+                        return IptvChannels.importPlaylist(this, "https://" + address);
+                    } catch (IptvChannels.HttpStatusException e) {
+                        // The server answered: the address is wrong.
+                        throw e;
+                    } catch (java.io.IOException e) {
+                        return IptvChannels.importPlaylist(this, "http://" + address);
+                    }
+                },
+                false);
     }
 
     /**
@@ -681,7 +694,8 @@ public class IptvSetupActivity extends Activity {
                                 IptvChannels.ImportResult result = task.call();
                                 runOnUiThread(() -> onImported(result, withLogin));
                             } catch (Exception e) {
-                                Log.w(TAG, "Import failed", e);
+                                // Not logged with its message: it can hold the URL of the list, with its password.
+                                Log.w(TAG, "Import failed: " + e.getClass().getSimpleName());
                                 runOnUiThread(() -> onImportFailed(e));
                             }
                         },
@@ -719,17 +733,19 @@ public class IptvSetupActivity extends Activity {
                                             result.videos);
         }
         mStatusView.setText(imported);
-        // Stay on this screen, ready for another list. "Import channels" turns disabled with the
-        // URL gone, so its focus goes to the URL.
+        // Stay on this screen, ready for another list.
         View focus = getCurrentFocus();
-        if (focus == null || focus == mImportButton || !focus.isEnabled()) {
-            mUrlView.requestFocus();
+        if (focus == null || !focus.isEnabled()) {
+            mLoginButton.requestFocus();
         }
-        mUrlView.setText("");
         setResult(RESULT_OK);
         loadPlaylists(-1);
         // The new channels have no programs yet.
         updateGuide(result.playlistId);
+        // The connections of a new account limit the recordings at the same time.
+        if (withLogin) {
+            IptvRecording.refreshConnectionLimits(this);
+        }
     }
 
     private void onImportFailed(Exception e) {
@@ -752,18 +768,15 @@ public class IptvSetupActivity extends Activity {
         }
         View focus = getCurrentFocus();
         if (focus == null || !focus.isEnabled()) {
-            mUrlView.requestFocus();
+            mLoginButton.requestFocus();
         }
     }
 
     private void setBusy(boolean busy) {
         mBusy = busy;
         mProgressView.setVisibility(busy ? View.VISIBLE : View.GONE);
-        mUrlView.setEnabled(!busy);
-        updateImportButton();
         mOpenFileButton.setEnabled(!busy);
         mLoginButton.setEnabled(!busy);
-        mDefaultButton.setEnabled(!busy);
         for (int i = 0; i < mListsView.getChildCount(); i++) {
             mListsView.getChildAt(i).findViewById(R.id.livetv_iptv_list_delete).setEnabled(!busy);
             mListsView.getChildAt(i).findViewById(R.id.livetv_iptv_list_guide).setEnabled(!busy);

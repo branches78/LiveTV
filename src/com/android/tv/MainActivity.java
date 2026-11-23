@@ -39,7 +39,6 @@ import android.media.tv.TvContract;
 import android.media.tv.TvContract.Channels;
 import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
-import android.media.tv.TvInputManager.TvInputCallback;
 import android.media.tv.TvTrackInfo;
 import android.media.tv.TvView.OnUnhandledInputEventListener;
 import android.media.tv.interactive.TvInteractiveAppManager;
@@ -79,7 +78,6 @@ import com.android.tv.audio.AudioManagerHelper;
 import com.android.tv.audiotvservice.AudioOnlyTvServiceUtil;
 import com.android.tv.common.BuildConfig;
 import com.android.tv.common.CommonConstants;
-import com.android.tv.common.CommonPreferences;
 import com.android.tv.common.SoftPreconditions;
 import com.android.tv.common.TvContentRatingCache;
 import com.android.tv.common.WeakHandler;
@@ -131,7 +129,6 @@ import com.android.tv.receiver.AudioCapabilitiesReceiver;
 import com.android.tv.recommendation.ChannelPreviewUpdater;
 import com.android.tv.recommendation.NotificationService;
 import com.android.tv.search.ProgramGuideSearchFragment;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 import com.android.tv.ui.ChannelBannerView;
 import com.android.tv.ui.DetailsActivity;
 import com.android.tv.ui.InputBannerViewBase;
@@ -165,11 +162,11 @@ import com.android.tv.util.TvTrackInfoUtils;
 import com.android.tv.util.Utils;
 import com.livetv.tv.framerate.DisplayModeRequester;
 import com.livetv.tv.iptv.IptvGuide;
+import com.livetv.tv.multiview.MultiviewActivity;
 import com.android.tv.util.ViewCache;
 import com.android.tv.util.account.AccountHelper;
 import com.android.tv.util.images.ImageCache;
 
-import com.google.common.base.Optional;
 
 import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
@@ -319,7 +316,6 @@ public class MainActivity extends Activity
     @Inject StartupFlags mStartupFlags;
     @Inject UiFlags mUiFlags;
     @Inject SetupUtils mSetupUtils;
-    @Inject Optional<BuiltInTunerManager> mOptionalBuiltInTunerManager;
     @Inject AccountHelper mAccountHelper;
     @Inject EpgFetcher mEpgFetcher;
 
@@ -344,6 +340,16 @@ public class MainActivity extends Activity
     private boolean mActivityResumed;
     private boolean mActivityStarted;
     private boolean mShouldTuneToTunerChannel;
+    /** LiveTV: back goes to the multiview, whose channel is shown in full screen. */
+    private boolean mReturnToMultiview;
+    /**
+     * LiveTV: the app was opened from the launcher, or the user left it with home or back (which
+     * since Android 12 only moves it to the back): on resume, the multiview opens if the settings
+     * say so.
+     */
+    private boolean mOpenMultiviewOnResume;
+    /** LiveTV: this activity started another one; going to the background is not leaving. */
+    private boolean mOwnActivityLaunched;
     private boolean mUseKeycodeBlocklist;
     private boolean mShowLockedChannelsTemporarily;
     private boolean mBackKeyPressed;
@@ -489,27 +495,6 @@ public class MainActivity extends Activity
     private final Runnable mRestoreMainViewRunnable = this::restoreMainTvView;
     private ProgramGuideSearchFragment mSearchFragment;
 
-    private final TvInputCallback mTvInputCallback =
-            new TvInputCallback() {
-                @Override
-                public void onInputAdded(String inputId) {
-                    if (mOptionalBuiltInTunerManager.isPresent()
-                            && CommonPreferences.shouldShowSetupActivity(MainActivity.this)) {
-                        BuiltInTunerManager builtInTunerManager =
-                                mOptionalBuiltInTunerManager.get();
-                        String tunerInputId = builtInTunerManager.getEmbeddedTunerInputId();
-                        if (tunerInputId.equals(inputId)) {
-                            Intent intent =
-                                    builtInTunerManager
-                                            .getTunerInputController()
-                                            .createSetupIntent(MainActivity.this);
-                            startActivity(intent);
-                            CommonPreferences.setShouldShowSetupActivity(MainActivity.this, false);
-                            mSetupUtils.markAsKnownInput(tunerInputId);
-                        }
-                    }
-                }
-            };
 
     private void applyParentalControlSettings() {
         boolean parentalControlEnabled =
@@ -610,9 +595,6 @@ public class MainActivity extends Activity
             Toast.makeText(this, "Using Strict Mode for eng builds", Toast.LENGTH_SHORT).show();
         }
         mTracker = tvApplication.getTracker();
-        if (mOptionalBuiltInTunerManager.isPresent()) {
-            mTvInputManagerHelper.addCallback(mTvInputCallback);
-        }
         mProgramDataManager.addOnCurrentProgramUpdatedListener(
                 Channel.INVALID_ID, mOnCurrentProgramUpdatedListener);
         mProgramDataManager.setPrefetchEnabled(true);
@@ -888,12 +870,6 @@ public class MainActivity extends Activity
             notificationIntent.setAction(NotificationService.ACTION_SHOW_RECOMMENDATION);
             startService(notificationIntent);
         }
-        if (mOptionalBuiltInTunerManager.isPresent()) {
-            mOptionalBuiltInTunerManager
-                    .get()
-                    .getTunerInputController()
-                    .executeNetworkTunerDiscoveryAsyncTask(this);
-        }
         mEpgFetcher.fetchImmediatelyIfNeeded();
         // LiveTV match framerate: the IPTV input asks for display modes through this window.
         DisplayModeRequester.setWindow(getWindow());
@@ -921,6 +897,15 @@ public class MainActivity extends Activity
         mActivityResumed = true;
         mShowNewSourcesFragment = true;
         mOtherActivityLaunched = false;
+        mOwnActivityLaunched = false;
+        if (mOpenMultiviewOnResume) {
+            mOpenMultiviewOnResume = false;
+            // Not while the multiview has no channel: the TV shows the last one watched.
+            if (MultiviewActivity.isOpenAtStart(this)
+                    && MultiviewActivity.hasSavedChannels(this)) {
+                startActivity(new Intent(this, MultiviewActivity.class));
+            }
+        }
         mAudioManagerHelper.requestAudioFocus();
 
         if (mTvView.isPlaying()) {
@@ -1147,7 +1132,8 @@ public class MainActivity extends Activity
     @Override
     protected void onStop() {
         if (DEBUG) Log.d(TAG, "onStop()");
-        DisplayModeRequester.setWindow(null);
+        // The Video on Demand player, started over this activity, may use its own window by now.
+        DisplayModeRequester.clearWindow(getWindow());
         if (mScreenOffIntentReceived) {
             mScreenOffIntentReceived = false;
         } else {
@@ -1553,6 +1539,17 @@ public class MainActivity extends Activity
         }
         mShouldTuneToTunerChannel = intent.getBooleanExtra(Utils.EXTRA_KEY_FROM_LAUNCHER, false);
         mInitChannelUri = null;
+        // LiveTV: a channel of the multiview in full screen goes back to the multiview; the app
+        // opened from the launcher starts in the multiview if the settings say so.
+        mReturnToMultiview =
+                intent.getBooleanExtra(MultiviewActivity.EXTRA_FROM_MULTIVIEW, false);
+        // The launcher opens TvActivity, which starts this one with EXTRA_KEY_FROM_LAUNCHER.
+        mOpenMultiviewOnResume =
+                mShouldTuneToTunerChannel
+                        || (Intent.ACTION_MAIN.equals(intent.getAction())
+                                && (intent.hasCategory(Intent.CATEGORY_LAUNCHER)
+                                        || intent.hasCategory(
+                                                Intent.CATEGORY_LEANBACK_LAUNCHER)));
 
         String extraAction = intent.getStringExtra(Utils.EXTRA_KEY_ACTION);
         if (!TextUtils.isEmpty(extraAction)) {
@@ -2127,9 +2124,6 @@ public class MainActivity extends Activity
         application.getMainActivityWrapper().onMainActivityDestroyed(this);
         if (mTvInputManagerHelper != null) {
             mTvInputManagerHelper.clearTvInputLabels();
-            if (mOptionalBuiltInTunerManager.isPresent()) {
-                mTvInputManagerHelper.removeCallback(mTvInputCallback);
-            }
         }
         super.onDestroy();
     }
@@ -2450,6 +2444,44 @@ public class MainActivity extends Activity
         if (dialog != null) {
             mOverlayManager.showDialogFragment(PinDialogFragment.DIALOG_TAG, dialog, false);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mReturnToMultiview) {
+            // LiveTV: the channel came from the multiview in full screen: back goes there.
+            mReturnToMultiview = false;
+            startActivity(new Intent(this, MultiviewActivity.class));
+            return;
+        }
+        // LiveTV: the user leaves the app; opened again, it may start in the multiview.
+        mOpenMultiviewOnResume = true;
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        // LiveTV: home pressed (not another activity of the app started): opened again, the app
+        // may start in the multiview.
+        if (!mOwnActivityLaunched) {
+            mOpenMultiviewOnResume = true;
+        }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+        // LiveTV: startActivity() comes here too.
+        mOwnActivityLaunched = true;
+        super.startActivityForResult(intent, requestCode, options);
+    }
+
+    @Override
+    public void startActivityFromFragment(
+            android.app.Fragment fragment, Intent intent, int requestCode, Bundle options) {
+        // LiveTV: the activities started by the fragments of this one.
+        mOwnActivityLaunched = true;
+        super.startActivityFromFragment(fragment, intent, requestCode, options);
     }
 
     @Override

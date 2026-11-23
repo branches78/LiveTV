@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2026 The LiveTV Authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Plays a movie or an episode. The controls are two rows of the menu: the play controls shown
+     with time shifting, and the TV options (subtitles, display mode, audio), whose choices open
+     in the side panel of the TV. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF000000">
+
+    <SurfaceView
+        android:id="@+id/livetv_vod_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <!-- Subtitles. -->
+    <TextView
+        android:id="@+id/livetv_vod_subtitles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="48dp"
+        android:layout_marginEnd="96dp"
+        android:layout_marginStart="96dp"
+        android:background="#99000000"
+        android:gravity="center"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:shadowColor="#FF000000"
+        android:shadowRadius="4"
+        android:textColor="#FFFFFFFF"
+        android:textSize="24sp"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/livetv_vod_buffering"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/livetv_vod_osd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/menu_background"
+        android:descendantFocusability="afterDescendants"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/livetv_vod_osd_padding_bottom"
+        android:paddingTop="96dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/livetv_vod_osd_title"
+            style="@style/menu_row_title_view"
+            android:layout_width="match_parent"
+            android:ellipsize="end"
+            android:singleLine="true" />
+
+        <include
+            android:id="@+id/livetv_vod_play_controls"
+            layout="@layout/livetv_vod_play_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/livetv_vod_options_title"
+            style="@style/menu_row_title_view"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:singleLine="true"
+            android:text="@string/menu_title_options" />
+
+        <!-- The TV options: action cards like the ones of the menu. -->
+        <LinearLayout
+            android:id="@+id/livetv_vod_options"
+            style="@style/menu_row_contents_view"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <include layout="@layout/option_container" />
+</FrameLayout>

@@ -18,23 +18,22 @@ package com.android.tv.ui.sidepanel;
 
 import android.app.ApplicationErrorReport;
 import android.content.Intent;
-import android.media.tv.TvInputInfo;
 import android.view.View;
 import android.widget.Toast;
 import com.android.tv.MainActivity;
 import com.android.tv.R;
 import com.android.tv.TvApplication;
 import com.android.tv.TvSingletons;
-import com.android.tv.common.CommonPreferences;
-import com.android.tv.common.customization.CustomizationManager;
 import com.android.tv.common.util.PermissionUtils;
 import com.android.tv.dialog.PinDialogFragment;
 import com.android.tv.features.TvFeatures;
 import com.android.tv.license.LicenseSideFragment;
 import com.android.tv.license.Licenses;
 import com.android.tv.util.TvSettings;
-import com.android.tv.util.Utils;
 import com.livetv.tv.framerate.FrameRateSettings;
+import com.livetv.tv.iptv.IptvBackupActivity;
+import com.livetv.tv.iptv.IptvChannels;
+import com.livetv.tv.multiview.MultiviewActivity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +58,9 @@ public class SettingsFragment extends SideFragment {
         TvSingletons singletons = TvSingletons.getSingletons(getContext());
         boolean hasNewInput =
                 singletons.getSetupUtils().hasNewInput(activity.getTvInputManagerHelper());
-        // LiveTV order: sources, customize channel list, match framerate, interactive apps,
-        // licenses, feedback, version. Parental controls and trickplay only show up for a
-        // system install or a built-in tuner.
+        // LiveTV order: sources, customize channel list, match framerate, start in multiview,
+        // interactive apps, export the IPTV setup,
+        // licenses, feedback, version. Parental controls only show up for a system install.
         // Same list as the channel sources screen.
         int sourceCount = activity.getTvInputManagerHelper().getTvInputInfos(true, true).size();
         String sourcesDescription =
@@ -121,6 +120,24 @@ public class SettingsFragment extends SideFragment {
                         }
                     });
         }
+        // LiveTV: open the app in the multiview.
+        items.add(
+                new SwitchItem(
+                        getString(R.string.livetv_multiview_open_at_start),
+                        getString(R.string.livetv_multiview_open_at_start),
+                        getString(R.string.livetv_multiview_open_at_start_description)) {
+                    @Override
+                    protected void onUpdate() {
+                        super.onUpdate();
+                        setChecked(MultiviewActivity.isOpenAtStart(getContext()));
+                    }
+
+                    @Override
+                    protected void onSelected() {
+                        super.onSelected();
+                        MultiviewActivity.setOpenAtStart(getContext(), isChecked());
+                    }
+                });
         if (PermissionUtils.hasModifyParentalControls(getMainActivity())) {
             items.add(
                     new ActionItem(
@@ -150,49 +167,6 @@ public class SettingsFragment extends SideFragment {
             // But, we may be able to turn on channel lock feature regardless of the permission.
             // It's TBD.
         }
-        boolean showTrickplaySetting = false;
-        if (singletons.getBuiltInTunerManager().isPresent()) {
-            for (TvInputInfo inputInfo :
-                    singletons.getTvInputManagerHelper().getTvInputInfos(true, true)) {
-                if (Utils.isInternalTvInput(getContext(), inputInfo.getId())) {
-                    showTrickplaySetting = true;
-                    break;
-                }
-            }
-            if (showTrickplaySetting) {
-                showTrickplaySetting =
-                        CustomizationManager.getTrickplayMode(getContext())
-                                == CustomizationManager.TRICKPLAY_MODE_ENABLED;
-            }
-        }
-        if (showTrickplaySetting) {
-            items.add(
-                    new SwitchItem(
-                            getString(R.string.settings_trickplay),
-                            getString(R.string.settings_trickplay),
-                            getString(R.string.settings_trickplay_description),
-                            getResources().getInteger(R.integer.trickplay_description_max_lines)) {
-                        @Override
-                        protected void onUpdate() {
-                            super.onUpdate();
-                            boolean enabled =
-                                    CommonPreferences.getTrickplaySetting(getContext())
-                                            != CommonPreferences.TRICKPLAY_SETTING_DISABLED;
-                            setChecked(enabled);
-                        }
-
-                        @Override
-                        protected void onSelected() {
-                            super.onSelected();
-                            @CommonPreferences.TrickplaySetting
-                            int setting =
-                                    isChecked()
-                                            ? CommonPreferences.TRICKPLAY_SETTING_ENABLED
-                                            : CommonPreferences.TRICKPLAY_SETTING_DISABLED;
-                            CommonPreferences.setTrickplaySetting(getContext(), setting);
-                        }
-                    });
-        }
         //Interactive Application Settings
         if (TvFeatures.HAS_TIAF.isEnabled(getContext()))
         {
@@ -209,6 +183,21 @@ public class SettingsFragment extends SideFragment {
                                     .getOverlayManager()
                                     .getSideFragmentManager()
                                     .show(new InteractiveAppSettingsFragment(), false);
+                        }
+                    });
+        }
+
+        // LiveTV: a backup of the IPTV setup, below the interactive apps.
+        if (IptvChannels.hasPlaylists(getContext())) {
+            items.add(
+                    new ActionItem(
+                            getString(R.string.livetv_backup_settings_title),
+                            getString(R.string.livetv_backup_settings_description)) {
+                        @Override
+                        protected void onSelected() {
+                            closeFragment();
+                            activity.startActivity(
+                                    IptvBackupActivity.buildExportIntent(activity));
                         }
                     });
         }

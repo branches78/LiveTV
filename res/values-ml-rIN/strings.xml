@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"മോണോ"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"സ്‌റ്റീരിയോ"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"പ്ലേ നിയന്ത്രണങ്ങൾ"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"ചാനലുകൾ"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"ടിവി ഓപ്‌ഷനുകൾ"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"ഈ ചാനലിന് പ്ലേ നിയന്ത്രണങ്ങൾ ലഭ്യമല്ല"</string>
@@ -127,8 +127,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"ചാനൽ ഉറവിടങ്ങൾ"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"പുതിയ ചാനലുകൾ ലഭ്യമാണ്"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"രക്ഷാകർതൃ നിയന്ത്രണങ്ങൾ"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"ടൈംഷിഫ്റ്റ്"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"കാണുന്നതിനിടയിൽ റെക്കോർഡുചെയ്യുക, അതുവഴി നിങ്ങൾക്ക് തത്സമയ പ്രോഗ്രാമുകൾ തൽക്കാലം നിർത്താനോ റീവൈൻഡുചെയ്യാനോ കഴിയും.\nമുന്നറിയിപ്പ്: ഇങ്ങനെ ചെയ്യുമ്പോൾ, ഇന്റേണൽ സ്റ്റോറേജ് അധികമായി ഉപയോഗിക്കപ്പെടുന്നതിനാൽ സ്റ്റോറേജിന്റെ ലൈഫ് കുറഞ്ഞേക്കാം."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"ഓപ്പൺ സോഴ്‌സ് ലൈസൻസ്"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"ഫീഡ്‍ബാക്ക് അയയ്ക്കുക"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"പതിപ്പ്"</string>
@@ -152,7 +150,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"ശീർഷകമൊന്നുമില്ല"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"ചാനൽ തടഞ്ഞിരിക്കുന്നു"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"പുതിയത്"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"ഉറവിടങ്ങൾ"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="other">%1$d ചാനലുകൾ</item>

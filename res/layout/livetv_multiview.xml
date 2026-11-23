@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2026 The LiveTV Authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Multiview: up to six IPTV channels at once. At the top the buttons for 2, 4 or 6 channels;
+     below, the tiles. The channels and the options of a tile open in the side panel of the TV. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF0B0B0B">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:paddingEnd="48dp"
+        android:paddingStart="48dp"
+        android:paddingTop="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@string/condensed_font"
+                android:singleLine="true"
+                android:text="@string/livetv_multiview"
+                android:textColor="#FFEEEEEE"
+                android:textSize="28sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@string/condensed_font"
+                android:singleLine="true"
+                android:text="@string/livetv_multiview_sound_hint"
+                android:textColor="#99EEEEEE"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/livetv_multiview_layout_2"
+                style="@style/LiveTv.MultiviewChip" />
+
+            <TextView
+                android:id="@+id/livetv_multiview_layout_4"
+                style="@style/LiveTv.MultiviewChip" />
+
+            <TextView
+                android:id="@+id/livetv_multiview_layout_6"
+                style="@style/LiveTv.MultiviewChip" />
+        </LinearLayout>
+
+        <com.livetv.tv.multiview.MultiviewGrid
+            android:id="@+id/livetv_multiview_grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false" />
+    </LinearLayout>
+
+    <include layout="@layout/option_container" />
+</FrameLayout>

@@ -28,9 +28,7 @@ import com.android.tv.common.flags.impl.DefaultUiFlags;
 import com.android.tv.common.singletons.HasSingletons;
 import com.android.tv.modules.TvSingletonsModule;
 import com.android.tv.perf.PerformanceMonitor;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 
-import com.google.common.base.Optional;
 import com.livetv.tv.iptv.IptvChannels;
 
 import dagger.android.AndroidInjector;
@@ -67,6 +65,10 @@ public class LiveTvApplication extends TvApplication implements HasSingletons<Tv
         // After "Clear data" the IPTV channels are still in the TV provider: start without them.
         IptvChannels.deleteOrphanedChannels(this);
         IptvChannels.deleteVideoChannels(this);
+        // LiveTV: recording is offered only while a removable drive is plugged in.
+        com.livetv.tv.iptv.IptvRecording.updateInputInfo(this);
+        // How many recordings the providers' accounts allow at the same time.
+        com.livetv.tv.iptv.IptvRecording.refreshConnectionLimits(this);
     }
 
     @Override
@@ -105,11 +107,6 @@ public class LiveTvApplication extends TvApplication implements HasSingletons<Tv
     @Override
     public DefaultUiFlags getUiFlags() {
         return mUiFlags;
-    }
-
-    @Override
-    public Optional<BuiltInTunerManager> getBuiltInTunerManager() {
-        return Optional.absent();
     }
 
     @Override

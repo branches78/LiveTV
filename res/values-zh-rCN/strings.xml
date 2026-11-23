@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"单声道"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"立体声"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"播放控件"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"频道"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"电视选项"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"此频道无法使用播放控件"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"频道来源"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"有新频道"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"家长控制"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"时移"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"一边观看一边录制，这样您就能够让直播节目暂停或快退。\n警告：此功能会密集占用存储空间，因此可能会缩短内部存储空间的使用寿命。"</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"开放源代码许可"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"发送反馈"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"版本"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"无标题"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"频道已屏蔽"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"新来源"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"来源"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="other">%1$d 个频道</item>

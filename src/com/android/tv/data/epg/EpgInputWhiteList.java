@@ -36,9 +36,7 @@ public final class EpgInputWhiteList {
     private static final boolean DEBUG = false;
     private static final String TAG = "EpgInputWhiteList";
     private static final ImmutableSet<String> QA_DEV_INPUTS =
-            ImmutableSet.of(
-                    "com.example.partnersupportsampletvinput/.SampleTvInputService",
-                    "com.android.tv.tuner.sample.dvb/.tvinput.SampleDvbTunerTvInputService");
+            ImmutableSet.of("com.example.partnersupportsampletvinput/.SampleTvInputService");
     private final LegacyFlags mLegacyFlags;
 
     /** Returns the package portion of a inputId */

@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">ተኳሃኝ ያልሆኑ ምንጮች</string>
     <string name="livetv_setup_input_incompatible">ሰርጦቹ በLiveTV ላይ ሊታዩ አይችሉም</string>
     <string name="livetv_iptv_input_label">የIPTV ዝርዝሮች</string>
+    <string name="livetv_vod_row">በፍላጎት ቪዲዮ</string>
+    <string name="livetv_vod_movies">ፊልሞች</string>
+    <string name="livetv_vod_series">ተከታታዮች</string>
 </resources>

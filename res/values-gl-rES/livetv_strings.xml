@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Fontes incompatibles</string>
     <string name="livetv_setup_input_incompatible">As súas canles non se poden ver en LiveTV</string>
     <string name="livetv_iptv_input_label">Listas IPTV</string>
+    <string name="livetv_vod_row">Vídeo baixo demanda</string>
+    <string name="livetv_vod_movies">Películas</string>
+    <string name="livetv_vod_series">Series</string>
 </resources>

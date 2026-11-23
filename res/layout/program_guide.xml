@@ -25,4 +25,21 @@
     <include layout="@layout/program_guide_side_panel" />
     <include layout="@layout/program_guide_table" />
 
+    <!-- LiveTV: the channel number typed with the remote, while the guide goes to it. -->
+    <TextView
+        android:id="@+id/livetv_guide_typed_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="48dp"
+        android:background="@drawable/livetv_guide_typed_number_background"
+        android:paddingStart="24dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="10dp"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:visibility="gone" />
+
 </FrameLayout>

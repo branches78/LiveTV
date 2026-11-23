@@ -31,7 +31,6 @@ import android.media.tv.TvInputManager.TvInputCallback;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -60,8 +59,6 @@ import com.android.tv.perf.StartupMeasure;
 import com.android.tv.perf.StartupMeasureFactory;
 import com.android.tv.recommendation.ChannelPreviewUpdater;
 import com.android.tv.recommendation.RecordedProgramPreviewUpdater;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
-import com.android.tv.tunerinputcontroller.TunerInputController;
 import com.android.tv.util.AsyncDbTask.DbExecutor;
 import com.android.tv.util.SetupUtils;
 import com.android.tv.util.TvInputManagerHelper;
@@ -90,14 +87,6 @@ public abstract class TvApplication extends BaseApplication implements TvSinglet
     private static final String TAG = "TvApplication";
     private static final boolean DEBUG = false;
 
-    /**
-     * Broadcast Action: The user has updated LC to a new version that supports tuner input. {@link
-     * TunerInputController} will receive this intent to check the existence of tuner input when the
-     * new version is first launched.
-     */
-    public static final String ACTION_APPLICATION_FIRST_LAUNCHED =
-            " com.android.tv.action.APPLICATION_FIRST_LAUNCHED";
-
     private static final String PREFERENCE_IS_FIRST_LAUNCH = "is_first_launch";
 
     private String mVersionName = "";
@@ -122,7 +111,6 @@ public abstract class TvApplication extends BaseApplication implements TvSinglet
     private boolean mStarted;
     @Inject EpgFetcher mEpgFetcher;
 
-    @Inject Optional<BuiltInTunerManager> mOptionalBuiltInTunerManager;
     @Inject SetupUtils mSetupUtils;
     @Inject @DbExecutor Executor mDbExecutor;
     @Inject Lazy<EpgReader> mEpgReader;
@@ -182,35 +170,10 @@ public abstract class TvApplication extends BaseApplication implements TvSinglet
                     .addCallback(
                             new TvInputCallback() {
                                 @Override
-                                public void onInputAdded(String inputId) {
-                                    if (mOptionalBuiltInTunerManager.isPresent()) {
-                                        BuiltInTunerManager builtInTunerManager =
-                                                mOptionalBuiltInTunerManager.get();
-                                        if (TextUtils.equals(
-                                                inputId,
-                                                builtInTunerManager.getEmbeddedTunerInputId())) {
-
-                                            builtInTunerManager
-                                                    .getTunerInputController()
-                                                    .updateTunerInputInfo(TvApplication.this);
-                                        }
-                                        handleInputCountChanged();
-                                    }
-                                }
-
-                                @Override
                                 public void onInputRemoved(String inputId) {
                                     handleInputCountChanged();
                                 }
                             });
-            if (mOptionalBuiltInTunerManager.isPresent()) {
-                // If the tuner input service is added before the app is started, we need to
-                // handle it here.
-                mOptionalBuiltInTunerManager
-                        .get()
-                        .getTunerInputController()
-                        .updateTunerInputInfo(TvApplication.this);
-            }
             if (CommonFeatures.DVR.isEnabled(this)) {
                 mDvrScheduleManager = new DvrScheduleManager(this);
                 mRecordingScheduler = RecordingScheduler.createScheduler(this);
@@ -234,12 +197,6 @@ public abstract class TvApplication extends BaseApplication implements TvSinglet
         boolean isFirstLaunch = sharedPreferences.getBoolean(PREFERENCE_IS_FIRST_LAUNCH, true);
         if (isFirstLaunch) {
             if (DEBUG) Log.d(TAG, "Congratulations, it's the first launch!");
-            if (mOptionalBuiltInTunerManager.isPresent()) {
-                mOptionalBuiltInTunerManager
-                        .get()
-                        .getTunerInputController()
-                        .onCheckingUsbTunerStatus(this, ACTION_APPLICATION_FIRST_LAUNCHED);
-            }
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREFERENCE_IS_FIRST_LAUNCH, false);
             editor.apply();
@@ -491,9 +448,8 @@ public abstract class TvApplication extends BaseApplication implements TvSinglet
         if (!enable) {
             List<TvInputInfo> inputs = inputManager.getTvInputList();
             boolean skipTunerInputCheck = false;
-            Optional<String> optionalEmbeddedTunerInputId =
-                    mOptionalBuiltInTunerManager.transform(
-                            BuiltInTunerManager::getEmbeddedTunerInputId);
+            // LiveTV: no built-in tuner.
+            Optional<String> optionalEmbeddedTunerInputId = Optional.absent();
             // If there is only play movies trailer input, we don't handle input count change.
             final String playMoviesInputIdPrefix = "com.google.android.videos/";
             int tunerInputCount = 0;

@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Nguồn không tương thích</string>
     <string name="livetv_setup_input_incompatible">Không thể hiển thị các kênh của ứng dụng này trong LiveTV</string>
     <string name="livetv_iptv_input_label">Danh sách IPTV</string>
+    <string name="livetv_vod_row">Video theo yêu cầu</string>
+    <string name="livetv_vod_movies">Phim</string>
+    <string name="livetv_vod_series">Phim bộ</string>
 </resources>

@@ -49,6 +49,16 @@ public final class DisplayModeRequester {
     }
 
     /**
+     * Called by an activity that stops: forgets its window, unless another activity that shows
+     * video (e.g. the Video on Demand player, started over it) registered its own since.
+     */
+    public static void clearWindow(Window window) {
+        if (sWindow == window) {
+            setWindow(null);
+        }
+    }
+
+    /**
      * Requests a mode for {@code frameRate}, or the default mode when it is 0.
      *
      * @return the requested display mode, or 0 if none (no window, or no matching mode).

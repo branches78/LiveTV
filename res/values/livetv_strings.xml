@@ -39,6 +39,28 @@
     <string name="livetv_search">Search</string>
     <!-- Menu card that opens the channel search. [CHAR LIMIT=40] -->
     <string name="livetv_search_channel">Search channel</string>
+    <!-- Menu card, next to "Search channel", and title of the screen that plays several IPTV channels at once. [CHAR LIMIT=30] -->
+    <string name="livetv_multiview">Multiview</string>
+    <!-- Multiview: button that shows that many channels at once. [CHAR LIMIT=20] -->
+    <string name="livetv_multiview_layout">%1$d channels</string>
+    <!-- Multiview: shown at the top of the screen. [CHAR LIMIT=60] -->
+    <string name="livetv_multiview_sound_hint">Sound plays from the selected channel · Hold OK for options</string>
+    <!-- Multiview: an empty tile, where OK adds a channel. [CHAR LIMIT=30] -->
+    <string name="livetv_multiview_add">Add channel</string>
+    <!-- Multiview: title of the side panel with the channels to add. [CHAR LIMIT=30] -->
+    <string name="livetv_multiview_pick_channel">Choose a channel</string>
+    <!-- Multiview: option of a tile with a channel. [CHAR LIMIT=40] -->
+    <string name="livetv_multiview_change">Change channel</string>
+    <!-- Multiview: option of a tile with a channel, which leaves the multiview and watches it. [CHAR LIMIT=40] -->
+    <string name="livetv_multiview_full_screen">Watch full screen</string>
+    <!-- Multiview: option of a tile with a channel, which empties the tile. [CHAR LIMIT=40] -->
+    <string name="livetv_multiview_remove">Remove from multiview</string>
+    <!-- Multiview: shown on a tile whose channel can't be played (it is tried again). [CHAR LIMIT=60] -->
+    <string name="livetv_multiview_error">Can\'t play this channel. Trying again…</string>
+    <!-- Settings: switch that opens the multiview when the app starts. [CHAR LIMIT=40] -->
+    <string name="livetv_multiview_open_at_start">Start in multiview</string>
+    <!-- Settings: description of the switch that opens the multiview when the app starts. [CHAR LIMIT=80] -->
+    <string name="livetv_multiview_open_at_start_description">Open the multiview when the app starts</string>
     <!-- Hint of the text field of the channel search. [CHAR LIMIT=40] -->
     <string name="livetv_search_hint">Channel name or number</string>
     <string name="livetv_search_empty_query">Say or type the name or the number of a channel.</string>
@@ -65,17 +87,14 @@
     <!-- Name of the IPTV channel source. [CHAR LIMIT=40] -->
     <string name="livetv_iptv_input_label">IPTV lists</string>
     <!-- Explanation on the IPTV setup screen. [CHAR LIMIT=NONE] -->
-    <string name="livetv_iptv_description">Enter the URL of an M3U channel list. Use only lists you are allowed to watch.</string>
-    <string name="livetv_iptv_url_hint" translatable="false">https://example.com/list.m3u</string>
+    <string name="livetv_iptv_description">Import a channel list, with or without username and password, or open an M3U file. Use only lists you are allowed to watch.</string>
     <string name="livetv_iptv_import">Import channels</string>
+    <!-- Button of the dialog that imports a list. [CHAR LIMIT=20] -->
+    <string name="livetv_iptv_import_short">Import</string>
     <!-- Button that opens a file manager to pick an M3U file. [CHAR LIMIT=40] -->
-    <string name="livetv_iptv_open_file">Open M3U file</string>
+    <string name="livetv_iptv_open_file">Import M3U file</string>
     <string name="livetv_iptv_reading_file">Reading file…</string>
     <string name="livetv_iptv_no_file_manager">No file manager installed. Install one to open M3U files.</string>
-    <!-- Button that imports the public iptv-org list of Spanish language channels. [CHAR LIMIT=25] -->
-    <string name="livetv_iptv_use_default">Use free channels</string>
-    <!-- Short name of the list of "Use free channels", shown next to its channels in the search. [CHAR LIMIT=30] -->
-    <string name="livetv_iptv_free_channels">Free channels</string>
     <string name="livetv_iptv_delete_failed">Could not delete the channels.</string>
     <plurals name="livetv_iptv_deleted">
         <item quantity="one">%d channel deleted</item>
@@ -110,8 +129,6 @@
     </plurals>
     <!-- %1$d is the maximum number of IPTV channels. [CHAR LIMIT=NONE] -->
     <string name="livetv_iptv_limit_reached">You already have %1$d channels, the maximum. Delete a list to import another one.</string>
-    <!-- Button that imports a list from a provider that asks for a username and a password. [CHAR LIMIT=25] -->
-    <string name="livetv_iptv_login">With username</string>
     <string name="livetv_iptv_login_title">List with username and password</string>
     <string name="livetv_iptv_login_description">Enter the details your IPTV provider gave you.</string>
     <!-- Address of the IPTV provider, such as http://example.com:8080. [CHAR LIMIT=30] -->
@@ -166,4 +183,83 @@
     <!-- Header of the sources of other apps whose channels LiveTV cannot read. [CHAR LIMIT=40] -->
     <string name="livetv_setup_category_incompatible">Incompatible sources</string>
     <string name="livetv_setup_input_incompatible">Its channels can’t be shown in LiveTV</string>
+    <!-- Title of the menu row with the movies and series of the IPTV lists. [CHAR LIMIT=40] -->
+    <string name="livetv_vod_row">Video on Demand</string>
+    <!-- Button of the Video on Demand row, and title of its screen. [CHAR LIMIT=20] -->
+    <string name="livetv_vod_movies">Movies</string>
+    <!-- Button of the Video on Demand row, and title of its screen. [CHAR LIMIT=20] -->
+    <string name="livetv_vod_series">Series</string>
+    <!-- First category of the movies screen. [CHAR LIMIT=30] -->
+    <string name="livetv_vod_all_movies">All movies</string>
+    <!-- First category of the series screen. [CHAR LIMIT=30] -->
+    <string name="livetv_vod_all_series">All series</string>
+    <!-- Title of an episode in the player: "Series · Episode". -->
+    <string name="livetv_vod_title_episode" translatable="false">%1$s · %2$s</string>
+    <!-- A season of a series, in the side panel. [CHAR LIMIT=30] -->
+    <string name="livetv_vod_season">Season %1$d</string>
+    <string name="livetv_vod_error">Can\'t load the titles. Check the connection.</string>
+    <string name="livetv_vod_empty">No titles here</string>
+    <string name="livetv_vod_no_episodes">This series has no episodes</string>
+    <string name="livetv_vod_play_error">Can\'t play this title</string>
+    <!-- First category of the movies and series screens: the titles left before their end. [CHAR LIMIT=30] -->
+    <string name="livetv_vod_continue">Continue watching</string>
+    <!-- Description of the play controls button that starts the title again. [CHAR LIMIT=40] -->
+    <string name="livetv_vod_restart">Start over</string>
+
+    <!-- Backup of the IPTV setup. -->
+    <!-- Settings item that opens the screen that saves the backup. [CHAR LIMIT=40] -->
+    <string name="livetv_backup_settings_title">Export IPTV setup</string>
+    <!-- Description of the settings item that saves the backup. [CHAR LIMIT=80] -->
+    <string name="livetv_backup_settings_description">Lists, channels and favorites to a file</string>
+    <!-- Section of the channel sources, at the top while no IPTV list is imported. [CHAR LIMIT=40] -->
+    <string name="livetv_setup_category_backup">Import backup file</string>
+    <!-- Item of that section, which opens the screen that imports a backup. [CHAR LIMIT=40] -->
+    <string name="livetv_backup_sources_title">Import file</string>
+    <!-- Description of the channel sources item that imports a backup. [CHAR LIMIT=80] -->
+    <string name="livetv_backup_sources_description">Restore your IPTV lists from a backup</string>
+    <string name="livetv_backup_export_title">Export IPTV setup</string>
+    <string name="livetv_backup_export_description">Saves your IPTV lists with their passwords, your channels (hidden ones included), favorites, the channel order and the guide settings to the Downloads folder. Tuners are not included. The PIN protects the passwords and you\'ll need it to import the file. Don\'t share the file.</string>
+    <string name="livetv_backup_restore_title">Import backup file</string>
+    <string name="livetv_backup_restore_description">Restores your IPTV lists, channels, favorites, channel order and guide settings from a file exported by LiveTV.</string>
+    <!-- Steps of the backup screens. [CHAR LIMIT=40] -->
+    <string name="livetv_backup_step_pick_file">Choose the file</string>
+    <string name="livetv_backup_step_enter_pin">Type the PIN of the file</string>
+    <string name="livetv_backup_step_restore">Import</string>
+    <string name="livetv_backup_step_new_pin">Choose a PIN</string>
+    <string name="livetv_backup_step_export">Export</string>
+    <!-- Under the PIN boxes. [CHAR LIMIT=80] -->
+    <string name="livetv_backup_pin_help">4 to 8 digits, with the number keys of the remote, or OK for the keyboard</string>
+    <!-- Button that saves the backup. [CHAR LIMIT=20] -->
+    <string name="livetv_backup_export">Export</string>
+    <!-- Button that imports the backup. [CHAR LIMIT=20] -->
+    <string name="livetv_backup_restore">Import</string>
+    <!-- Button that opens a file manager to choose the backup. [CHAR LIMIT=20] -->
+    <string name="livetv_backup_pick_file">Choose file</string>
+    <string name="livetv_backup_exporting">Saving…</string>
+    <!-- %1$s: the file name; %2$s: "2 lists"; %3$s: "350 channels". -->
+    <string name="livetv_backup_exported">Saved to Downloads: %1$s (%2$s, %3$s).</string>
+    <string name="livetv_backup_restoring">Importing…</string>
+    <string name="livetv_backup_restoring_title">Importing your IPTV lists…</string>
+    <string name="livetv_backup_restoring_message">This can take a moment. You\'ll go back to your sources when it\'s done.</string>
+    <string name="livetv_backup_exporting_title">Saving the backup…</string>
+    <!-- %1$s: "2 lists"; %2$s: "350 channels". -->
+    <string name="livetv_backup_restored">Imported %1$s with %2$s. The lists and their guides are being updated in the background.</string>
+    <string name="livetv_backup_wrong_pin">Wrong PIN, or the file is damaged.</string>
+    <string name="livetv_backup_not_backup">This file is not a LiveTV backup, or it is damaged.</string>
+    <string name="livetv_backup_already_set_up">There are IPTV lists already: a backup can only be restored when there are none.</string>
+    <string name="livetv_backup_no_storage_permission">Without access to the storage, the file can\'t be saved.</string>
+    <!-- %1$s: the kind of error. -->
+    <string name="livetv_backup_failed">It didn\'t work (%1$s).</string>
+    <plurals name="livetv_backup_lists">
+        <item quantity="one">%d list</item>
+        <item quantity="other">%d lists</item>
+    </plurals>
+    <plurals name="livetv_backup_channels">
+        <item quantity="one">%d channel</item>
+        <item quantity="other">%d channels</item>
+    </plurals>
+    <!-- In the program guide, while typing a channel number with the remote. %1$s: the digits typed. -->
+    <string name="livetv_guide_typed_number">Channel %1$s</string>
+    <!-- Button that closes the export screen once the backup is saved. [CHAR LIMIT=20] -->
+    <string name="livetv_backup_done">Done</string>
 </resources>

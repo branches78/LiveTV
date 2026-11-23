@@ -33,6 +33,7 @@ import com.android.tv.util.TvInputManagerHelper;
 import com.android.tv.util.Utils;
 import com.livetv.tv.channels.ChannelOrder;
 import com.livetv.tv.channels.Favorites;
+import com.livetv.tv.iptv.IptvChannels;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -183,17 +184,29 @@ public class CustomizeChannelListFragment extends SideFragment {
         mItems.clear();
         mItems.add(mGroupBySubMenu);
         for (ChannelGroup group : mGroups) {
-            if (!GROUP_KEY_ALL.equals(group.mKey)) {
-                mItems.add(group.mHeaderItem);
-            }
-            if (mExpandedGroups.contains(group.mKey)) {
-                if (group.mSelectGroupItem != null) {
-                    mItems.add(group.mSelectGroupItem);
-                }
-                mItems.addAll(group.mChannelItems);
-            }
+            addVisibleItems(group);
         }
         return mItems;
+    }
+
+    private void addVisibleItems(ChannelGroup group) {
+        if (!GROUP_KEY_ALL.equals(group.mKey)) {
+            mItems.add(group.mHeaderItem);
+        }
+        if (!mExpandedGroups.contains(group.mKey)) {
+            return;
+        }
+        if (!group.mSubGroups.isEmpty()) {
+            // LiveTV: the IPTV source with several lists shows a header per list.
+            for (ChannelGroup subGroup : group.mSubGroups) {
+                addVisibleItems(subGroup);
+            }
+            return;
+        }
+        if (group.mSelectGroupItem != null) {
+            mItems.add(group.mSelectGroupItem);
+        }
+        mItems.addAll(group.mChannelItems);
     }
 
     private void toggleGroup(ChannelGroup group) {
@@ -206,6 +219,7 @@ public class CustomizeChannelListFragment extends SideFragment {
 
     private void addChannelToGroup(ChannelGroup group, Channel channel) {
         ChannelItem channelItem = new ChannelItem(channel, group.mSelectGroupItem);
+        channelItem.mIndent = group.mItemIndent;
         group.mChannelItems.add(channelItem);
         group.mSelectGroupItem.addChannelItem(channelItem);
     }
@@ -217,6 +231,7 @@ public class CustomizeChannelListFragment extends SideFragment {
                 group.mChannelItems.get(0).mSelectGroupItem = null;
                 group.mSelectGroupItem = null;
             }
+            cleanUpOneChannelGroupItem(group.mSubGroups);
         }
     }
 
@@ -235,7 +250,67 @@ public class CustomizeChannelListFragment extends SideFragment {
             }
             addChannelToGroup(group, channel);
         }
+        splitIptvGroup(groups);
         cleanUpOneChannelGroupItem(groups);
+    }
+
+    /**
+     * LiveTV: with several IPTV lists, the IPTV source shows each list as a sub-group, with its
+     * own header, "select all" and channels. With one list it stays as it is.
+     */
+    private void splitIptvGroup(List<ChannelGroup> groups) {
+        String iptvInputId = IptvChannels.getInputId(getActivity());
+        ChannelGroup iptvGroup = null;
+        for (ChannelGroup group : groups) {
+            if (group.mKey.equals(iptvInputId)) {
+                iptvGroup = group;
+                break;
+            }
+        }
+        if (iptvGroup == null) {
+            return;
+        }
+        IptvChannels.ChannelLists lists = IptvChannels.getChannelLists(getActivity());
+        if (lists.names.size() < 2) {
+            return;
+        }
+        int indent = getResources().getDimensionPixelOffset(R.dimen.livetv_channel_group_indent);
+        // One sub-group per list, in the order they were imported, keeping the channel order.
+        java.util.Map<Long, ChannelGroup> subGroups = new java.util.LinkedHashMap<>();
+        for (java.util.Map.Entry<Long, String> list : lists.names.entrySet()) {
+            ChannelGroup subGroup =
+                    new ChannelGroup(iptvInputId + "/" + list.getKey(), list.getValue());
+            subGroup.mHeaderItem.mIndent = indent;
+            subGroup.mItemIndent = 2 * indent;
+            subGroup.mSelectGroupItem.mIndent = 2 * indent;
+            subGroups.put(list.getKey(), subGroup);
+        }
+        // Channels of no known list (rare) stay in a sub-group named like the source.
+        ChannelGroup others = null;
+        for (ChannelItem item : iptvGroup.mChannelItems) {
+            Long listId = lists.listOfChannel.get(item.getChannel().getId());
+            ChannelGroup subGroup = listId != null ? subGroups.get(listId) : null;
+            if (subGroup == null) {
+                if (others == null) {
+                    others = new ChannelGroup(iptvInputId + "/other", iptvGroup.mLabel);
+                    others.mHeaderItem.mIndent = indent;
+                    others.mItemIndent = 2 * indent;
+                    others.mSelectGroupItem.mIndent = 2 * indent;
+                }
+                subGroup = others;
+            }
+            addChannelToGroup(subGroup, item.getChannel());
+        }
+        iptvGroup.mChannelItems.clear();
+        iptvGroup.mSelectGroupItem = null;
+        for (ChannelGroup subGroup : subGroups.values()) {
+            if (!subGroup.mChannelItems.isEmpty()) {
+                iptvGroup.mSubGroups.add(subGroup);
+            }
+        }
+        if (others != null) {
+            iptvGroup.mSubGroups.add(others);
+        }
     }
 
     /**
@@ -375,14 +450,53 @@ public class CustomizeChannelListFragment extends SideFragment {
     /** Channels of one source (or HD/SD), shown under a header that expands and collapses. */
     private class ChannelGroup {
         private final String mKey;
+        private final String mLabel;
         private final GroupHeaderItem mHeaderItem;
         private SelectGroupItem mSelectGroupItem = new SelectGroupItem();
         private final List<ChannelItem> mChannelItems = new ArrayList<>();
+        /** LiveTV: the lists of the IPTV source; when present, they hold the channels. */
+        private final List<ChannelGroup> mSubGroups = new ArrayList<>();
+        /** LiveTV: extra start padding of the channels and "select all" of a sub-group. */
+        private int mItemIndent;
 
         ChannelGroup(String key, String label) {
             mKey = key;
+            mLabel = label;
             mHeaderItem = new GroupHeaderItem(this, label);
         }
+
+        /** The channels of the group, or of all its sub-groups. */
+        int getChannelCount() {
+            int count = mChannelItems.size();
+            for (ChannelGroup subGroup : mSubGroups) {
+                count += subGroup.getChannelCount();
+            }
+            return count;
+        }
+    }
+
+    /**
+     * LiveTV: adds {@code indent} to the start padding of an item's view, which is shared with
+     * other items and side panels; {@link #unindent} restores it.
+     */
+    private static int indent(View view, int indent) {
+        int original = view.getPaddingStart();
+        if (indent > 0) {
+            view.setPaddingRelative(
+                    original + indent,
+                    view.getPaddingTop(),
+                    view.getPaddingEnd(),
+                    view.getPaddingBottom());
+        }
+        return original;
+    }
+
+    private static void unindent(View view, int originalPaddingStart) {
+        view.setPaddingRelative(
+                originalPaddingStart,
+                view.getPaddingTop(),
+                view.getPaddingEnd(),
+                view.getPaddingBottom());
     }
 
     private class GroupHeaderItem extends ActionItem {
@@ -390,6 +504,10 @@ public class CustomizeChannelListFragment extends SideFragment {
         private final String mLabel;
         private TextView mTitleView;
         private TextView mDescriptionView;
+        /** LiveTV: extra start padding, for the header of a list of the IPTV source. */
+        private int mIndent;
+        private View mView;
+        private int mOriginalPaddingStart;
 
         GroupHeaderItem(ChannelGroup group, String label) {
             super(label);
@@ -400,8 +518,17 @@ public class CustomizeChannelListFragment extends SideFragment {
         @Override
         protected void onBind(View view) {
             super.onBind(view);
+            mView = view;
+            mOriginalPaddingStart = indent(view, mIndent);
             mTitleView = (TextView) view.findViewById(R.id.title);
             mDescriptionView = (TextView) view.findViewById(R.id.description);
+        }
+
+        @Override
+        protected void onUnbind() {
+            unindent(mView, mOriginalPaddingStart);
+            mView = null;
+            super.onUnbind();
         }
 
         @Override
@@ -409,7 +536,7 @@ public class CustomizeChannelListFragment extends SideFragment {
             super.onUpdate();
             boolean expanded = mExpandedGroups.contains(mGroup.mKey);
             mTitleView.setText((expanded ? "\u25BE  " : "\u25B8  ") + mLabel);
-            int count = mGroup.mChannelItems.size();
+            int count = mGroup.getChannelCount();
             mDescriptionView.setVisibility(View.VISIBLE);
             mDescriptionView.setText(
                     getResources()
@@ -426,6 +553,10 @@ public class CustomizeChannelListFragment extends SideFragment {
         private final List<ChannelItem> mChannelItemsInGroup = new ArrayList<>();
         private TextView mTextView;
         private boolean mAllChecked;
+        /** LiveTV: extra start padding, inside a list of the IPTV source. */
+        private int mIndent;
+        private View mView;
+        private int mOriginalPaddingStart;
 
         public SelectGroupItem() {
             super(null);
@@ -438,7 +569,16 @@ public class CustomizeChannelListFragment extends SideFragment {
         @Override
         protected void onBind(View view) {
             super.onBind(view);
+            mView = view;
+            mOriginalPaddingStart = indent(view, mIndent);
             mTextView = (TextView) view.findViewById(R.id.title);
+        }
+
+        @Override
+        protected void onUnbind() {
+            unindent(mView, mOriginalPaddingStart);
+            mView = null;
+            super.onUnbind();
         }
 
         @Override
@@ -480,6 +620,9 @@ public class CustomizeChannelListFragment extends SideFragment {
     private class ChannelItem extends ChannelCheckItem {
         private SelectGroupItem mSelectGroupItem;
         private View mView;
+        /** LiveTV: extra start padding, inside a list of the IPTV source. */
+        private int mIndent;
+        private int mOriginalPaddingStart;
 
         public ChannelItem(Channel channel, SelectGroupItem selectGroupItem) {
             super(channel, getChannelDataManager(), getProgramDataManager());
@@ -490,6 +633,7 @@ public class CustomizeChannelListFragment extends SideFragment {
         protected void onBind(View view) {
             super.onBind(view);
             mView = view;
+            mOriginalPaddingStart = indent(view, mIndent);
             // LiveTV: holding OK on a channel of the "All" list starts moving it.
             if (sGroupingType == GROUP_BY_ALL) {
                 view.setOnLongClickListener(
@@ -505,6 +649,7 @@ public class CustomizeChannelListFragment extends SideFragment {
         @Override
         protected void onUnbind() {
             // Item views are shared with other side panels.
+            unindent(mView, mOriginalPaddingStart);
             mView.setOnLongClickListener(null);
             mView.setLongClickable(false);
             mView = null;

@@ -9,4 +9,48 @@
         <item name="android:paddingEnd">24dp</item>
         <item name="android:minHeight">48dp</item>
     </style>
+
+    <!-- The two import buttons of the IPTV setup screen: bigger, with the same width. -->
+    <style name="LiveTv.IptvButton.Large">
+        <item name="android:minWidth">280dp</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:paddingStart">32dp</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- The number of a step of the backup screens (its circle is drawn in code). -->
+    <style name="LiveTv.BackupStepBadge" parent="">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- The title of a step of the backup screens. -->
+    <style name="LiveTv.BackupStepTitle" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- The buttons for 2, 4 or 6 channels of the multiview. -->
+    <style name="LiveTv.MultiviewChip" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:background">@drawable/livetv_multiview_chip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:fontFamily">@string/condensed_font</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/livetv_multiview_chip_text</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>

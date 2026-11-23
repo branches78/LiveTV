@@ -35,12 +35,9 @@ import com.android.tv.R;
 import com.android.tv.TvSingletons;
 import com.android.tv.common.SoftPreconditions;
 import com.android.tv.common.dagger.annotations.ApplicationContext;
-import com.android.tv.common.singletons.HasTvInputId;
 import com.android.tv.common.util.CommonUtils;
 import com.android.tv.data.ChannelDataManager;
 import com.android.tv.data.api.Channel;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
-import com.google.common.base.Optional;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,12 +69,9 @@ public class SetupUtils {
     private final Set<String> mSetUpInputs;
     private final Set<String> mRecognizedInputs;
     private boolean mIsFirstTune;
-    private final Optional<String> mOptionalTunerInputId;
 
     @Inject
-    public SetupUtils(
-            @ApplicationContext Context context,
-            Optional<BuiltInTunerManager> optionalBuiltInTunerManager) {
+    public SetupUtils(@ApplicationContext Context context) {
         mContext = context;
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         mSetUpInputs = new ArraySet<>();
@@ -90,8 +84,6 @@ public class SetupUtils {
         mRecognizedInputs.addAll(
                 mSharedPreferences.getStringSet(PREF_KEY_RECOGNIZED_INPUTS, mKnownInputs));
         mIsFirstTune = mSharedPreferences.getBoolean(PREF_KEY_IS_FIRST_TUNE, true);
-        mOptionalTunerInputId =
-                optionalBuiltInTunerManager.transform(HasTvInputId::getEmbeddedTunerInputId);
     }
 
     /** Additional work after the setup of TV input. */
@@ -336,13 +328,6 @@ public class SetupUtils {
         for (TvInputInfo input : manager.getTvInputList()) {
             removedInputList.remove(input.getId());
         }
-        // A USB tuner device can be temporarily unplugged. We do not remove the USB tuner input
-        // from the known inputs so that the input won't appear as a new input whenever the user
-        // plugs in the USB tuner device again.
-        if (mOptionalTunerInputId.isPresent()) {
-            removedInputList.remove(mOptionalTunerInputId.get());
-        }
-
         if (!removedInputList.isEmpty()) {
             boolean inputPackageDeleted = false;
             for (String input : removedInputList) {

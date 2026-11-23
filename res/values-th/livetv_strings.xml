@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">แหล่งที่มาที่ใช้ร่วมกันไม่ได้</string>
     <string name="livetv_setup_input_incompatible">แสดงช่องของแอปนี้ใน LiveTV ไม่ได้</string>
     <string name="livetv_iptv_input_label">รายการ IPTV</string>
+    <string name="livetv_vod_row">วิดีโอออนดีมานด์</string>
+    <string name="livetv_vod_movies">ภาพยนตร์</string>
+    <string name="livetv_vod_series">ซีรีส์</string>
 </resources>

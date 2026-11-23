@@ -34,6 +34,7 @@ import com.android.tv.analytics.Tracker;
 import com.android.tv.common.util.CommonUtils;
 import com.android.tv.common.util.DurationTimer;
 import com.android.tv.menu.MenuRowFactory.PartnerRow;
+import com.android.tv.menu.MenuRowFactory.VodRow;
 import com.android.tv.menu.MenuRowFactory.TvOptionsRow;
 import com.android.tv.ui.TunableTvView;
 import com.android.tv.ui.hideable.AutoHideScheduler;
@@ -154,6 +155,7 @@ public class Menu implements AccessibilityStateChangeListener {
         // Build menu rows
         addMenuRow(menuRowFactory.createMenuRow(this, PlayControlsRow.class));
         addMenuRow(menuRowFactory.createMenuRow(this, ChannelsRow.class));
+        addMenuRow(menuRowFactory.createMenuRow(this, VodRow.class));
         addMenuRow(menuRowFactory.createMenuRow(this, PartnerRow.class));
         addMenuRow(menuRowFactory.createMenuRow(this, TvOptionsRow.class));
         mMenuView.setMenuRows(mMenuRows);

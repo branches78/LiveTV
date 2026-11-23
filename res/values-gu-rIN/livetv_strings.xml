@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">અસંગત સ્રોતો</string>
     <string name="livetv_setup_input_incompatible">તેની ચૅનલ LiveTVમાં બતાવી શકાતી નથી</string>
     <string name="livetv_iptv_input_label">IPTV સૂચિઓ</string>
+    <string name="livetv_vod_row">વીડિયો ઑન ડિમાન્ડ</string>
+    <string name="livetv_vod_movies">મૂવી</string>
+    <string name="livetv_vod_series">સિરીઝ</string>
 </resources>

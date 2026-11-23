@@ -45,6 +45,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_HDMI_CEC_ACTIVE_SOURCE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!-- LiveTV: scheduled recordings start on time (exact alarms; granted on install). -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+         android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <uses-permission android:name="android.permission.HDMI_CEC"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -62,8 +66,6 @@
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA"/>
     <uses-permission android:name="com.android.providers.tv.permission.ACCESS_ALL_EPG_DATA"/>
     <uses-permission android:name="com.android.providers.tv.permission.ACCESS_WATCHED_PROGRAMS"/>
-    <!-- Permissions/feature for USB tuner -->
-    <uses-permission android:name="android.permission.DVB_DEVICE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <uses-feature android:name="android.hardware.usb.host"
@@ -77,13 +79,15 @@
     <uses-feature android:name="android.hardware.touchscreen"
          android:required="false"/>
 
+    <!-- LiveTV: the permissions and the provider are named after the package, so the debug build
+         (com.livetv.tv.debug) installs next to the release one. -->
     <!-- Receives input events from the TV app. -->
-    <permission android:name="com.livetv.tv.permission.RECEIVE_INPUT_EVENT"
+    <permission android:name="${applicationId}.permission.RECEIVE_INPUT_EVENT"
          android:description="@string/permdesc_receiveInputEvent"
          android:label="@string/permlab_receiveInputEvent"
          android:protectionLevel="signatureOrSystem"/>
     <!-- Customizes Live TV with customization packages. -->
-    <permission android:name="com.livetv.tv.permission.CUSTOMIZE_TV_APP"
+    <permission android:name="${applicationId}.permission.CUSTOMIZE_TV_APP"
          android:description="@string/permdesc_customizeTvApp"
          android:label="@string/permlab_customizeTvApp"
          android:protectionLevel="signatureOrSystem"/>
@@ -102,7 +106,7 @@
          tools:replace="android:appComponentFactory">
 
         <provider android:name="com.android.tv.common.CommonPreferenceProvider"
-             android:authorities="com.livetv.tv.common.preferences"
+             android:authorities="${applicationId}.common.preferences"
              android:exported="false"
              android:process="com.android.tv.common"/>
 
@@ -283,9 +287,24 @@
             <meta-data android:name="android.media.tv.input"
                  android:resource="@xml/livetv_iptv_input"/>
         </service>
+        <!-- LiveTV: the IPTV lists can record only while a removable drive is plugged in. -->
+        <receiver android:name="com.livetv.tv.iptv.IptvRecording$StorageReceiver"
+             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_REMOVED"/>
+                <action android:name="android.intent.action.MEDIA_EJECT"/>
+                <action android:name="android.intent.action.MEDIA_BAD_REMOVAL"/>
+                <data android:scheme="file"/>
+            </intent-filter>
+        </receiver>
         <activity android:name="com.livetv.tv.iptv.IptvSetupActivity"
              android:exported="true"
              android:label="@string/livetv_iptv_input_label"
+             android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
+        <activity android:name="com.livetv.tv.iptv.IptvBackupActivity"
+             android:exported="false"
              android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
         <activity android:name="com.livetv.tv.iptv.IptvGuideAssignActivity"
              android:exported="false"
@@ -293,6 +312,18 @@
         <activity android:name="com.livetv.tv.iptv.IptvGuidePickerActivity"
              android:exported="false"
              android:theme="@android:style/Theme.DeviceDefault.NoActionBar"/>
+        <activity android:name="com.livetv.tv.vod.VodActivity"
+             android:exported="false"
+             android:theme="@style/Theme.TV"/>
+        <activity android:name="com.livetv.tv.vod.VodPlayerActivity"
+             android:configChanges="keyboard|keyboardHidden|navigation"
+             android:exported="false"
+             android:theme="@style/Theme.TV"/>
+
+        <activity android:name="com.livetv.tv.multiview.MultiviewActivity"
+             android:configChanges="keyboard|keyboardHidden|navigation"
+             android:exported="false"
+             android:theme="@style/Theme.TV"/>
 
         <service android:name="com.android.tv.data.epg.EpgFetchService"
              android:exported="false"

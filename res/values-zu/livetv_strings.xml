@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Imithombo engahambisani</string>
     <string name="livetv_setup_input_incompatible">Iziteshi zayo azikwazi ukuboniswa ku-LiveTV</string>
     <string name="livetv_iptv_input_label">Izinhlu ze-IPTV</string>
+    <string name="livetv_vod_row">Ividiyo ngokufunwa</string>
+    <string name="livetv_vod_movies">Amamuvi</string>
+    <string name="livetv_vod_series">Uchungechunge</string>
 </resources>

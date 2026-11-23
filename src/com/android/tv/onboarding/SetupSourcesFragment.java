@@ -40,12 +40,12 @@ import com.android.tv.common.ui.setup.SetupGuidedStepFragment;
 import com.android.tv.common.ui.setup.SetupMultiPaneFragment;
 import com.android.tv.data.ChannelDataManager;
 import com.android.tv.data.TvInputNewComparator;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 import com.android.tv.ui.GuidedActionsStylistWithDivider;
 import com.android.tv.util.SetupUtils;
 import com.android.tv.util.TvInputManagerHelper;
 
-import com.google.common.base.Optional;
+import com.livetv.tv.iptv.IptvBackupActivity;
+import com.livetv.tv.iptv.IptvChannels;
 
 import dagger.android.AndroidInjection;
 import dagger.android.ContributesAndroidInjector;
@@ -118,6 +118,8 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
         private static final int ACTION_INCOMPATIBLE_INPUT = 2;
         private static final int ACTION_HEADER = 3;
         private static final int ACTION_INPUT_START = 4;
+        /** LiveTV: restores a backup of the IPTV setup, while no list is imported. */
+        private static final int ACTION_RESTORE_IPTV_BACKUP = -10;
 
         private static final int PENDING_ACTION_NONE = 0;
         private static final int PENDING_ACTION_INPUT_CHANGED = 1;
@@ -126,18 +128,20 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
         @Inject TvInputManagerHelper mInputManager;
         @Inject ChannelDataManager mChannelDataManager;
         @Inject SetupUtils mSetupUtils;
-        @Inject Optional<BuiltInTunerManager> mBuiltInTunerManagerOptional;
         @Inject UiFlags mUiFlags;
         private List<TvInputInfo> mInputs;
         private List<TvInputInfo> mIncompatibleInputs = new ArrayList<>();
         private int mKnownInputStartIndex;
-        private int mDoneInputStartIndex;
 
         private SetupSourcesFragment mParentFragment;
 
         private String mNewlyAddedInputId;
 
         private int mPendingAction = PENDING_ACTION_NONE;
+        /** LiveTV: the restore screen was opened from here. */
+        private boolean mRestoreStarted;
+        /** LiveTV: the next update of the list puts the focus on the IPTV source. */
+        private boolean mFocusIptvInput;
 
         private final TvInputCallback mInputCallback =
                 new TvInputCallback() {
@@ -219,12 +223,6 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
             mInputManager.addCallback(mInputCallback);
             mChannelDataManager.addListener(mChannelDataManagerListener);
             mParentFragment = (SetupSourcesFragment) getParentFragment();
-            if (mBuiltInTunerManagerOptional.isPresent()) {
-                mBuiltInTunerManagerOptional
-                        .get()
-                        .getTunerInputController()
-                        .executeNetworkTunerDiscoveryAsyncTask(activity);
-            }
         }
 
         @Override
@@ -271,14 +269,10 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
             }
             Collections.sort(mInputs, new TvInputNewComparator(mSetupUtils, mInputManager));
             mKnownInputStartIndex = 0;
-            mDoneInputStartIndex = 0;
             for (TvInputInfo input : mInputs) {
                 if (mSetupUtils.isNewInput(input.getId())) {
                     mSetupUtils.markAsKnownInput(input.getId());
                     ++mKnownInputStartIndex;
-                }
-                if (!mSetupUtils.isSetupDone(input.getId())) {
-                    ++mDoneInputStartIndex;
                 }
             }
         }
@@ -286,35 +280,82 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
         private void updateActions() {
             List<GuidedAction> actions = new ArrayList<>();
             createActionsInternal(actions);
+            // LiveTV: back from restoring a backup, the IPTV source gets the focus (the restore
+            // item, which had it, is gone).
+            int focusPosition = -1;
+            if (mFocusIptvInput) {
+                mFocusIptvInput = false;
+                String iptvInputId = IptvChannels.getInputId(getActivity());
+                for (int i = 0; i < actions.size(); i++) {
+                    int index = (int) actions.get(i).getId() - ACTION_INPUT_START;
+                    if (index >= 0
+                            && index < mInputs.size()
+                            && mInputs.get(index).getId().equals(iptvInputId)) {
+                        focusPosition = i;
+                        break;
+                    }
+                }
+            }
             setActions(actions);
+            VerticalGridView gridView = getGuidedActionsStylist().getActionsGridView();
+            if (gridView == null) {
+                return;
+            }
+            if (focusPosition >= 0) {
+                gridView.setSelectedPosition(focusPosition);
+            }
+            // LiveTV: the focused item may have been removed; without focus the remote did
+            // nothing on this screen.
+            View view = getView();
+            if (view != null && !view.hasFocus()) {
+                gridView.requestFocus();
+            }
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (mRestoreStarted) {
+                // Back from restoring a backup: show the imported source.
+                mRestoreStarted = false;
+                mFocusIptvInput = true;
+                if (mParentFragment.isEnterTransitionRunning()) {
+                    mPendingAction = PENDING_ACTION_CHANNEL_CHANGED;
+                } else {
+                    updateActions();
+                }
+            }
+        }
+
+        private GuidedAction createHeader(int titleRes) {
+            return new GuidedAction.Builder(getActivity())
+                    .id(ACTION_HEADER)
+                    .title(null)
+                    .description(getString(titleRes))
+                    .focusable(false)
+                    .infoOnly(true)
+                    .build();
+        }
+
+        /**
+         * LiveTV sections: "Import backup file" (while no IPTV list is imported), "Sources" (every
+         * source, the new ones first) and "Incompatible sources".
+         */
         private void createActionsInternal(List<GuidedAction> actions) {
             int newPosition = -1;
-            int position = 0;
-            if (mDoneInputStartIndex > 0) {
-                // Need a "New" category
+            if (!IptvChannels.hasPlaylists(getActivity())) {
+                actions.add(createHeader(R.string.livetv_setup_category_backup));
                 actions.add(
                         new GuidedAction.Builder(getActivity())
-                                .id(ACTION_HEADER)
-                                .title(null)
-                                .description(getString(R.string.setup_category_new))
-                                .focusable(false)
-                                .infoOnly(true)
+                                .id(ACTION_RESTORE_IPTV_BACKUP)
+                                .title(getString(R.string.livetv_backup_sources_title))
+                                .description(getString(R.string.livetv_backup_sources_description))
                                 .build());
             }
+            if (!mInputs.isEmpty()) {
+                actions.add(createHeader(R.string.setup_category_done));
+            }
             for (int i = 0; i < mInputs.size(); ++i) {
-                if (i == mDoneInputStartIndex) {
-                    ++position;
-                    actions.add(
-                            new GuidedAction.Builder(getActivity())
-                                    .id(ACTION_HEADER)
-                                    .title(null)
-                                    .description(getString(R.string.setup_category_done))
-                                    .focusable(false)
-                                    .infoOnly(true)
-                                    .build());
-                }
                 TvInputInfo input = mInputs.get(i);
                 String inputId = input.getId();
                 String description;
@@ -335,9 +376,8 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
                 } else {
                     description = getString(R.string.setup_input_new);
                 }
-                ++position;
                 if (input.getId().equals(mNewlyAddedInputId)) {
-                    newPosition = position;
+                    newPosition = actions.size();
                 }
                 actions.add(
                         new GuidedAction.Builder(getActivity())
@@ -369,14 +409,9 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
                                     .build());
                 }
             }
-            if (mInputs.size() > 0 || !mIncompatibleInputs.isEmpty()) {
-                // Divider
-                ++position;
-                actions.add(GuidedActionsStylistWithDivider.createDividerAction(getContext()));
-            }
             if (!TextUtils.isEmpty(mUiFlags.moreChannelsUrl())) {
-                // online store action
-                ++position;
+                // online store action, after a divider
+                actions.add(GuidedActionsStylistWithDivider.createDividerAction(getContext()));
                 actions.add(
                         new GuidedAction.Builder(getActivity())
                                 .id(ACTION_ONLINE_STORE)
@@ -400,6 +435,11 @@ public class SetupSourcesFragment extends SetupMultiPaneFragment {
         public void onGuidedActionClicked(GuidedAction action) {
             if (action.getId() == ACTION_ONLINE_STORE) {
                 mParentFragment.onActionClick(ACTION_CATEGORY, (int) action.getId());
+                return;
+            }
+            if (action.getId() == ACTION_RESTORE_IPTV_BACKUP) {
+                mRestoreStarted = true;
+                startActivity(IptvBackupActivity.buildRestoreIntent(getActivity()));
                 return;
             }
             int index = (int) action.getId() - ACTION_INPUT_START;

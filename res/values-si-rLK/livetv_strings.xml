@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">නොගැළපෙන මූලාශ්‍ර</string>
     <string name="livetv_setup_input_incompatible">එහි නාලිකා LiveTV තුළ පෙන්විය නොහැක</string>
     <string name="livetv_iptv_input_label">IPTV ලැයිස්තු</string>
+    <string name="livetv_vod_row">ඉල්ලුම මත වීඩියෝ</string>
+    <string name="livetv_vod_movies">චිත්‍රපට</string>
+    <string name="livetv_vod_series">කතා මාලා</string>
 </resources>

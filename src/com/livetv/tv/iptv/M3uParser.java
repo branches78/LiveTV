@@ -16,14 +16,20 @@
 
 package com.livetv.tv.iptv;
 
+import android.text.TextUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.livetv.tv.iptv.IptvChannels.isWebUrl;
 
 /**
  * Parses extended M3U playlists ({@code #EXTM3U} / {@code #EXTINF}). Only web addresses (http and
@@ -82,7 +88,8 @@ final class M3uParser {
         List<Entry> entries = new ArrayList<>();
         int total = 0;
         int videos = 0;
-        StringBuilder guideUrls = new StringBuilder();
+        // LiveTV: a set, so a guide whose address starts like another's is not taken for it.
+        Set<String> guideUrls = new LinkedHashSet<>();
         BufferedReader reader = new BufferedReader(input);
         StringBuilder lineBuffer = new StringBuilder();
         String name = null;
@@ -102,8 +109,8 @@ final class M3uParser {
                     if ("url-tvg".equals(key) || "x-tvg-url".equals(key)) {
                         // Several guides can be listed, separated by commas.
                         for (String url : matcher.group(2).split("[,\\s]+")) {
-                            if (isWebUrl(url) && guideUrls.indexOf(url) < 0) {
-                                guideUrls.append(guideUrls.length() > 0 ? " " : "").append(url);
+                            if (isWebUrl(url)) {
+                                guideUrls.add(url);
                             }
                         }
                     }
@@ -146,7 +153,7 @@ final class M3uParser {
                 name = null;
             }
         }
-        return new Result(entries, total, videos, guideUrls.toString());
+        return new Result(entries, total, videos, TextUtils.join(" ", guideUrls));
     }
 
     /** Returns the next line, cut to {@link #MAX_LINE_CHARS}, or null at the end of the list. */
@@ -201,11 +208,6 @@ final class M3uParser {
                 || path.contains("/series/")
                 || VIDEO_FILE.matcher(path).find()
                 || VIDEO_FILE.matcher(fragment).find();
-    }
-
-    private static boolean isWebUrl(String url) {
-        String lowerCase = url.toLowerCase(Locale.ROOT);
-        return lowerCase.startsWith("http://") || lowerCase.startsWith("https://");
     }
 
     private static String emptyToNull(String value) {

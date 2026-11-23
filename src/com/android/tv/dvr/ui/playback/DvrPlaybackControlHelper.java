@@ -73,6 +73,16 @@ class DvrPlaybackControlHelper extends PlaybackControlGlue {
     private ArrayObjectAdapter mSecondaryActionsAdapter;
     private PlaybackControlsRow mPlaybackControlsRow;
     @Nullable private View mPlayPauseButton;
+    /** LiveTV: the buttons of the play controls (rewind, play/pause, fast forward). */
+    @Nullable private ViewGroup mControlBar;
+    /** LiveTV: whether the rewind or fast forward key held started rewinding or fast forwarding. */
+    private boolean mSeekKeyHeld;
+    /** LiveTV: a press of rewind or fast forward jumps this far, like the other players. */
+    private static final long SEEK_STEP_MS = 10000;
+    /** LiveTV: key repeats (about half a second held) before rewinding or fast forwarding. */
+    private static final int HOLD_REPEAT_COUNT = 1;
+    /** LiveTV: key repeats (about a second held) before the next speed. */
+    private static final int SPEED_UP_REPEAT_COUNT = 20;
 
     DvrPlaybackControlHelper(Activity activity, DvrPlaybackOverlayFragment overlayFragment) {
         super(activity, new int[TimeShiftUtils.MAX_SPEED_LEVEL + 1]);
@@ -130,6 +140,7 @@ class DvrPlaybackControlHelper extends PlaybackControlGlue {
                         super.onBindRowViewHolder(vh, item);
                         vh.setOnKeyListener(DvrPlaybackControlHelper.this);
                         ViewGroup controlBar = (ViewGroup) vh.view.findViewById(R.id.control_bar);
+                        mControlBar = controlBar;
                         mPlayPauseButton = controlBar.getChildAt(1);
                     }
 
@@ -137,6 +148,7 @@ class DvrPlaybackControlHelper extends PlaybackControlGlue {
                     protected void onUnbindRowViewHolder(RowPresenter.ViewHolder vh) {
                         super.onUnbindRowViewHolder(vh);
                         vh.setOnKeyListener(null);
+                        mControlBar = null;
                     }
                 };
         presenter.setProgressColor(
@@ -169,7 +181,97 @@ class DvrPlaybackControlHelper extends PlaybackControlGlue {
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
-        return mReadyToControl && super.onKey(v, keyCode, event);
+        if (!mReadyToControl) {
+            return false;
+        }
+        // LiveTV: rewind and fast forward work like the other players of the app.
+        Boolean rewind = getSeekDirection(keyCode);
+        if (rewind != null) {
+            onSeekKey(event, rewind);
+            return true;
+        }
+        return super.onKey(v, keyCode, event);
+    }
+
+    /**
+     * LiveTV: true for a key that rewinds (the rewind key, or OK on the rewind button), false for
+     * one that fast forwards, null for any other key.
+     */
+    @Nullable
+    private Boolean getSeekDirection(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_MEDIA_REWIND:
+                return true;
+            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+                return false;
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+            case KeyEvent.KEYCODE_ENTER:
+            case KeyEvent.KEYCODE_NUMPAD_ENTER:
+                if (mControlBar == null || mControlBar.getChildCount() < 3) {
+                    return null;
+                }
+                View focus = mControlBar.findFocus();
+                if (focus == null) {
+                    return null;
+                }
+                if (isInside(focus, mControlBar.getChildAt(0))) {
+                    return true;
+                }
+                if (isInside(focus, mControlBar.getChildAt(2))) {
+                    return false;
+                }
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    private static boolean isInside(View view, View parent) {
+        for (View v = view; v != null; ) {
+            if (v == parent) {
+                return true;
+            }
+            v = v.getParent() instanceof View ? (View) v.getParent() : null;
+        }
+        return false;
+    }
+
+    /**
+     * LiveTV: a press jumps {@link #SEEK_STEP_MS}; held, it rewinds or fast forwards at 2X,
+     * faster the longer it is held, and plays normally again when released.
+     */
+    private void onSeekKey(KeyEvent event, boolean rewind) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            int repeat = event.getRepeatCount();
+            if (repeat == 0) {
+                mSeekKeyHeld = false;
+                return;
+            }
+            boolean speedUp =
+                    repeat == HOLD_REPEAT_COUNT
+                            || (mSeekKeyHeld
+                                    && (repeat - HOLD_REPEAT_COUNT) % SPEED_UP_REPEAT_COUNT == 0);
+            if (speedUp) {
+                mSeekKeyHeld = true;
+                if (rewind) {
+                    mTransportControls.rewind();
+                } else {
+                    mTransportControls.fastForward();
+                }
+            }
+        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+            if (mSeekKeyHeld) {
+                mSeekKeyHeld = false;
+                mTransportControls.play();
+            } else {
+                long position = getCurrentPosition() + (rewind ? -SEEK_STEP_MS : SEEK_STEP_MS);
+                long duration = getMediaDuration();
+                if (duration > 0) {
+                    position = Math.min(position, duration);
+                }
+                mTransportControls.seekTo(Math.max(0, position));
+            }
+        }
     }
 
     @Override

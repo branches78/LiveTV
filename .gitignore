@@ -24,3 +24,8 @@ local.properties
 
 # Internal notes
 docs/livetv-pendientes.md
+
+# Release signing (LiveTV): the key and its passwords stay on this computer
+keystore.properties
+*.jks
+*.keystore

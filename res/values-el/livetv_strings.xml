@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Μη συμβατές πηγές</string>
     <string name="livetv_setup_input_incompatible">Τα κανάλια της δεν μπορούν να εμφανιστούν στο LiveTV</string>
     <string name="livetv_iptv_input_label">Λίστες IPTV</string>
+    <string name="livetv_vod_row">Βίντεο κατ’ απαίτηση</string>
+    <string name="livetv_vod_movies">Ταινίες</string>
+    <string name="livetv_vod_series">Σειρές</string>
 </resources>

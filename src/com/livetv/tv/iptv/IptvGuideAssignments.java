@@ -24,7 +24,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Locale;
 
 /**
@@ -92,11 +94,6 @@ final class IptvGuideAssignments {
         return references;
     }
 
-    /** Whether the user chose the guide of the channel (or no guide at all). */
-    static boolean isAssigned(Context context, String channelKey) {
-        return prefs(context).contains(channelKey);
-    }
-
     /**
      * The {@link #reference} of the guide channel the user chose, {@code ""} for no programs, or
      * {@code null} when the matching is automatic.
@@ -116,6 +113,26 @@ final class IptvGuideAssignments {
             editor.remove(channelKey);
         } else {
             editor.putString(channelKey, guideChannelId);
+        }
+        editor.apply();
+    }
+
+    /** Every assignment, by channel key (for a backup). */
+    static Map<String, String> getAll(Context context) {
+        Map<String, String> all = new HashMap<>();
+        for (Map.Entry<String, ?> entry : prefs(context).getAll().entrySet()) {
+            if (entry.getValue() instanceof String) {
+                all.put(entry.getKey(), (String) entry.getValue());
+            }
+        }
+        return all;
+    }
+
+    /** Adds the assignments of a restored backup. */
+    static void putAll(Context context, Map<String, String> assignments) {
+        SharedPreferences.Editor editor = prefs(context).edit();
+        for (Map.Entry<String, String> entry : assignments.entrySet()) {
+            editor.putString(entry.getKey(), entry.getValue());
         }
         editor.apply();
     }

@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -256,6 +257,80 @@ public class TimeShiftManager {
         mTracker.sendTimeShiftAction(mLastActionId);
         mPlayController.pause();
         updateActions();
+    }
+
+    /** LiveTV: a press of rewind or fast forward jumps this far, like the Video on Demand player. */
+    public static final long SEEK_STEP_MS = 10000;
+    /** LiveTV: key repeats (about half a second held) before rewinding or fast forwarding. */
+    private static final int HOLD_REPEAT_COUNT = 1;
+    /** LiveTV: key repeats (about a second held) before the next speed. */
+    private static final int SPEED_UP_REPEAT_COUNT = 20;
+    /** LiveTV: whether the rewind or fast forward key held started rewinding or fast forwarding. */
+    private boolean mSeekKeyHeld;
+
+    /**
+     * LiveTV: jumps {@code deltaMs} back (negative) or forward, within the time that can be
+     * played. Playback goes on as it was (playing or paused).
+     */
+    public void seekBy(long deltaMs) {
+        if (!isAvailable() || mCurrentPositionMediator.mCurrentPositionMs == INVALID_TIME) {
+            return;
+        }
+        long target =
+                Math.min(
+                        getRecordEndTimeMs(),
+                        Math.max(
+                                mPlayController.mRecordStartTimeMs,
+                                mCurrentPositionMediator.mCurrentPositionMs + deltaMs));
+        mLastActionId =
+                deltaMs < 0
+                        ? TIME_SHIFT_ACTION_ID_JUMP_TO_PREVIOUS
+                        : TIME_SHIFT_ACTION_ID_JUMP_TO_NEXT;
+        mPlayController.seekTo(target);
+        mCurrentPositionMediator.onSeekRequested(target);
+        updateActions();
+    }
+
+    /**
+     * LiveTV: handles a key that rewinds or fast forwards, like the Video on Demand player: a
+     * press jumps {@link #SEEK_STEP_MS}; held, it rewinds or fast forwards at 2X, faster the
+     * longer it is held, and plays normally again when released.
+     *
+     * @return whether rewinding or fast forwarding started or changed speed with this event.
+     */
+    public boolean onSeekKey(KeyEvent event, boolean rewind) {
+        if (!isAvailable()) {
+            return false;
+        }
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            int repeat = event.getRepeatCount();
+            if (repeat == 0) {
+                mSeekKeyHeld = false;
+                return false;
+            }
+            boolean speedUp =
+                    repeat == HOLD_REPEAT_COUNT
+                            || (mSeekKeyHeld
+                                    && (repeat - HOLD_REPEAT_COUNT) % SPEED_UP_REPEAT_COUNT == 0);
+            if (!speedUp) {
+                return false;
+            }
+            mSeekKeyHeld = true;
+            if (rewind) {
+                rewind();
+            } else {
+                fastForward();
+            }
+            return true;
+        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+            if (mSeekKeyHeld) {
+                mSeekKeyHeld = false;
+                play();
+            } else {
+                seekBy(rewind ? -SEEK_STEP_MS : SEEK_STEP_MS);
+            }
+        }
+        return false;
     }
 
     /**

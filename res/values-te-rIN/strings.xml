@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"మోనో"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"స్టీరియో"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"ప్లే నియంత్రణలు"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"ఛానెల్‌లు"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"టీవీ ఎంపికలు"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"ఈ ఛానెల్ యొక్క ప్లే నియంత్రణలు అందుబాటులో లేవు"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"ఛానెల్ సోర్స్‌లు"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"కొత్త ఛానెల్‌లు అందుబాటులో ఉన్నాయి"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"తల్లిదండ్రుల నియంత్రణలు"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"టైమ్‌షిఫ్ట్"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"ప్రత్యక్ష ప్రసార కార్యక్రమాలను చూస్తున్నప్పుడు రికార్డ్ కూడా చేయండి, ఇలా చేయడం ద్వారా మీరు కోరుకున్నప్పుడు వాటిని పాజ్ లేదా రివైండ్ చేయవచ్చు.\nహెచ్చరిక: ఇది నిల్వను అధికంగా ఉపయోగించడం ద్వారా అంతర్గత నిల్వ జీవితకాలాన్ని తగ్గించవచ్చు."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"ఓపెన్ సోర్స్ లైసెన్స్‌లు"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"అభిప్రాయాన్ని పంపు"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"సంస్కరణ"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"శీర్షిక లేదు"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"ఛానెల్ బ్లాక్ చేయబడింది"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"కొత్తవి"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"మూలాలు"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="other">%1$d ఛానెల్‌లు</item>

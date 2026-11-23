@@ -2,4 +2,6 @@
 <!-- LiveTV brand colors (placeholder). -->
 <resources>
     <color name="livetv_icon_background">#0D1B2A</color>
+    <!-- How much of a movie or an episode was watched, on its card. -->
+    <color name="livetv_vod_progress">#FFE53935</color>
 </resources>

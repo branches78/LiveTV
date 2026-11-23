@@ -118,7 +118,7 @@ public class SetupPassthroughActivity extends Activity {
             try {
                 ComponentName callingActivity = getCallingActivity();
                 if (callingActivity == null
-                        || !callingActivity.getPackageName().equals(CommonConstants.BASE_PACKAGE)) {
+                        || !callingActivity.getPackageName().equals(getPackageName())) {
                    String name =
                         callingActivity == null ? "null" : callingActivity.getPackageName();
                     Log.w(TAG,

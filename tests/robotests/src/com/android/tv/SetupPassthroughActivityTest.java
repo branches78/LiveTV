@@ -47,7 +47,6 @@ import com.android.tv.testing.FakeTvInputManager;
 import com.android.tv.testing.FakeTvInputManagerHelper;
 import com.android.tv.testing.TestSingletonApp;
 import com.android.tv.testing.constants.ConfigConstants;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 import com.android.tv.util.AsyncDbTask.DbExecutor;
 import com.android.tv.util.SetupUtils;
 import com.android.tv.util.TvInputManagerHelper;
@@ -448,10 +447,6 @@ public class SetupPassthroughActivityTest {
             myTestApp = test;
         }
 
-        @Provides
-        Optional<BuiltInTunerManager> providesBuiltInTunerManager() {
-            return Optional.absent();
-        }
 
         @Provides
         TvInputManagerHelper providesTvInputManagerHelper() {

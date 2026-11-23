@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Fonts incompatibles</string>
     <string name="livetv_setup_input_incompatible">Els seus canals no es poden veure a LiveTV</string>
     <string name="livetv_iptv_input_label">Llistes IPTV</string>
+    <string name="livetv_vod_row">Vídeo a la carta</string>
+    <string name="livetv_vod_movies">Pel·lícules</string>
+    <string name="livetv_vod_series">Sèries</string>
 </resources>

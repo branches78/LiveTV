@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Burime të papërputhshme</string>
     <string name="livetv_setup_input_incompatible">Kanalet e tij nuk mund të shfaqen në LiveTV</string>
     <string name="livetv_iptv_input_label">Lista IPTV</string>
+    <string name="livetv_vod_row">Video sipas kërkesës</string>
+    <string name="livetv_vod_movies">Filma</string>
+    <string name="livetv_vod_series">Seriale</string>
 </resources>

@@ -44,9 +44,11 @@ public class CommonFeatures {
      * <p>See <a href="https://goto.google.com/atv-dvr-onepager">go/atv-dvr-onepager</a>
      *
      * <p>DVR API is introduced in N, it only works when app runs as a system app.
+     *
+     * <p>LiveTV: enabled for the app too (it only uses public APIs). Recording is offered for the
+     * sources that can record: the IPTV lists only while a removable drive is plugged in.
      */
-    public static final TestableFeature DVR =
-            createTestableFeature(and(Sdk.AT_LEAST_N, SystemAppFeature.SYSTEM_APP_FEATURE));
+    public static final TestableFeature DVR = createTestableFeature(Sdk.AT_LEAST_N);
 
     /**
      * ENABLE_RECORDING_REGARDLESS_OF_STORAGE_STATUS

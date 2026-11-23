@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"모노"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"스테레오"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"재생 컨트롤"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"채널"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"TV 옵션"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"이 채널에서 재생 컨트롤을 사용할 수 없습니다."</string>
@@ -131,8 +131,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"채널 소스"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"새 채널 사용 가능"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"자녀 보호 기능"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"타임시프트"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"생방송 프로그램을 일시중지하거나 되감을 수 있도록 시청하면서 녹화해 보세요.\n경고: 이 기능을 사용하면 저장소가 많이 사용되므로 내부 저장소 수명이 줄어들 수도 있습니다."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"오픈소스 라이선스"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"의견 보내기"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"버전"</string>
@@ -156,7 +154,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"제목 없음"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"차단된 채널"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"새 소스"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"소스"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="other">채널 %1$d개</item>

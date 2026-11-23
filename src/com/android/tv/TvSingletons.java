@@ -33,7 +33,6 @@ import com.android.tv.dvr.DvrScheduleManager;
 import com.android.tv.dvr.DvrWatchedPositionManager;
 import com.android.tv.dvr.recorder.RecordingScheduler;
 import com.android.tv.perf.PerformanceMonitor;
-import com.android.tv.tunerinputcontroller.HasBuiltInTunerManager;
 import com.android.tv.util.SetupUtils;
 import com.android.tv.util.TvInputManagerHelper;
 
@@ -44,7 +43,7 @@ import com.android.tv.common.flags.BackendKnobsFlags;
 import java.util.concurrent.Executor;
 
 /** Interface with getters for application scoped singletons. */
-public interface TvSingletons extends BaseSingletons, HasBuiltInTunerManager, HasUiFlags {
+public interface TvSingletons extends BaseSingletons, HasUiFlags {
 
     /*
      * Do not add any new methods here.

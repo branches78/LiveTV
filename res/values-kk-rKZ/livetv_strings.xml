@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Үйлесімсіз көздер</string>
     <string name="livetv_setup_input_incompatible">Оның арналарын LiveTV-де көрсету мүмкін емес</string>
     <string name="livetv_iptv_input_label">IPTV тізімдері</string>
+    <string name="livetv_vod_row">Сұраныс бойынша бейне</string>
+    <string name="livetv_vod_movies">Фильмдер</string>
+    <string name="livetv_vod_series">Сериалдар</string>
 </resources>

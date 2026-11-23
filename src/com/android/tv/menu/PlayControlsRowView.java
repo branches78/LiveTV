@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -198,9 +199,10 @@ public class PlayControlsRowView extends MenuRowView {
                 R.string.play_controls_description_fast_rewind,
                 null,
                 () -> {
+                    // LiveTV: a click (touch) jumps back; OK is handled by initializeSeekKeys.
                     if (mTimeShiftManager.isAvailable()) {
-                        mTimeShiftManager.rewind();
-                        updateButtons();
+                        mTimeShiftManager.seekBy(-TimeShiftManager.SEEK_STEP_MS);
+                        updateControls(true);
                     }
                 });
         initializeButton(
@@ -221,10 +223,12 @@ public class PlayControlsRowView extends MenuRowView {
                 null,
                 () -> {
                     if (mTimeShiftManager.isAvailable()) {
-                        mTimeShiftManager.fastForward();
-                        updateButtons();
+                        mTimeShiftManager.seekBy(TimeShiftManager.SEEK_STEP_MS);
+                        updateControls(true);
                     }
                 });
+        initializeSeekKeys(mRewindButton, true);
+        initializeSeekKeys(mFastForwardButton, false);
         initializeButton(
                 mJumpNextButton,
                 R.drawable.lb_ic_skip_next,
@@ -299,6 +303,27 @@ public class PlayControlsRowView extends MenuRowView {
                         }
                     });
         }
+    }
+
+    /**
+     * LiveTV: OK on rewind or fast forward works like the Video on Demand player: a press jumps
+     * ten seconds, holding it rewinds or fast forwards (faster the longer) until released.
+     */
+    private void initializeSeekKeys(PlayControlsButton button, boolean rewind) {
+        button.findViewById(R.id.button)
+                .setOnKeyListener(
+                        (v, keyCode, event) -> {
+                            if (keyCode != KeyEvent.KEYCODE_DPAD_CENTER
+                                    && keyCode != KeyEvent.KEYCODE_ENTER
+                                    && keyCode != KeyEvent.KEYCODE_NUMPAD_ENTER) {
+                                return false;
+                            }
+                            if (mTimeShiftManager != null && mTimeShiftManager.isAvailable()) {
+                                mTimeShiftManager.onSeekKey(event, rewind);
+                                updateControls(true);
+                            }
+                            return true;
+                        });
     }
 
     private void initializeButton(

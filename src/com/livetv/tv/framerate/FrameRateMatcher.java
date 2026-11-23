@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.display.DisplayManager;
 import android.media.MediaFormat;
+import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -33,6 +34,7 @@ import androidx.media3.common.Format;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.video.VideoFrameMetadataListener;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -159,7 +161,7 @@ public final class FrameRateMatcher implements VideoFrameMetadataListener {
      * changing channels does not switch the output twice. {@code listener} may be called before
      * this method returns.
      *
-     * @param streamKey identifies the channel, to remember its frame rate.
+     * @param streamKey identifies the channel, to remember its frame rate; null to not remember it.
      */
     public void startStream(String streamKey, Listener listener) {
         mMainHandler.removeCallbacksAndMessages(null);
@@ -171,7 +173,8 @@ public final class FrameRateMatcher implements VideoFrameMetadataListener {
         mOutputReady = false;
 
         // Older builds could save a rate that is not a standard one; ignore those.
-        float knownFrameRate = snapToStandardRate(mFrameRates.getFloat(streamKey, 0));
+        float knownFrameRate =
+                streamKey == null ? 0 : snapToStandardRate(mFrameRates.getFloat(streamKey, 0));
         mContentFrameRate = knownFrameRate;
         if (FrameRateSettings.getMode(mContext) != FrameRateSettings.MODE_AUTO) {
             // Seamless switches (or none) never blank the screen: no need to hold the video.
@@ -195,9 +198,18 @@ public final class FrameRateMatcher implements VideoFrameMetadataListener {
                 context.getSharedPreferences(PREFS_FRAME_RATES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = null;
         for (String key : frameRates.getAll().keySet()) {
+            // LiveTV: only the channels' rates. The movies and series ("vod:...") and the
+            // recordings are kept: they are not channels, and used to be forgotten at every start.
+            Uri uri = Uri.parse(key);
+            List<String> segments = uri.getPathSegments();
+            if (!TvContract.AUTHORITY.equals(uri.getAuthority())
+                    || segments.size() != 2
+                    || !"channel".equals(segments.get(0))) {
+                continue;
+            }
             boolean exists;
             try {
-                exists = channelIds.contains(ContentUris.parseId(Uri.parse(key)));
+                exists = channelIds.contains(ContentUris.parseId(uri));
             } catch (RuntimeException e) {
                 exists = false;
             }
@@ -217,13 +229,24 @@ public final class FrameRateMatcher implements VideoFrameMetadataListener {
     public void reset() {
         mMainHandler.removeCallbacksAndMessages(null);
         stopWaitingForDisplay();
-        if (sActive == this) {
+        boolean active = sActive == this;
+        if (active) {
             sActive = null;
         }
         mListener = null;
         mOutputReady = true;
         mContentFrameRate = 0;
-        apply(0);
+        if (active) {
+            apply(0);
+        } else {
+            // Another player started since (e.g. Video on Demand over the live channel): the
+            // display mode is its own now, only this surface's rate is cleared.
+            if (mAppliedFrameRate > 0) {
+                setSurfaceFrameRate(0, FrameRateSettings.MODE_AUTO);
+            }
+            mAppliedFrameRate = 0;
+            mDetectionResetPending = true;
+        }
     }
 
     /**

@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Mga hindi compatible na source</string>
     <string name="livetv_setup_input_incompatible">Hindi maipapakita sa LiveTV ang mga channel nito</string>
     <string name="livetv_iptv_input_label">Mga listahan ng IPTV</string>
+    <string name="livetv_vod_row">Video on Demand</string>
+    <string name="livetv_vod_movies">Mga Pelikula</string>
+    <string name="livetv_vod_series">Mga Serye</string>
 </resources>

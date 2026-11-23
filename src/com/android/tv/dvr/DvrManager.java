@@ -39,6 +39,7 @@ import android.util.Log;
 import android.util.Range;
 
 import com.android.tv.TvSingletons;
+import com.android.tv.common.CommonConstants;
 import com.android.tv.common.SoftPreconditions;
 import com.android.tv.common.feature.CommonFeatures;
 import com.android.tv.common.util.CommonUtils;
@@ -866,9 +867,21 @@ public class DvrManager {
         }
     }
 
+    /**
+     * Whether the recording was made by this app, so its file can be deleted without the storage
+     * permission.
+     *
+     * <p>LiveTV: also the recordings of its IPTV lists, which are in the app's own folder on the
+     * drive. Android 11 and later never grant the storage permission to the app, so without this
+     * deleting them would ask for it and keep the file.
+     */
     @AnyThread
     public static boolean isFromBundledInput(RecordedProgram mRecordedProgram) {
-        return CommonUtils.isInBundledPackageSet(mRecordedProgram.getPackageName());
+        String packageName = mRecordedProgram.getPackageName();
+        return CommonUtils.isInBundledPackageSet(packageName)
+                || CommonConstants.BASE_PACKAGE.equals(packageName)
+                // LiveTV: the debug build, com.livetv.tv.debug.
+                || packageName.startsWith(CommonConstants.BASE_PACKAGE + ".");
     }
 
     @AnyThread

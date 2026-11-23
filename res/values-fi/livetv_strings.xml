@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Yhteensopimattomat lähteet</string>
     <string name="livetv_setup_input_incompatible">Sen kanavia ei voi näyttää LiveTV:ssä</string>
     <string name="livetv_iptv_input_label">IPTV-listat</string>
+    <string name="livetv_vod_row">Tilausvideo</string>
+    <string name="livetv_vod_movies">Elokuvat</string>
+    <string name="livetv_vod_series">Sarjat</string>
 </resources>

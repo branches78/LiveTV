@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Surse incompatibile</string>
     <string name="livetv_setup_input_incompatible">Canalele sale nu pot fi afișate în LiveTV</string>
     <string name="livetv_iptv_input_label">Liste IPTV</string>
+    <string name="livetv_vod_row">Video la cerere</string>
+    <string name="livetv_vod_movies">Filme</string>
+    <string name="livetv_vod_series">Seriale</string>
 </resources>

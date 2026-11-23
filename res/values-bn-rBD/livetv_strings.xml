@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">অসামঞ্জস্যপূর্ণ উৎস</string>
     <string name="livetv_setup_input_incompatible">এর চ্যানেলগুলি LiveTV-তে দেখানো যাবে না</string>
     <string name="livetv_iptv_input_label">IPTV তালিকা</string>
+    <string name="livetv_vod_row">ভিডিও অন ডিমান্ড</string>
+    <string name="livetv_vod_movies">মুভি</string>
+    <string name="livetv_vod_series">সিরিজ</string>
 </resources>

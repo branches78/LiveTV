@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"මොනෝ"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"ස්ටීරියෝ"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"ධාවක පාලන"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"නාලිකා"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"රූපවාහිනී විකල්ප"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"මෙම නාලිකාව සඳහා Play පාලන ලද නොහැකිය"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"නාලිකා මූලාශ්‍ර"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"නව නාලිකා තිබේ"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"මාපිය පාලන"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"Timeshift"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"ඔබට වැඩසටහන් විරාම කිරීමට හෝ ප්‍රතිවාදනය කිරීමට හැකි වන ලෙස නරඹන අතරතුර පටිගත කරන්න.\nඅවවාදයයි: මෙය අභ්‍යන්තර ගබඩාවෙහි ආයු කාලය ගබඩාව දැඩි ලෙස භාවිත කිරීමෙන් අඩු කළ හැකිය."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"විවෘත මූලාශ්‍ර බලපත්‍ර"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"ප්‍රතිපෝෂණය යවන්න"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"අනුවාදය"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"මාතෘකාවක් නොමැත"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"නාලිකාව අවහිර කරන ලදි"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"නව"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"මූලාශ්‍ර"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="one">නාලිකා %1$d</item>

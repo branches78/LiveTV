@@ -109,7 +109,8 @@ public final class IptvGuide {
                     try {
                         updateNow(appContext, playlistId, false);
                     } catch (RuntimeException e) {
-                        Log.w(TAG, "Cannot update the guide", e);
+                        // Not logged with its message: it can hold the URL of the list, with its password.
+                        Log.w(TAG, "Cannot update the guide: " + e.getClass().getSimpleName());
                     }
                     if (onDone != null) {
                         MAIN_HANDLER.post(onDone);
@@ -128,7 +129,8 @@ public final class IptvGuide {
                     try {
                         updateNow(appContext, playlistId, true);
                     } catch (RuntimeException e) {
-                        Log.w(TAG, "Cannot apply the guide again", e);
+                        // Not logged with its message: it can hold the URL of the list, with its password.
+                        Log.w(TAG, "Cannot apply the guide again: " + e.getClass().getSimpleName());
                     }
                     if (onDone != null) {
                         MAIN_HANDLER.post(onDone);
@@ -185,7 +187,8 @@ public final class IptvGuide {
                         }
                         deleteUnusedCache(appContext);
                     } catch (RuntimeException e) {
-                        Log.w(TAG, "Cannot update the guides", e);
+                        // Not logged with its message: it can hold the URL of the list, with its password.
+                        Log.w(TAG, "Cannot update the guides: " + e.getClass().getSimpleName());
                     }
                 });
     }
@@ -203,6 +206,11 @@ public final class IptvGuide {
         final Map<String, List<Long>> byName = new HashMap<>();
         /** By {@link #looseName}: the last resort. */
         final Map<String, List<Long>> byLooseName = new HashMap<>();
+        /**
+         * Channel id -> the genre its name suggests ("ESPN": sports), for the programs of guides
+         * without categories.
+         */
+        final Map<Long, String> genres = new HashMap<>();
     }
 
     /** Programs found in the guides for the list's channels. */
@@ -386,8 +394,9 @@ public final class IptvGuide {
                 readGuide(cache, url, true, channels, collected, now - PAST_MS, now + FUTURE_MS);
                 read = true;
             } catch (IOException | XmlPullParserException | RuntimeException e) {
-                // The URL is not logged: it can hold a password.
-                Log.w(TAG, "Cannot read a guide of list " + playlistId + ": " + e);
+                // Not logged with its message: it can hold the URL, with a password.
+                Log.w(TAG, "Cannot read a guide of list " + playlistId + ": "
+                        + e.getClass().getSimpleName());
             }
         }
         // Guides of other lists, only for the channels assigned to them by hand. Their own list
@@ -404,7 +413,9 @@ public final class IptvGuide {
                 }
                 readGuide(cache, url, false, channels, collected, now - PAST_MS, now + FUTURE_MS);
             } catch (IOException | XmlPullParserException | RuntimeException e) {
-                Log.w(TAG, "Cannot read another list's guide for list " + playlistId + ": " + e);
+                // Not logged with its message: it can hold the URL, with a password.
+                Log.w(TAG, "Cannot read another list's guide for list " + playlistId + ": "
+                        + e.getClass().getSimpleName());
             }
         }
         if (!read && !playlist.guideUrls.trim().isEmpty()) {
@@ -516,6 +527,10 @@ public final class IptvGuide {
                 }
                 long id = cursor.getLong(0);
                 channels.ids.add(id);
+                String genre = getChannelGenre(cursor.getString(1));
+                if (genre != null) {
+                    channels.genres.put(id, genre);
+                }
                 if (!cursor.isNull(3)) {
                     String key =
                             IptvGuideAssignments.channelKey(
@@ -813,6 +828,10 @@ public final class IptvGuide {
                 values.put(
                         Programs.COLUMN_CANONICAL_GENRE,
                         Genres.encode(genres.toArray(new String[0])));
+            } else if (channels.genres.containsKey(channelId)) {
+                // A guide without categories (e.g. epgshare01's Colombia): the genre of the
+                // channel, so the guide's genres still list it.
+                values.put(Programs.COLUMN_CANONICAL_GENRE, channels.genres.get(channelId));
             }
             collected.programs.add(values);
             collected.channelsWithPrograms.add(channelId);
@@ -832,28 +851,160 @@ public final class IptvGuide {
      * Replaces the programs of the list's channels. The TV provider only lets this app delete
      * programs channel by channel, without a selection.
      */
+    /** The columns of a program that can change from one update of the guide to the next. */
+    private static final String[] PROGRAM_INFO_COLUMNS = {
+        Programs.COLUMN_TITLE,
+        Programs.COLUMN_EPISODE_TITLE,
+        Programs.COLUMN_SHORT_DESCRIPTION,
+        Programs.COLUMN_POSTER_ART_URI,
+        Programs.COLUMN_CANONICAL_GENRE,
+        Programs.COLUMN_END_TIME_UTC_MILLIS
+    };
+
+    /** A program already in the TV provider. */
+    private static final class StoredProgram {
+        final long id;
+        /**
+         * A summary of {@link #PROGRAM_INFO_COLUMNS} ({@link #infoHash}), to see whether the
+         * program changed without keeping every description in memory.
+         */
+        final int infoHash;
+        boolean kept;
+
+        StoredProgram(long id, int infoHash) {
+            this.id = id;
+            this.infoHash = infoHash;
+        }
+    }
+
+    /** Summarizes the values of {@link #PROGRAM_INFO_COLUMNS}; empty and missing are the same. */
+    private static int infoHash(String[] values) {
+        StringBuilder builder = new StringBuilder();
+        for (String value : values) {
+            builder.append(value == null ? "" : value).append('\u0001');
+        }
+        return builder.toString().hashCode();
+    }
+
+    /**
+     * Replaces the programs of the list's channels with {@code programs}.
+     *
+     * <p>LiveTV: a program still in the guide (same channel and start) keeps its row, updated if
+     * it changed, instead of being deleted and inserted again. The recordings scheduled in Live
+     * Channels point to their program by its ID: a new ID removes the schedule, so every update
+     * of the guide used to cancel the recordings scheduled, even one in progress.
+     */
     private static void storePrograms(
             Context context, List<Long> channelIds, List<ContentValues> programs)
             throws Exception {
         ContentResolver resolver = context.getContentResolver();
-        ArrayList<ContentProviderOperation> deletes = new ArrayList<>();
-        for (long channelId : channelIds) {
-            deletes.add(
-                    ContentProviderOperation.newDelete(
-                                    TvContract.buildProgramsUriForChannel(channelId))
-                            .build());
-            if (deletes.size() == BATCH_SIZE) {
-                resolver.applyBatch(TvContract.AUTHORITY, deletes);
-                deletes.clear();
+        Set<Long> listChannels = new HashSet<>(channelIds);
+        // Channel and start -> the program stored there.
+        Map<String, StoredProgram> stored = new HashMap<>();
+        String[] projection = new String[PROGRAM_INFO_COLUMNS.length + 3];
+        projection[0] = Programs._ID;
+        projection[1] = Programs.COLUMN_CHANNEL_ID;
+        projection[2] = Programs.COLUMN_START_TIME_UTC_MILLIS;
+        System.arraycopy(PROGRAM_INFO_COLUMNS, 0, projection, 3, PROGRAM_INFO_COLUMNS.length);
+        // Programs of other apps and lists can be read too: only the list's channels count.
+        try (Cursor cursor =
+                resolver.query(Programs.CONTENT_URI, projection, null, null, null)) {
+            while (cursor != null && cursor.moveToNext()) {
+                long channelId = cursor.getLong(1);
+                if (!listChannels.contains(channelId)) {
+                    continue;
+                }
+                String[] info = new String[PROGRAM_INFO_COLUMNS.length];
+                for (int i = 0; i < info.length; i++) {
+                    info[i] = cursor.getString(i + 3);
+                }
+                StoredProgram program = new StoredProgram(cursor.getLong(0), infoHash(info));
+                StoredProgram previous =
+                        stored.put(programKey(channelId, cursor.getLong(2)), program);
+                if (previous != null) {
+                    // Two programs at the same time: the extra one goes with the old ones.
+                    stored.put("duplicate:" + previous.id, previous);
+                }
             }
         }
-        if (!deletes.isEmpty()) {
-            resolver.applyBatch(TvContract.AUTHORITY, deletes);
+
+        ArrayList<ContentProviderOperation> updates = new ArrayList<>();
+        List<ContentValues> inserts = new ArrayList<>();
+        for (ContentValues values : programs) {
+            StoredProgram program =
+                    stored.get(
+                            programKey(
+                                    values.getAsLong(Programs.COLUMN_CHANNEL_ID),
+                                    values.getAsLong(Programs.COLUMN_START_TIME_UTC_MILLIS)));
+            if (program == null || program.kept) {
+                inserts.add(values);
+                continue;
+            }
+            program.kept = true;
+            String[] info = new String[PROGRAM_INFO_COLUMNS.length];
+            ContentValues update = new ContentValues();
+            for (int i = 0; i < PROGRAM_INFO_COLUMNS.length; i++) {
+                String column = PROGRAM_INFO_COLUMNS[i];
+                Object value = values.get(column);
+                info[i] = value == null ? null : value.toString();
+                // A value gone from the guide (e.g. no description now) is cleared.
+                if (value == null) {
+                    update.putNull(column);
+                } else if (value instanceof Long) {
+                    update.put(column, (Long) value);
+                } else {
+                    update.put(column, value.toString());
+                }
+            }
+            if (infoHash(info) != program.infoHash) {
+                updates.add(
+                        ContentProviderOperation.newUpdate(TvContract.buildProgramUri(program.id))
+                                .withValues(update)
+                                .build());
+            }
         }
-        for (int start = 0; start < programs.size(); start += BATCH_SIZE) {
+
+        ArrayList<ContentProviderOperation> deletes = new ArrayList<>();
+        for (StoredProgram program : stored.values()) {
+            if (!program.kept) {
+                deletes.add(
+                        ContentProviderOperation.newDelete(TvContract.buildProgramUri(program.id))
+                                .build());
+            }
+        }
+        applyInBatches(resolver, deletes);
+        applyInBatches(resolver, updates);
+        for (int start = 0; start < inserts.size(); start += BATCH_SIZE) {
             List<ContentValues> batch =
-                    programs.subList(start, Math.min(start + BATCH_SIZE, programs.size()));
+                    inserts.subList(start, Math.min(start + BATCH_SIZE, inserts.size()));
             resolver.bulkInsert(Programs.CONTENT_URI, batch.toArray(new ContentValues[0]));
+        }
+        Log.i(
+                TAG,
+                "Programs: "
+                        + (stored.size() - deletes.size())
+                        + " kept ("
+                        + updates.size()
+                        + " changed), "
+                        + deletes.size()
+                        + " deleted, "
+                        + inserts.size()
+                        + " added");
+    }
+
+    private static String programKey(long channelId, long startMs) {
+        return channelId + ":" + startMs;
+    }
+
+    private static void applyInBatches(
+            ContentResolver resolver, ArrayList<ContentProviderOperation> operations)
+            throws Exception {
+        for (int start = 0; start < operations.size(); start += BATCH_SIZE) {
+            resolver.applyBatch(
+                    TvContract.AUTHORITY,
+                    new ArrayList<>(
+                            operations.subList(
+                                    start, Math.min(start + BATCH_SIZE, operations.size()))));
         }
     }
 
@@ -936,6 +1087,83 @@ public final class IptvGuide {
         text = text.replaceAll("^[a-z]{2,3}\\s*[-:|]\\s+", "");
         text = text.replaceAll("[(\\[][^)\\]]*[)\\]]", " ");
         return text.replaceAll("\\b(hd|sd|fhd|uhd|4k|1080p|720p|480p)\\b", " ");
+    }
+
+    /**
+     * Words of channel names and the genre they suggest, checked in order: "Discovery Kids" is a
+     * kids channel before "Discovery" is a documentary one, and "TNT Sports" a sports channel
+     * before "TNT" is a movie one. General channels get none.
+     */
+    private static final Object[][] CHANNEL_GENRES = {
+        {Genres.SPORTS, new String[] {
+            "espn", "fox sports", "foxsports", "win sports", "winsports", "win+", "tyc",
+            "tnt sports", "directv sports", "dsports", "claro sports", "bein", "sky sports",
+            "gol", "golf", "nba", "nfl", "mlb", "f1", "deporte", "deportes", "futbol", "tudn",
+            "sport", "sports", "eurosport", "fight", "ufc", "wwe", "win"}},
+        {Genres.NEWS, new String[] {
+            "cnn", "ntn24", "noticias", "noticia", "news", "cable noticias", "rt", "dw",
+            "france 24", "bbc world", "euronews", "telesur", "bloomberg", "cnbc", "cm&",
+            "a24", "tn", "c5n", "24 horas", "24h", "nmas", "milenio"}},
+        {Genres.FAMILY_KIDS, new String[] {
+            "cartoon", "cartoonito", "disney", "nick", "nickelodeon", "nick jr", "kids",
+            "baby", "babyfirst", "baby first", "baby tv", "boomerang", "junior", "jr",
+            "infantil", "pakapaka", "tooncast", "zoomoo", "clan", "dreamworks", "discovery kids",
+            "nat geo kids", "mundo ninos", "ninos", "toon"}},
+        {Genres.ANIMAL_WILDLIFE, new String[] {
+            "animal planet", "nat geo wild", "natgeo wild", "wild", "love nature"}},
+        {Genres.TECH_SCIENCE, new String[] {"discovery science", "science", "ciencia"}},
+        {Genres.TRAVEL, new String[] {"travel", "viajes", "discovery turbo"}},
+        {Genres.LIFE_STYLE, new String[] {
+            "food network", "gourmet", "el gourmet", "home & health", "home and health", "hgtv",
+            "tlc", "discovery home", "home", "cocina", "lifetime", "e! entertainment"}},
+        {Genres.EDUCATION, new String[] {
+            "discovery", "history", "h2", "nat geo", "natgeo", "national geographic",
+            "curiosity", "investigation", "id", "docu", "documental", "smithsonian",
+            "encuentro", "educa"}},
+        {Genres.MUSIC, new String[] {
+            "mtv", "htv", "vh1", "music", "musica", "telehit", "ritmo", "concert", "concerts",
+            "stingray"}},
+        {Genres.SHOPPING, new String[] {"shop", "shopping", "televentas", "qvc", "hsn"}},
+        {Genres.COMEDY, new String[] {"comedy", "comedy central", "adult swim"}},
+        {Genres.DRAMA, new String[] {
+            "tlnovelas", "novelas", "novela", "pasiones", "telenovela", "telenovelas", "drama"}},
+        {Genres.GAMING, new String[] {"esports", "gaming", "viax", "via x"}},
+        {Genres.ARTS, new String[] {"film&arts", "film & arts", "arte", "arts", "cultura"}},
+        {Genres.MOVIES, new String[] {
+            "hbo", "cinemax", "cinecanal", "cinema", "cine", "cinelatino", "tnt", "star channel",
+            "amc", "space", "golden", "studio universal", "paramount", "sony movies", "tcm",
+            "film", "films", "movie", "movies", "pelicula", "peliculas", "de pelicula", "max",
+            "multipremier", "fox movies", "europa europa", "isat", "edge"}},
+        {Genres.ENTERTAINMENT, new String[] {
+            "axn", "warner", "sony", "universal", "fx", "a&e", "a & e", "tbs", "e!", "studio",
+            "series", "bravo", "lifetime", "telemundo", "univision", "unimas", "galavision",
+            "telefe", "las estrellas", "distrito comedia", "glitz", "reality", "entertainment",
+            "ae mundo", "usa"}},
+    };
+
+    /** The genre the name of a channel suggests, or null for a general channel. */
+    @Nullable
+    static String getChannelGenre(@Nullable String name) {
+        if (name == null) {
+            return null;
+        }
+        // Words separated by single spaces, so a word matches whole ("rt", not "sport").
+        String text =
+                " "
+                        + Normalizer.normalize(name, Normalizer.Form.NFD)
+                                .replaceAll("\\p{M}", "")
+                                .toLowerCase(Locale.ROOT)
+                                .replaceAll("[^a-z0-9&!+]+", " ")
+                                .trim()
+                        + " ";
+        for (Object[] entry : CHANNEL_GENRES) {
+            for (String word : (String[]) entry[1]) {
+                if (text.contains(" " + word + " ")) {
+                    return (String) entry[0];
+                }
+            }
+        }
+        return null;
     }
 
     /** Maps an XMLTV category (Spanish or English) to a canonical genre, or null. */

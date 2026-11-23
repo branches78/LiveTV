@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">منابع ناسازگار</string>
     <string name="livetv_setup_input_incompatible">کانال‌های آن در LiveTV نمایش داده نمی‌شوند</string>
     <string name="livetv_iptv_input_label">فهرست‌های IPTV</string>
+    <string name="livetv_vod_row">ویدیوی درخواستی</string>
+    <string name="livetv_vod_movies">فیلم‌ها</string>
+    <string name="livetv_vod_series">سریال‌ها</string>
 </resources>

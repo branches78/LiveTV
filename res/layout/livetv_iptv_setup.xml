@@ -31,55 +31,28 @@
             android:textColor="#B3FFFFFF"
             android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/livetv_iptv_url"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:hint="@string/livetv_iptv_url_hint"
-            android:imeOptions="actionDone"
-            android:inputType="textUri"
-            android:singleLine="true"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#80FFFFFF" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:orientation="horizontal">
 
+            <!-- Opens the dialog for a list's address, with or without username and password. -->
             <Button
-                android:id="@+id/livetv_iptv_import"
-                style="@style/LiveTv.IptvButton"
+                android:id="@+id/livetv_iptv_login"
+                style="@style/LiveTv.IptvButton.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/livetv_iptv_import" />
 
             <Button
                 android:id="@+id/livetv_iptv_open_file"
-                style="@style/LiveTv.IptvButton"
+                style="@style/LiveTv.IptvButton.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="24dp"
                 android:text="@string/livetv_iptv_open_file" />
-
-            <Button
-                android:id="@+id/livetv_iptv_login"
-                style="@style/LiveTv.IptvButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/livetv_iptv_login" />
-
-            <Button
-                android:id="@+id/livetv_iptv_use_default"
-                style="@style/LiveTv.IptvButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/livetv_iptv_use_default" />
         </LinearLayout>
 
         <LinearLayout

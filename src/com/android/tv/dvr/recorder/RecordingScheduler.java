@@ -325,7 +325,15 @@ public class RecordingScheduler extends TvInputCallback implements ScheduledReco
             PendingIntent alarmIntent =
                     PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_IMMUTABLE);
             // This will cancel the previous alarm.
-            mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeAt, alarmIntent);
+            // LiveTV: not a system app, exact alarms need a permission (USE_EXACT_ALARM, granted
+            // on install); without it, an inexact alarm rather than a crash.
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+                    && !mAlarmManager.canScheduleExactAlarms()) {
+                mAlarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeAt, alarmIntent);
+            } else {
+                mAlarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP, wakeAt, alarmIntent);
+            }
         } else {
             if (DEBUG) Log.d(TAG, "No future recording, alarm not set");
         }

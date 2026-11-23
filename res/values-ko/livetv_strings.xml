@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">호환되지 않는 소스</string>
     <string name="livetv_setup_input_incompatible">이 앱의 채널은 LiveTV에 표시할 수 없습니다</string>
     <string name="livetv_iptv_input_label">IPTV 목록</string>
+    <string name="livetv_vod_row">주문형 비디오</string>
+    <string name="livetv_vod_movies">영화</string>
+    <string name="livetv_vod_series">시리즈</string>
 </resources>

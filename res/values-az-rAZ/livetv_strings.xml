@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Uyğun olmayan mənbələr</string>
     <string name="livetv_setup_input_incompatible">Kanalları LiveTV-də göstərilə bilməz</string>
     <string name="livetv_iptv_input_label">IPTV siyahıları</string>
+    <string name="livetv_vod_row">Tələb əsasında video</string>
+    <string name="livetv_vod_movies">Filmlər</string>
+    <string name="livetv_vod_series">Seriallar</string>
 </resources>

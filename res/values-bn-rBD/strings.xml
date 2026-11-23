@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"মোনো"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"স্টিরিও"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"খেলার নিয়ন্ত্রণগুলি"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"চ্যানেলগুলি"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"টিভি বিকল্পগুলি"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"এই চ্যানেলটির জন্য প্লে নিয়ন্ত্রণগুলি অনুপলব্ধ"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"চ্যানেলের উৎসগুলি"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"নতুন চ্যানেলগুলি উপলব্ধ"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"অভিভাবকীয় নিয়ন্ত্রণগুলি"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"টাইমশিফ্ট"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"দেখার সময় রেকর্ড করুন সুতারং আপনি লাইভ প্রোগ্রামগুলিকে বিরাম দিতে বা রিওয়াইন্ড করতে পারেন৷\nসতর্কতা: সঞ্চয়স্থানের বেশি পরিমাণে ব্যবহার করার ফলে অভ্যন্তরীণ সঞ্চয়স্থানের কর্মক্ষমতা হ্রাস করতে পারে৷"</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"মুক্ত উৎস লাইসেন্সগুলি"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"প্রতিক্রিয়া পাঠান"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"সংস্করণ"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"কোনো শিরোনাম নেই"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"চ্যানেল অবরুদ্ধ করা হয়েছে"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"নতুন"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"উৎসগুলি"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="one">%1$dটি চ্যানেল</item>

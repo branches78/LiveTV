@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Name under a Video on Demand card: brighter when the card is focused. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#FFFFFFFF" android:state_focused="true" />
+    <item android:color="#99EEEEEE" />
+</selector>

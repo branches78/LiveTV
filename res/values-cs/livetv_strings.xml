@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Nekompatibilní zdroje</string>
     <string name="livetv_setup_input_incompatible">Její kanály nelze v LiveTV zobrazit</string>
     <string name="livetv_iptv_input_label">Seznamy IPTV</string>
+    <string name="livetv_vod_row">Video na vyžádání</string>
+    <string name="livetv_vod_movies">Filmy</string>
+    <string name="livetv_vod_series">Seriály</string>
 </resources>

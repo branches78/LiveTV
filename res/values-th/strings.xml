@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"โมโน"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"สเตอริโอ"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"การควบคุมการเล่น"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"ช่อง"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"ตัวเลือกทีวี"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"ไม่มีการควบคุมการเล่นสำหรับช่องนี้"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"แหล่งที่มาของช่อง"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"มีช่องใหม่ให้บริการ"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"การควบคุมโดยผู้ปกครอง"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"ไทม์ชิฟท์"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"บันทึกขณะดูเพื่อให้สามารถหยุดชั่วคราวหรือกรอกลับรายการสดได้\nคำเตือน: การดำเนินการนี้อาจลดอายุการใช้งานของพื้นที่เก็บข้อมูลภายในเนื่องจากการใช้งานหนัก"</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"ใบอนุญาตโอเพนซอร์ส"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"ส่งความคิดเห็น"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"เวอร์ชัน"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"ไม่มีชื่อ"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"บล็อกช่องแล้ว"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"ใหม่"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"แหล่งที่มา"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="other">%1$d ช่อง</item>

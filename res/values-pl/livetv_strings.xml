@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Niezgodne źródła</string>
     <string name="livetv_setup_input_incompatible">Jej kanałów nie można wyświetlić w LiveTV</string>
     <string name="livetv_iptv_input_label">Listy IPTV</string>
+    <string name="livetv_vod_row">Wideo na żądanie</string>
+    <string name="livetv_vod_movies">Filmy</string>
+    <string name="livetv_vod_series">Seriale</string>
 </resources>

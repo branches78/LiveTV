@@ -77,8 +77,6 @@
     <integer name="pin_dialog_exit_offset_y">32</integer>
     <integer name="pin_number_scroll_duration">250</integer>
 
-    <!-- Trickplay Setting -->
-    <integer name="trickplay_description_max_lines">5</integer>
 
     <!-- Max recycle view pool size -->
     <integer name="max_recycled_view_pool_epg_table_item">50</integer>

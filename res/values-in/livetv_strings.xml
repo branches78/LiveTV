@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Sumber yang tidak kompatibel</string>
     <string name="livetv_setup_input_incompatible">Salurannya tidak dapat ditampilkan di LiveTV</string>
     <string name="livetv_iptv_input_label">Daftar IPTV</string>
+    <string name="livetv_vod_row">Video on Demand</string>
+    <string name="livetv_vod_movies">Film</string>
+    <string name="livetv_vod_series">Serial</string>
 </resources>

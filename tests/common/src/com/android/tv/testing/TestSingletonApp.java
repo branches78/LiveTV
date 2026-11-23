@@ -48,12 +48,10 @@ import com.android.tv.testing.dvr.DvrDataManagerInMemoryImpl;
 import com.android.tv.testing.fakes.FakeClock;
 import com.android.tv.testing.testdata.TestData;
 import com.android.tv.tuner.singletons.TunerSingletons;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 import com.android.tv.util.AsyncDbTask.DbExecutor;
 import com.android.tv.util.SetupUtils;
 import com.android.tv.util.TvInputManagerHelper;
 
-import com.google.common.base.Optional;
 
 import dagger.Lazy;
 
@@ -74,7 +72,6 @@ public class TestSingletonApp extends Application
     @DbExecutor public Executor dbExecutor = AsyncTask.SERIAL_EXECUTOR;
 
     private final Lazy<EpgReader> mEpgReaderProvider = () -> epgReader;
-    private final Optional<BuiltInTunerManager> mBuiltInTunerManagerOptional = Optional.absent();
 
     private final PerformanceMonitor mPerformanceMonitor = new StubPerformanceMonitor();
     private ChannelDataManager mChannelDataManager;
@@ -83,7 +80,7 @@ public class TestSingletonApp extends Application
     public void onCreate() {
         super.onCreate();
         tvInputManagerHelper = new FakeTvInputManagerHelper(this);
-        setupUtils = new SetupUtils(this, mBuiltInTunerManagerOptional);
+        setupUtils = new SetupUtils(this);
         tvInputManagerHelper.start();
         mChannelDataManager =
                 new ChannelDataManager(
@@ -174,10 +171,6 @@ public class TestSingletonApp extends Application
         return setupUtils;
     }
 
-    @Override
-    public Optional<BuiltInTunerManager> getBuiltInTunerManager() {
-        return mBuiltInTunerManagerOptional;
-    }
 
     @Override
     public MainActivityWrapper getMainActivityWrapper() {

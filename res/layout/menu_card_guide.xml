@@ -39,6 +39,8 @@
         android:paddingStart="@dimen/card_meta_padding_start"
         android:paddingEnd="@dimen/card_meta_padding_end"
         android:paddingTop="@dimen/card_meta_padding_top"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
         android:singleLine="true"
         android:ellipsize="end"
         android:fontFamily="@string/condensed_font"

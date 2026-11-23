@@ -33,6 +33,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -326,7 +327,15 @@ public class ProgramItemView extends TextView {
         }
         updateText(selectedGenreId, title);
         updateIcons();
-        updateContentDescription(title);
+        // LiveTV: the full description (channel, duration, episode...) is only read aloud by a
+        // screen reader. Building it for every program took ~10% of the time to open the guide.
+        AccessibilityManager accessibilityManager =
+                (AccessibilityManager) getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+        if (accessibilityManager != null && accessibilityManager.isEnabled()) {
+            updateContentDescription(title);
+        } else {
+            setContentDescription(title);
+        }
         measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         mTextWidth = getMeasuredWidth() - getPaddingStart() - getPaddingEnd();
         // Maximum width for us to use a ripple

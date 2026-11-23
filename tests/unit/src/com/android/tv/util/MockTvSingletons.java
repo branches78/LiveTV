@@ -41,9 +41,7 @@ import com.android.tv.dvr.DvrWatchedPositionManager;
 import com.android.tv.dvr.recorder.RecordingScheduler;
 import com.android.tv.perf.PerformanceMonitor;
 import com.android.tv.testing.fakes.FakeClock;
-import com.android.tv.tunerinputcontroller.BuiltInTunerManager;
 
-import com.google.common.base.Optional;
 
 import dagger.Lazy;
 
@@ -146,10 +144,6 @@ public class MockTvSingletons implements TvSingletons, HasSingletons<TvSingleton
         return mApp.getSetupUtils();
     }
 
-    @Override
-    public Optional<BuiltInTunerManager> getBuiltInTunerManager() {
-        return mApp.getBuiltInTunerManager();
-    }
 
     @Override
     public MainActivityWrapper getMainActivityWrapper() {

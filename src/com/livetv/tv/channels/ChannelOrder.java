@@ -138,6 +138,26 @@ public final class ChannelOrder {
                 .apply();
     }
 
+    /** The saved order of the "All" list, as channel IDs (for a backup). */
+    public static List<Long> getSavedOrder(Context context) {
+        return loadOrder(context);
+    }
+
+    /** Saves the order of the "All" list as channel IDs (a restored backup). */
+    public static void saveOrderIds(Context context, List<Long> channelIds) {
+        StringBuilder builder = new StringBuilder();
+        for (long id : channelIds) {
+            if (builder.length() > 0) {
+                builder.append(',');
+            }
+            builder.append(id);
+        }
+        context.getSharedPreferences(SHARED_PREF_CHANNEL_ORDER, Context.MODE_PRIVATE)
+                .edit()
+                .putString(PREF_KEY_ALL_ORDER, builder.toString())
+                .apply();
+    }
+
     /** Forgets the channels of the saved order that are not in {@code channelIds}. */
     public static void retainChannels(Context context, Set<Long> channelIds) {
         List<Long> order = loadOrder(context);

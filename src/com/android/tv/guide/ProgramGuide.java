@@ -39,6 +39,7 @@ import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityManager.AccessibilityStateChangeListener;
 
@@ -54,6 +55,7 @@ import com.android.tv.common.WeakHandler;
 import com.android.tv.common.util.DurationTimer;
 import com.android.tv.data.ChannelDataManager;
 import com.android.tv.data.GenreItems;
+import com.android.tv.data.api.Channel;
 import com.android.tv.data.ProgramDataManager;
 import com.android.tv.dvr.DvrDataManager;
 import com.android.tv.dvr.DvrScheduleManager;
@@ -94,6 +96,12 @@ public class ProgramGuide
             ProgramManager.FIRST_ENTRY_MIN_DURATION;
 
     private static final int MSG_PROGRAM_TABLE_FADE_IN_ANIM = 1000;
+    /** LiveTV: shows the channels of the genre the focus stopped on. */
+    private static final int MSG_APPLY_GENRE = 1001;
+    /** LiveTV: how long the focus stays on a genre before its channels are shown. */
+    private static final long GENRE_SETTLE_MS = 250;
+    /** LiveTV: time for the new rows to settle before they fade in. */
+    private static final long GENRE_FADE_IN_DELAY_MS = 100;
 
     private static final String SCREEN_NAME = "EPG";
 
@@ -142,6 +150,13 @@ public class ProgramGuide
     private boolean mShowGuidePartial;
     private final SharedPreferences mSharedPreference;
     private View mSelectedRow;
+
+    // LiveTV: the channel number typed with the remote, until it times out or the guide hides.
+    private static final long TYPED_NUMBER_TIMEOUT_MS = 2000;
+    private static final int MAX_TYPED_DIGITS = 6;
+    private final StringBuilder mTypedNumber = new StringBuilder();
+    private TextView mTypedNumberView;
+    private final Runnable mClearTypedNumber = this::clearTypedNumber;
     private Animator mDetailOutAnimator;
     private Animator mDetailInAnimator;
 
@@ -249,6 +264,7 @@ public class ProgramGuide
                 VerticalGridView.WINDOW_ALIGN_OFFSET_PERCENT_DISABLED);
 
         mTable = mContainer.findViewById(R.id.program_guide_table);
+        mTypedNumberView = mContainer.findViewById(R.id.livetv_guide_typed_number);
 
         mTimelineRow = (TimelineRow) mTable.findViewById(R.id.time_row);
         mTimeListAdapter = new TimeListAdapter(res);
@@ -445,20 +461,14 @@ public class ProgramGuide
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
 
-                        if (!isActive()) {
-                            return;
-                        }
-                        mProgramManager.resetChannelListWithGenre(mLastRequestedGenreId);
-                        resetTimelineScroll();
-                        if (!mHandler.hasMessages(MSG_PROGRAM_TABLE_FADE_IN_ANIM)) {
-                            mHandler.sendEmptyMessage(MSG_PROGRAM_TABLE_FADE_IN_ANIM);
-                        }
+                        // LiveTV: the channels change in applyGenreChange(), once the focus
+                        // stops on a genre.
                     }
                 });
         mProgramTableFadeInAnimator =
                 AnimatorInflater.loadAnimator(mActivity, R.animator.program_guide_table_fade_in);
         mProgramTableFadeInAnimator.setTarget(mTable);
-        mProgramTableFadeInAnimator.addListener(new HardwareLayerAnimatorListenerAdapter(mTable));
+        // LiveTV: no hardware layer, so the rows are drawn as they are while fading in.
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(mActivity);
         mAccessibilityManager =
                 (AccessibilityManager) mActivity.getSystemService(Context.ACCESSIBILITY_SERVICE);
@@ -598,6 +608,7 @@ public class ProgramGuide
         }
         mTracker.sendHideEpg(mVisibleDuration.reset());
         cancelHide();
+        clearTypedNumber();
         mProgramManager.programGuideVisibilityChanged(false);
         mProgramManager.removeListener(mProgramManagerListener);
         mActive = false;
@@ -615,6 +626,7 @@ public class ProgramGuide
             mProgramTableFadeInAnimator.cancel();
         }
         mHandler.removeMessages(MSG_PROGRAM_TABLE_FADE_IN_ANIM);
+        mHandler.removeMessages(MSG_APPLY_GENRE);
         mTable.setAlpha(1.0f);
 
         mTimelineAnimation = false;
@@ -637,6 +649,59 @@ public class ProgramGuide
     /** Process the {@code KEYCODE_BACK} key event. */
     public void onBackPressed() {
         hide();
+    }
+
+    /**
+     * LiveTV: a number key of the remote. The digits typed so far go to the row of the channel
+     * with that number or, if none has it, to the first one whose number starts with them, as in
+     * the multiview.
+     */
+    public void onNumberKey(int digit) {
+        if (!isActive()) {
+            return;
+        }
+        mContainer.removeCallbacks(mClearTypedNumber);
+        if (mTypedNumber.length() >= MAX_TYPED_DIGITS) {
+            mTypedNumber.setLength(0);
+        }
+        mTypedNumber.append(digit);
+        String typed = mTypedNumber.toString();
+        mTypedNumberView.setText(mActivity.getString(R.string.livetv_guide_typed_number, typed));
+        mTypedNumberView.setVisibility(View.VISIBLE);
+        mContainer.postDelayed(mClearTypedNumber, TYPED_NUMBER_TIMEOUT_MS);
+
+        // Display numbers are compared as text: "5" and "05" are different channels.
+        int match = -1;
+        for (int i = 0, n = mProgramManager.getChannelCount(); i < n; i++) {
+            Channel channel = mProgramManager.getChannel(i);
+            String number = channel == null ? null : channel.getDisplayNumber();
+            if (number == null) {
+                continue;
+            }
+            if (number.equals(typed)) {
+                match = i;
+                break;
+            }
+            if (match < 0 && number.startsWith(typed)) {
+                match = i;
+            }
+        }
+        if (match < 0) {
+            return;
+        }
+        if (!mGrid.hasFocus()) {
+            // From the genres: back to the table.
+            mGrid.requestFocus();
+        }
+        mGrid.setSelectedPosition(match);
+    }
+
+    private void clearTypedNumber() {
+        mContainer.removeCallbacks(mClearTypedNumber);
+        mTypedNumber.setLength(0);
+        if (mTypedNumberView != null) {
+            mTypedNumberView.setVisibility(View.GONE);
+        }
     }
 
     /** Returns {@code true} if the program guide should process the input events. */
@@ -676,26 +741,33 @@ public class ProgramGuide
             return;
         }
         mLastRequestedGenreId = genreId;
-        if (mProgramTableFadeOutAnimator.isStarted()) {
-            // When requestGenreChange is called repeatedly in short time, we keep the fade-out
-            // state for mTableFadeAnimDuration from now. Without it, we'll see blinks.
-            mHandler.removeMessages(MSG_PROGRAM_TABLE_FADE_IN_ANIM);
-            mHandler.sendEmptyMessageDelayed(
-                    MSG_PROGRAM_TABLE_FADE_IN_ANIM, mTableFadeAnimDuration);
-            return;
-        }
-        if (mHandler.hasMessages(MSG_PROGRAM_TABLE_FADE_IN_ANIM)) {
-            mProgramManager.resetChannelListWithGenre(mLastRequestedGenreId);
-            mHandler.removeMessages(MSG_PROGRAM_TABLE_FADE_IN_ANIM);
-            mHandler.sendEmptyMessageDelayed(
-                    MSG_PROGRAM_TABLE_FADE_IN_ANIM, mTableFadeAnimDuration);
-            return;
-        }
+        // LiveTV: like the categories of the movies, the channels fade out and change only when
+        // the focus stops on a genre, then fade in once the new rows are in place. Moving quickly
+        // through the genres keeps them faded instead of rebuilding the rows for each one.
+        mHandler.removeMessages(MSG_PROGRAM_TABLE_FADE_IN_ANIM);
+        mHandler.removeMessages(MSG_APPLY_GENRE);
         if (mProgramTableFadeInAnimator.isStarted()) {
             mProgramTableFadeInAnimator.cancel();
         }
+        if (!mProgramTableFadeOutAnimator.isStarted() && mTable.getAlpha() > 0) {
+            mProgramTableFadeOutAnimator.start();
+        }
+        mHandler.sendEmptyMessageDelayed(
+                MSG_APPLY_GENRE, Math.max(GENRE_SETTLE_MS, mTableFadeAnimDuration));
+    }
 
-        mProgramTableFadeOutAnimator.start();
+    /** LiveTV: shows the channels of the genre the focus stopped on, then fades them in. */
+    private void applyGenreChange() {
+        if (!isActive()) {
+            return;
+        }
+        if (mProgramTableFadeOutAnimator.isRunning()) {
+            mHandler.sendEmptyMessageDelayed(MSG_APPLY_GENRE, GENRE_SETTLE_MS / 2);
+            return;
+        }
+        mProgramManager.resetChannelListWithGenre(mLastRequestedGenreId);
+        resetTimelineScroll();
+        mHandler.sendEmptyMessageDelayed(MSG_PROGRAM_TABLE_FADE_IN_ANIM, GENRE_FADE_IN_DELAY_MS);
     }
 
     /** Returns the scroll offset of the time line row in pixels. */
@@ -1064,6 +1136,8 @@ public class ProgramGuide
         public void handleMessage(Message msg, @NonNull ProgramGuide programGuide) {
             if (msg.what == MSG_PROGRAM_TABLE_FADE_IN_ANIM) {
                 programGuide.mProgramTableFadeInAnimator.start();
+            } else if (msg.what == MSG_APPLY_GENRE) {
+                programGuide.applyGenreChange();
             }
         }
     }

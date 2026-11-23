@@ -28,7 +28,7 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.android.tv.common.CommonConstants;
+import com.android.tv.BuildConfig;
 import com.android.tv.common.SoftPreconditions;
 import com.android.tv.common.dagger.init.SafePreDaggerInitializer;
 import com.android.tv.common.util.CommonUtils;
@@ -55,7 +55,8 @@ public class LocalSearchProvider extends DaggerContentProvider {
     private static final boolean DEBUG = false;
 
     /** The authority for LocalSearchProvider. */
-    public static final String AUTHORITY = CommonConstants.BASE_PACKAGE + ".search";
+    // LiveTV: the package, so the debug build (com.livetv.tv.debug) has its own search.
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".search";
 
     // TODO: Remove this once added to the SearchManager.
     private static final String SUGGEST_COLUMN_PROGRESS_BAR_PERCENTAGE = "progress_bar_percentage";

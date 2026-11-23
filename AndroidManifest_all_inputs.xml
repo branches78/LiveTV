@@ -34,7 +34,7 @@
 
         <!-- providers are listed here to keep them separate from the internal versions -->
         <provider android:name="com.android.tv.search.LocalSearchProvider"
-            android:authorities="com.livetv.tv.search"
+            android:authorities="${applicationId}.search"
             android:enabled="true"
             android:exported="true">
             <meta-data android:name="SupportedSwitchActionType"

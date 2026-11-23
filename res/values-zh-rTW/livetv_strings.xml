@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">不相容的來源</string>
     <string name="livetv_setup_input_incompatible">無法在 LiveTV 中顯示這個應用程式的頻道</string>
     <string name="livetv_iptv_input_label">IPTV 清單</string>
+    <string name="livetv_vod_row">隨選視訊</string>
+    <string name="livetv_vod_movies">電影</string>
+    <string name="livetv_vod_series">影集</string>
 </resources>

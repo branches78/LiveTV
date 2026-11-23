@@ -23,6 +23,17 @@
     <string name="livetv_favorites_remove">Quitar de favoritos</string>
     <string name="livetv_search">Buscar</string>
     <string name="livetv_search_channel">Buscar canal</string>
+    <string name="livetv_multiview">Multivista</string>
+    <string name="livetv_multiview_layout">%1$d canales</string>
+    <string name="livetv_multiview_sound_hint">Suena el canal seleccionado · Mantén OK para ver opciones</string>
+    <string name="livetv_multiview_add">Agregar canal</string>
+    <string name="livetv_multiview_pick_channel">Elegir canal</string>
+    <string name="livetv_multiview_change">Cambiar canal</string>
+    <string name="livetv_multiview_full_screen">Ver en pantalla completa</string>
+    <string name="livetv_multiview_remove">Quitar de la multivista</string>
+    <string name="livetv_multiview_error">No se puede reproducir este canal. Reintentando…</string>
+    <string name="livetv_multiview_open_at_start">Iniciar en multivista</string>
+    <string name="livetv_multiview_open_at_start_description">Al abrir la app se muestra la multivista</string>
     <string name="livetv_search_hint">Nombre o número del canal</string>
     <string name="livetv_search_empty_query">Di o escribe el nombre o el número de un canal.</string>
     <string name="livetv_search_no_results">No se encontraron canales.</string>
@@ -50,13 +61,12 @@
     </plurals>
 
     <string name="livetv_iptv_input_label">Listas IPTV</string>
-    <string name="livetv_iptv_description">Introduce la URL de una lista de canales M3U. Usa solo listas que tengas derecho a ver.</string>
+    <string name="livetv_iptv_description">Importa una lista de canales, con o sin usuario y contraseña, o abre un archivo M3U. Usa solo listas que tengas derecho a ver.</string>
     <string name="livetv_iptv_import">Importar canales</string>
-    <string name="livetv_iptv_open_file">Abrir archivo M3U</string>
+    <string name="livetv_iptv_import_short">Importar</string>
+    <string name="livetv_iptv_open_file">Importar archivo M3U</string>
     <string name="livetv_iptv_reading_file">Leyendo archivo…</string>
     <string name="livetv_iptv_no_file_manager">No hay un administrador de archivos instalado. Instala uno para abrir archivos M3U.</string>
-    <string name="livetv_iptv_use_default">Usar canales gratuitos</string>
-    <string name="livetv_iptv_free_channels">Canales gratuitos</string>
     <string name="livetv_iptv_delete_failed">No se pudieron borrar los canales.</string>
     <plurals name="livetv_iptv_deleted">
         <item quantity="one">Se borró %d canal</item>
@@ -87,7 +97,6 @@
         <item quantity="other">¿Eliminar %1$s y sus %2$d canales?</item>
     </plurals>
     <string name="livetv_iptv_limit_reached">Ya tienes %1$d canales, el máximo. Elimina una lista para importar otra.</string>
-    <string name="livetv_iptv_login">Con usuario</string>
     <string name="livetv_iptv_login_title">Lista con usuario y contraseña</string>
     <string name="livetv_iptv_login_description">Introduce los datos que te dio tu proveedor de IPTV.</string>
     <string name="livetv_iptv_login_server">Servidor</string>
@@ -186,4 +195,59 @@
     <string name="dvr_toast_recording_deleted">No se encontró la grabación.</string>
     <string name="livetv_setup_category_incompatible">Fuentes incompatibles</string>
     <string name="livetv_setup_input_incompatible">Sus canales no se pueden ver en LiveTV</string>
+    <string name="livetv_vod_row">Video bajo demanda</string>
+    <string name="livetv_vod_movies">Películas</string>
+    <string name="livetv_vod_series">Series</string>
+    <string name="livetv_vod_all_movies">Todas las películas</string>
+    <string name="livetv_vod_all_series">Todas las series</string>
+    <string name="livetv_vod_season">Temporada %1$d</string>
+    <string name="livetv_vod_error">No se pudieron cargar los títulos. Revisa la conexión.</string>
+    <string name="livetv_vod_empty">No hay títulos aquí</string>
+    <string name="livetv_vod_no_episodes">Esta serie no tiene episodios</string>
+    <string name="livetv_vod_play_error">No se puede reproducir este título</string>
+    <string name="livetv_vod_continue">Continuar viendo</string>
+    <string name="livetv_vod_restart">Empezar desde el principio</string>
+
+    <string name="livetv_backup_settings_title">Exportar configuración IPTV</string>
+    <string name="livetv_backup_settings_description">Listas, canales y favoritos a un archivo</string>
+    <string name="livetv_setup_category_backup">Importar archivo de respaldo</string>
+    <string name="livetv_backup_sources_title">Importar archivo</string>
+    <string name="livetv_backup_sources_description">Restaura tus listas IPTV desde un respaldo</string>
+    <string name="livetv_backup_export_title">Exportar configuración IPTV</string>
+    <string name="livetv_backup_export_description">Guarda en la carpeta Descargas tus listas IPTV con sus contraseñas, tus canales (también los ocultos), los favoritos, el orden de los canales y la configuración de la guía. Los sintonizadores no se incluyen. El PIN protege las contraseñas y lo necesitarás para importar el archivo. No compartas el archivo.</string>
+    <string name="livetv_backup_restore_title">Importar archivo de respaldo</string>
+    <string name="livetv_backup_restore_description">Recupera tus listas IPTV, canales, favoritos, orden de los canales y configuración de la guía desde un archivo exportado por LiveTV.</string>
+    <string name="livetv_backup_step_pick_file">Elige el archivo</string>
+    <string name="livetv_backup_step_enter_pin">Escribe el PIN del archivo</string>
+    <string name="livetv_backup_step_restore">Importa</string>
+    <string name="livetv_backup_step_new_pin">Elige un PIN</string>
+    <string name="livetv_backup_step_export">Exporta</string>
+    <string name="livetv_backup_pin_help">De 4 a 8 dígitos, con los números del control, u OK para usar el teclado</string>
+    <string name="livetv_backup_export">Exportar</string>
+    <string name="livetv_backup_restore">Importar</string>
+    <string name="livetv_backup_pick_file">Elegir archivo</string>
+    <string name="livetv_backup_exporting">Guardando…</string>
+    <string name="livetv_backup_exported">Guardado en Descargas: %1$s (%2$s, %3$s).</string>
+    <string name="livetv_backup_restoring">Importando…</string>
+    <string name="livetv_backup_restoring_title">Importando tus listas IPTV…</string>
+    <string name="livetv_backup_restoring_message">Puede tardar un momento. Al terminar volverás a tus fuentes.</string>
+    <string name="livetv_backup_exporting_title">Guardando el respaldo…</string>
+    <string name="livetv_backup_restored">Se importaron %1$s con %2$s. Las listas y sus guías se están actualizando en segundo plano.</string>
+    <string name="livetv_backup_wrong_pin">PIN incorrecto, o el archivo está dañado.</string>
+    <string name="livetv_backup_not_backup">Este archivo no es un respaldo de LiveTV, o está dañado.</string>
+    <string name="livetv_backup_already_set_up">Ya hay listas IPTV: un respaldo solo se puede restaurar cuando no hay ninguna.</string>
+    <string name="livetv_backup_no_storage_permission">Sin acceso al almacenamiento no se puede guardar el archivo.</string>
+    <string name="livetv_backup_failed">No funcionó (%1$s).</string>
+    <plurals name="livetv_backup_lists">
+        <item quantity="one">%d lista</item>
+        <item quantity="many">%d listas</item>
+        <item quantity="other">%d listas</item>
+    </plurals>
+    <plurals name="livetv_backup_channels">
+        <item quantity="one">%d canal</item>
+        <item quantity="many">%d canales</item>
+        <item quantity="other">%d canales</item>
+    </plurals>
+    <string name="livetv_guide_typed_number">Canal %1$s</string>
+    <string name="livetv_backup_done">Terminar</string>
 </resources>

@@ -75,6 +75,8 @@ public class MenuRowFactory {
                 return new PartnerRow(mMainActivity, menu, title, customActions);
             }
             return null;
+        } else if (VodRow.class.equals(key)) {
+            return new VodRow(mMainActivity, menu);
         } else if (TvOptionsRow.class.equals(key)) {
             return new TvOptionsRow(
                     mMainActivity,
@@ -101,6 +103,19 @@ public class MenuRowFactory {
                     R.string.menu_title_options,
                     R.dimen.action_card_height,
                     tvOptionsRowAdapterFactory.create(context, customActions));
+        }
+    }
+
+    /** LiveTV: the "Video on Demand" row, between the channels and the TV options. */
+    public static class VodRow extends ItemListRow {
+        private VodRow(Context context, Menu menu) {
+            super(
+                    context,
+                    menu,
+                    R.string.livetv_vod_row,
+                    // The height of the channels row: its cards look like the guide card.
+                    R.dimen.card_layout_height,
+                    new VodRowAdapter(context));
         }
     }
 

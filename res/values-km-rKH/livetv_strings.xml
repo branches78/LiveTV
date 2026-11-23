@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">ប្រភពមិនត្រូវគ្នា</string>
     <string name="livetv_setup_input_incompatible">មិនអាចបង្ហាញប៉ុស្តិ៍របស់វានៅក្នុង LiveTV បានទេ</string>
     <string name="livetv_iptv_input_label">បញ្ជី IPTV</string>
+    <string name="livetv_vod_row">វីដេអូតាមតម្រូវការ</string>
+    <string name="livetv_vod_movies">ភាពយន្ត</string>
+    <string name="livetv_vod_series">រឿងភាគ</string>
 </resources>

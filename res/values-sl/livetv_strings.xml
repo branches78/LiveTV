@@ -11,4 +11,7 @@
     <string name="livetv_setup_category_incompatible">Nezdružljivi viri</string>
     <string name="livetv_setup_input_incompatible">Njenih kanalov ni mogoče prikazati v LiveTV</string>
     <string name="livetv_iptv_input_label">Seznami IPTV</string>
+    <string name="livetv_vod_row">Video na zahtevo</string>
+    <string name="livetv_vod_movies">Filmi</string>
+    <string name="livetv_vod_series">Serije</string>
 </resources>

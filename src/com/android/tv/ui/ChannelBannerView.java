@@ -28,6 +28,7 @@ import android.graphics.Bitmap;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvInputInfo;
 import android.support.annotation.Nullable;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -928,11 +929,28 @@ public class ChannelBannerView extends FrameLayout
         }
     }
 
-    /** LiveTV: whether there is a program description to expand. */
+    /**
+     * LiveTV: whether there is a program description to expand, that is one cut short, or one
+     * already expanded (to collapse it).
+     */
     public boolean hasProgramDescription() {
-        return isShown()
-                && mProgramDescriptionTextView.getVisibility() == VISIBLE
-                && !TextUtils.isEmpty(mProgramDescriptionText);
+        if (!isShown()
+                || mProgramDescriptionTextView.getVisibility() != VISIBLE
+                || TextUtils.isEmpty(mProgramDescriptionText)) {
+            return false;
+        }
+        return mDescriptionExpanded || isProgramDescriptionCut();
+    }
+
+    /** LiveTV: whether the short program description does not show the whole text. */
+    private boolean isProgramDescriptionCut() {
+        Layout layout = mProgramDescriptionTextView.getLayout();
+        if (layout == null) {
+            return false;
+        }
+        int lines = layout.getLineCount();
+        return lines > PROGRAM_DESCRIPTION_MAX_LINES
+                || (lines > 0 && layout.getEllipsisCount(lines - 1) > 0);
     }
 
     public boolean isDescriptionExpanded() {

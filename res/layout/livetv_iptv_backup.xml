@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LiveTV: imports or exports the IPTV setup, in numbered steps from top to bottom. Import:
+     choose the file, type its PIN, import. Export: choose a PIN, repeat it, export. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/livetv_icon_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="96dp"
+        android:paddingTop="48dp"
+        android:paddingEnd="96dp"
+        android:paddingBottom="48dp">
+
+        <TextView
+            android:id="@+id/livetv_backup_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp" />
+
+        <TextView
+            android:id="@+id/livetv_backup_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#B3FFFFFF"
+            android:textSize="16sp" />
+
+        <!-- Import: the file. -->
+        <LinearLayout
+            android:id="@+id/livetv_backup_step_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/livetv_backup_step_file_badge"
+                style="@style/LiveTv.BackupStepBadge" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/livetv_backup_step_file_title"
+                    style="@style/LiveTv.BackupStepTitle"
+                    android:text="@string/livetv_backup_step_pick_file" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/livetv_backup_pick_file"
+                        style="@style/LiveTv.IptvButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="200dp"
+                        android:text="@string/livetv_backup_pick_file" />
+
+                    <TextView
+                        android:id="@+id/livetv_backup_file"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:ellipsize="middle"
+                        android:singleLine="true"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- The PIN: of the file (import) or a new one (export). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/livetv_backup_step_pin_badge"
+                style="@style/LiveTv.BackupStepBadge" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/livetv_backup_step_pin_title"
+                    style="@style/LiveTv.BackupStepTitle" />
+
+                <com.livetv.tv.iptv.PinEntryView
+                    android:id="@+id/livetv_backup_pin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/livetv_backup_pin_help"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Import or export. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/livetv_backup_step_action_badge"
+                style="@style/LiveTv.BackupStepBadge" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/livetv_backup_step_action_title"
+                    style="@style/LiveTv.BackupStepTitle" />
+
+                <Button
+                    android:id="@+id/livetv_backup_action"
+                    style="@style/LiveTv.IptvButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="200dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="32dp"
+            android:background="#26FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/livetv_backup_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/livetv_backup_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- After saving the backup: out of the screen. -->
+        <Button
+            android:id="@+id/livetv_backup_done"
+            style="@style/LiveTv.IptvButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:minWidth="200dp"
+            android:text="@string/livetv_backup_done"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>
+
+    <!-- Covers the screen while importing or saving, so the user sees that it is working. -->
+    <LinearLayout
+        android:id="@+id/livetv_backup_busy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E6000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="72dp"
+            android:layout_height="72dp" />
+
+        <TextView
+            android:id="@+id/livetv_backup_busy_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/livetv_backup_busy_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:textColor="#B3FFFFFF"
+            android:textSize="16sp" />
+    </LinearLayout>
+</FrameLayout>

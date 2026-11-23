@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="audio_channel_mono" msgid="8812941280022167428">"mono"</string>
     <string name="audio_channel_stereo" msgid="5798223286366598036">"stereo"</string>
-    <string name="menu_title_play_controls" msgid="2490237359425190652">"Vidhibiti vya kucheza"</string>
+    <string name="menu_title_play_controls" msgid="2490237359425190652">"Timeshift"</string>
     <string name="menu_title_channels" msgid="1949045451672990132">"Vituo"</string>
     <string name="menu_title_options" msgid="7184594626814914022">"Chaguo za Runinga"</string>
     <string name="play_controls_unavailable" msgid="8900698593131693148">"Vidhibiti vya kucheza havipatikani kwa kituo hiki"</string>
@@ -129,8 +129,6 @@
     <string name="settings_channel_source_item_setup" msgid="4566190088656419070">"Vyanzo vya vituo"</string>
     <string name="settings_channel_source_item_setup_new_inputs" msgid="4845822152617430787">"Vituo vipya vinapatikana"</string>
     <string name="settings_parental_controls" msgid="5449397921700749317">"Udhibiti wa wazazi"</string>
-    <string name="settings_trickplay" msgid="7762730842781251582">"Kipengele cha kubadilisha wakati"</string>
-    <string name="settings_trickplay_description" msgid="3060323976172182519">"Rekodi vipindi vinapoendelea kucheza ili uweze kusitisha au kurudisha nyuma vipindi vya moja kwa moja.\nOnyo: Huenda hatua hii ikapunguza muda wa matumizi ya hifadhi ya ndani kutokana na matumizi mengi ya hifadhi."</string>
     <string name="settings_menu_licenses" msgid="1257646083838406103">"Leseni za programu huria"</string>
     <string name="settings_send_feedback" msgid="6897217561193701829">"Tuma maoni"</string>
     <string name="settings_menu_version" msgid="2604030372029921403">"Toleo"</string>
@@ -154,7 +152,6 @@
     </plurals>
     <string name="channel_banner_no_title" msgid="8660301979190693176">"Kichwa hakijaongezwa"</string>
     <string name="channel_banner_locked_channel_title" msgid="2006564967318945980">"Kituo kimezuiwa"</string>
-    <string name="setup_category_new" msgid="2899355289563443627">"Vipya"</string>
     <string name="setup_category_done" msgid="4750902502852212319">"Vyanzo"</string>
     <plurals name="setup_input_channels" formatted="false" msgid="1695941684075602971">
       <item quantity="other">Vituo %1$d</item>

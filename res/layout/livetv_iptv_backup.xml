@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- LiveTV: imports or exports the IPTV setup, in numbered steps from top to bottom. Import:
-     choose the file, type its PIN, import. Export: choose a PIN, repeat it, export. -->
+     choose the file, type its PIN, import. Export: choose a PIN, export. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">

@@ -155,6 +155,13 @@ tasks.withType(com.android.build.gradle.tasks.PackageApplication).configureEach 
                 include '*.apk'
             }
             into apkReleasesDir
+            // Named after the version: LiveTV-1.0.0.apk, LiveTV-debug-1.0.0.apk.
+            def version = android.defaultConfig.versionName
+            rename {
+                task.name == 'packageRelease'
+                        ? "LiveTV-${version}.apk"
+                        : "LiveTV-debug-${version}.apk"
+            }
         }
     }
 }

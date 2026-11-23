@@ -36,6 +36,7 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
+import com.android.tv.common.CommonConstants;
 import com.android.tv.common.compat.SystemApiCompat;
 import com.android.tv.common.SoftPreconditions;
 import com.android.tv.common.compat.TvInputInfoCompat;
@@ -709,11 +710,6 @@ public class TvInputManagerHelper {
     }
 
     /**
-     * Without ACCESS_ALL_EPG_DATA (LiveTV installed as a regular app) the TV provider only returns
-     * this app's own channels, so inputs of other apps would show up with no channels. Passthrough
-     * inputs (HDMI etc.) have no channels and are kept.
-     */
-    /**
      * Returns the channel sources of other apps hidden by {@link #isUnreadableAppInput}, so the
      * sources screen can list them as incompatible.
      */
@@ -726,6 +722,7 @@ public class TvInputManagerHelper {
         for (TvInputInfo input : mTvInputManager.getTvInputList()) {
             if (input.getType() == TvInputInfo.TYPE_TUNER
                     && isUnreadableAppInput(input)
+                    && !isOtherLiveTvBuild(input)
                     && !isBlocked(input.getId())) {
                 list.add(input);
             }
@@ -739,6 +736,21 @@ public class TvInputManagerHelper {
         return list;
     }
 
+    /**
+     * LiveTV: the IPTV source of the other build (release or debug, both can be installed) is not
+     * an incompatible app: it is left out of that list.
+     */
+    private static boolean isOtherLiveTvBuild(TvInputInfo info) {
+        String packageName = info.getServiceInfo().packageName;
+        return packageName.equals(CommonConstants.BASE_PACKAGE)
+                || packageName.startsWith(CommonConstants.BASE_PACKAGE + ".");
+    }
+
+    /**
+     * Without ACCESS_ALL_EPG_DATA (LiveTV installed as a regular app) the TV provider only returns
+     * this app's own channels, so inputs of other apps would show up with no channels. Passthrough
+     * inputs (HDMI etc.) have no channels and are kept.
+     */
     private boolean isUnreadableAppInput(TvInputInfo info) {
         return !PermissionUtils.hasAccessAllEpg(mContext)
                 && !info.isPassthroughInput()

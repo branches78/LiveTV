@@ -175,7 +175,7 @@
     <string name="msg_tune_failed" msgid="3277419551849972252">"Tune failed"</string>
     <string name="msg_missing_app" msgid="8291542072400042076">"No app was found to handle this action."</string>
     <string name="msg_all_channels_hidden" msgid="777397634062471936">"All source channels are hidden.\nSelect at least one channel to watch."</string>
-    <string name="msg_channel_unavailable_unknown" msgid="765586450831081871">"The video is unexpectedly unavailable"</string>
+    <string name="msg_channel_unavailable_unknown" msgid="765586450831081871">"This channel isn't available right now"</string>
     <string name="msg_back_key_guide" msgid="7404682718828721924">"BACK key is for connected device. Press HOME button to exit."</string>
     <string name="msg_read_tv_listing_permission_denied" msgid="8882813301235518909">"Live TV needs permission to read the TV listings."</string>
     <string name="setup_sources_text" msgid="4988039637873759839">"Set up your sources"</string>

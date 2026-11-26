@@ -35,9 +35,13 @@ any channels: you add your own sources.
 
 ### Multiview
 
-- Watch 2, 4 or 6 IPTV channels at once; the selected one has the sound.
-- Pick channels with the side panel or the number keys, open one in full screen and come back.
-- Optionally opens at start (only when it has channels). The channels and layout are kept.
+- Watch up to 6 IPTV channels at once; the selected one has the sound.
+- The layout fits the connections the Xtream account allows (2 to 6 channels). A tile over the
+  limit, or that doesn't load, says so instead of loading forever.
+- Pick channels with the side panel or the number keys, open one in full screen and come back to
+  it.
+- Optionally opens at start (only when it has channels); back there leaves the app. The channels
+  are kept.
 
 ### Movies and series
 

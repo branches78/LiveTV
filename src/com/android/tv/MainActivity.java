@@ -903,7 +903,7 @@ public class MainActivity extends Activity
             // Not while the multiview has no channel: the TV shows the last one watched.
             if (MultiviewActivity.isOpenAtStart(this)
                     && MultiviewActivity.hasSavedChannels(this)) {
-                startActivity(new Intent(this, MultiviewActivity.class));
+                startActivity(MultiviewActivity.newIntent(this, true));
             }
         }
         mAudioManagerHelper.requestAudioFocus();
@@ -2451,7 +2451,7 @@ public class MainActivity extends Activity
         if (mReturnToMultiview) {
             // LiveTV: the channel came from the multiview in full screen: back goes there.
             mReturnToMultiview = false;
-            startActivity(new Intent(this, MultiviewActivity.class));
+            startActivity(MultiviewActivity.newIntent(this, true));
             return;
         }
         // LiveTV: the user leaves the app; opened again, it may start in the multiview.

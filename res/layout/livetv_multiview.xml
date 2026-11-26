@@ -58,17 +58,12 @@
                 android:textColor="#99EEEEEE"
                 android:textSize="16sp" />
 
+            <!-- The number of channels of the multiview: a label, not a button. -->
             <TextView
-                android:id="@+id/livetv_multiview_layout_2"
-                style="@style/LiveTv.MultiviewChip" />
-
-            <TextView
-                android:id="@+id/livetv_multiview_layout_4"
-                style="@style/LiveTv.MultiviewChip" />
-
-            <TextView
-                android:id="@+id/livetv_multiview_layout_6"
-                style="@style/LiveTv.MultiviewChip" />
+                android:id="@+id/livetv_multiview_layout"
+                style="@style/LiveTv.MultiviewChip"
+                android:clickable="false"
+                android:focusable="false" />
         </LinearLayout>
 
         <com.livetv.tv.multiview.MultiviewGrid

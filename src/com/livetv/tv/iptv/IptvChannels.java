@@ -857,6 +857,40 @@ public final class IptvChannels {
         return lists;
     }
 
+    /** The IDs of the imported lists. Only reads the preferences: fine on the main thread. */
+    public static List<Long> getPlaylistIds(Context context) {
+        List<Long> ids = new ArrayList<>();
+        try {
+            JSONArray array = new JSONArray(prefs(context).getString(KEY_PLAYLISTS, "[]"));
+            for (int i = 0; i < array.length(); i++) {
+                ids.add(Playlist.fromJson(array.getJSONObject(i)).id);
+            }
+        } catch (JSONException e) {
+            // Not logged with its message: it quotes the lists, with their passwords.
+            Log.w(TAG, "Cannot read the lists: " + e.getClass().getSimpleName());
+        }
+        return ids;
+    }
+
+    /** The ID of the list of an IPTV channel, or -1. */
+    public static long getPlaylistId(Context context, Uri channelUri) {
+        try (Cursor cursor =
+                context.getContentResolver()
+                        .query(
+                                channelUri,
+                                new String[] {Channels.COLUMN_INTERNAL_PROVIDER_FLAG1},
+                                null,
+                                null,
+                                null)) {
+            if (cursor != null && cursor.moveToFirst() && !cursor.isNull(0)) {
+                return cursor.getLong(0);
+            }
+        } catch (RuntimeException e) {
+            Log.w(TAG, "Cannot read the list of a channel: " + e.getClass().getSimpleName());
+        }
+        return -1;
+    }
+
     /** A list whose provider publishes movies and series through the Xtream API. */
     public static final class VodSource {
         public final long playlistId;

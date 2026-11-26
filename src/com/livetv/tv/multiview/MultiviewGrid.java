@@ -22,8 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Lays out the visible tiles of the multiview in a grid: 2 side by side, 4 in two rows of two, 6
- * in two rows of three. Every tile is 16:9, as large as fits, and the grid is centered.
+ * Lays out the visible tiles of the multiview in rows, each centered: 2 side by side; 3 as two
+ * above and one below; 4 in two rows of two; 5 as two, one and two; 6 in two rows of three.
+ * Every tile is 16:9, as large as fits, and the grid is centered.
  */
 public final class MultiviewGrid extends ViewGroup {
     private static final float ASPECT_RATIO = 16f / 9f;
@@ -39,14 +40,31 @@ public final class MultiviewGrid extends ViewGroup {
         mGap = Math.round(16 * getResources().getDisplayMetrics().density);
     }
 
-    /** Columns for that many tiles. */
-    static int getColumns(int count) {
-        return count <= 4 ? 2 : 3;
+    /** The tiles of each row, from the top, for that many tiles. */
+    static int[] getRowSizes(int count) {
+        switch (count) {
+            case 1:
+                return new int[] {1};
+            case 2:
+                return new int[] {2};
+            case 3:
+                return new int[] {2, 1};
+            case 4:
+                return new int[] {2, 2};
+            case 5:
+                return new int[] {2, 1, 2};
+            default:
+                return new int[] {3, 3};
+        }
     }
 
-    /** Rows for that many tiles. */
-    static int getRows(int count) {
-        return count <= 2 ? 1 : 2;
+    /** Columns for that many tiles: the tiles of the widest row. */
+    static int getColumns(int count) {
+        int columns = 0;
+        for (int size : getRowSizes(count)) {
+            columns = Math.max(columns, size);
+        }
+        return columns;
     }
 
     private int getVisibleCount() {
@@ -62,7 +80,7 @@ public final class MultiviewGrid extends ViewGroup {
     /** {width, height} of each tile within the given size. */
     private int[] getTileSize(int width, int height, int count) {
         int columns = getColumns(count);
-        int rows = getRows(count);
+        int rows = getRowSizes(count).length;
         int tileWidth = (width - mGap * (columns - 1)) / columns;
         int tileHeight = (height - mGap * (rows - 1)) / rows;
         if (tileWidth > tileHeight * ASPECT_RATIO) {
@@ -95,23 +113,33 @@ public final class MultiviewGrid extends ViewGroup {
         if (count == 0) {
             return;
         }
-        int columns = getColumns(count);
-        int rows = getRows(count);
-        int[] tile = getTileSize(right - left, bottom - top, count);
-        int gridWidth = tile[0] * columns + mGap * (columns - 1);
-        int gridHeight = tile[1] * rows + mGap * (rows - 1);
-        int startX = (right - left - gridWidth) / 2;
-        int startY = (bottom - top - gridHeight) / 2;
-        int index = 0;
+        int[] rowSizes = getRowSizes(count);
+        int width = right - left;
+        int[] tile = getTileSize(width, bottom - top, count);
+        int gridHeight = tile[1] * rowSizes.length + mGap * (rowSizes.length - 1);
+        int y = (bottom - top - gridHeight) / 2;
+        int row = 0;
+        int inRow = 0;
+        int x = rowStart(width, tile[0], rowSizes[0]);
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             if (child.getVisibility() == GONE) {
                 continue;
             }
-            int x = startX + (index % columns) * (tile[0] + mGap);
-            int y = startY + (index / columns) * (tile[1] + mGap);
+            if (inRow == rowSizes[row] && row < rowSizes.length - 1) {
+                row++;
+                inRow = 0;
+                y += tile[1] + mGap;
+                x = rowStart(width, tile[0], rowSizes[row]);
+            }
             child.layout(x, y, x + tile[0], y + tile[1]);
-            index++;
+            x += tile[0] + mGap;
+            inRow++;
         }
+    }
+
+    /** The left of the first tile of a row, so that the row is centered. */
+    private int rowStart(int width, int tileWidth, int tiles) {
+        return (width - tileWidth * tiles - mGap * (tiles - 1)) / 2;
     }
 }

@@ -163,7 +163,7 @@ public class ChannelsRowAdapter extends ItemListRowView.ItemListAdapter<Channels
         getMainActivity()
                 .getOverlayManager()
                 .hideOverlays(TvOverlayManager.FLAG_HIDE_OVERLAYS_DEFAULT);
-        getMainActivity().startActivitySafe(new Intent(mContext, MultiviewActivity.class));
+        getMainActivity().startActivitySafe(MultiviewActivity.newIntent(mContext, false));
     }
 
     /** LiveTV: the multiview plays only the channels of the IPTV lists. */

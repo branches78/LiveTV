@@ -32,6 +32,12 @@
     <string name="livetv_multiview_full_screen">Ver en pantalla completa</string>
     <string name="livetv_multiview_remove">Quitar de la multivista</string>
     <string name="livetv_multiview_error">No se puede reproducir este canal. Reintentando…</string>
+    <string name="livetv_multiview_stalled">Este canal no carga. Puede que tu proveedor IPTV no permita más canales a la vez. Reintentando…</string>
+    <string name="livetv_multiview_refused">Tu proveedor IPTV rechazó este canal. Puede que no permita más canales a la vez. Reintentando…</string>
+    <plurals name="livetv_multiview_limit">
+        <item quantity="one">Tu proveedor IPTV permite solo %1$d canal a la vez</item>
+        <item quantity="other">Tu proveedor IPTV permite solo %1$d canales a la vez</item>
+    </plurals>
     <string name="livetv_multiview_open_at_start">Iniciar en multivista</string>
     <string name="livetv_multiview_open_at_start_description">Al abrir la app se muestra la multivista</string>
     <string name="livetv_search_hint">Nombre o número del canal</string>

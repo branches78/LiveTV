@@ -140,6 +140,14 @@ public final class IptvRecording {
                 .start();
     }
 
+    /**
+     * The connections the account of a list allows, as last read from its provider: 0 if
+     * unlimited, -1 if unknown (a list without a username and a password, or not read yet).
+     */
+    public static int getMaxConnections(Context context, long playlistId) {
+        return prefs(context).getInt(KEY_MAX_CONNECTIONS_PREFIX + playlistId, -1);
+    }
+
     /** The {@code max_connections} of an Xtream account (0: unlimited), or -1 if unknown. */
     private static int readMaxConnections(String apiUrl) {
         HttpURLConnection connection = null;

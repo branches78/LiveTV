@@ -495,7 +495,7 @@
     <!-- Message when all channels are hidden. [CHAR LIMIT=NONE] -->
     <string name="msg_all_channels_hidden">All source channels are hidden.\nSelect at least one channel to watch.</string>
     <!-- Message displayed when availability is changed by unknown reason. [CHAR LIMIT=NONE] -->
-    <string name="msg_channel_unavailable_unknown">The video is unexpectedly unavailable</string>
+    <string name="msg_channel_unavailable_unknown">This channel isn\'t available right now</string>
     <!-- Message displayed when a TV input (eg HDMI Cable) is not physically connected. [CHAR LIMIT=NONE] -->
     <string name="msg_channel_unavailable_not_connected">No Signal. Please check your source connection.</string>
     <!-- Message to notify the different use of Back Button: Home Button(To exit) Back button

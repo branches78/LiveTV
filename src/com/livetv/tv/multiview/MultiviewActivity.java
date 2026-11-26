@@ -38,9 +38,11 @@ import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.TrackSelectionParameters;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.datasource.HttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,6 +54,7 @@ import com.android.tv.data.ChannelDataManager;
 import com.android.tv.data.api.Channel;
 import com.livetv.tv.audio.LiveRenderersFactory;
 import com.livetv.tv.iptv.IptvChannels;
+import com.livetv.tv.iptv.IptvRecording;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,14 +75,25 @@ public final class MultiviewActivity extends Activity {
      * comes back to the multiview.
      */
     public static final String EXTRA_FROM_MULTIVIEW = "com.livetv.tv.extra.FROM_MULTIVIEW";
+    /**
+     * Whether the multiview is the start of the app, not opened over a channel: back there leaves
+     * the app instead of going to the channel under it.
+     */
+    private static final String EXTRA_LEAVE_ON_BACK = "com.livetv.tv.extra.LEAVE_ON_BACK";
 
     private static final String PREFS = "livetv_multiview";
     private static final String KEY_LAYOUT = "layout";
     private static final String KEY_CHANNELS = "channels";
+    /** The selected tile, so that coming back from a channel in full screen selects it again. */
+    private static final String KEY_SELECTED = "selected";
     private static final int MAX_TILES = 6;
-    private static final int[] LAYOUTS = {2, 4, 6};
     /** How long a tile whose channel failed waits before trying again. */
     private static final long RETRY_DELAY_MS = 5000;
+    /**
+     * How long a tile may load, or stay stalled, before it tells so: often the provider allows
+     * no more connections, and some keep them waiting instead of refusing them.
+     */
+    private static final long LOAD_TIMEOUT_MS = 20000;
     /** How long the digits typed in the list of channels wait for the next one. */
     private static final long TYPED_NUMBER_TIMEOUT_MS = 2000;
     private static final int MAX_TYPED_DIGITS = 6;
@@ -96,12 +110,17 @@ public final class MultiviewActivity extends Activity {
         final SurfaceView surface;
         final View empty;
         final View buffering;
-        final View error;
+        final TextView error;
         final View sound;
         final TextView label;
         long channelId = C.INDEX_UNSET;
+        /** The list of the channel, whose account limits the connections; -1 if unknown. */
+        long playlistId = -1;
         ExoPlayer player;
+        /** Not played: its account has no connection left for it. */
+        boolean overLimit;
         final Runnable retry = this::startPlayer;
+        final Runnable stalled = this::onStalled;
 
         Tile(int index, View view) {
             this.index = index;
@@ -129,6 +148,10 @@ public final class MultiviewActivity extends Activity {
             surface.setVisibility(hasChannel() ? View.VISIBLE : View.GONE);
             label.setVisibility(hasChannel() ? View.VISIBLE : View.GONE);
             label.setText(channel == null ? null : getChannelLabel(channel));
+            playlistId =
+                    channel == null
+                            ? -1
+                            : IptvChannels.getPlaylistId(MultiviewActivity.this, channel.getUri());
             if (!hasChannel()) {
                 buffering.setVisibility(View.GONE);
                 error.setVisibility(View.GONE);
@@ -141,13 +164,46 @@ public final class MultiviewActivity extends Activity {
             sound.setVisibility(audible ? View.VISIBLE : View.GONE);
             if (player != null) {
                 player.setVolume(audible ? 1f : 0f);
+                // The silent tiles do not decode their audio: it would take CPU and an audio
+                // output, and their video would wait for an audio clock that stutters.
+                TrackSelectionParameters parameters = player.getTrackSelectionParameters();
+                if (parameters.disabledTrackTypes.contains(C.TRACK_TYPE_AUDIO) == audible) {
+                    player.setTrackSelectionParameters(
+                            parameters
+                                    .buildUpon()
+                                    .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, !audible)
+                                    .build());
+                }
             }
+        }
+
+        /**
+         * The connections the account of the channel allows, if the tiles before this one, of the
+         * same account, use them all; 0 otherwise.
+         */
+        int getExceededLimit() {
+            if (!hasChannel() || !isShown() || playlistId < 0) {
+                return 0;
+            }
+            int max = IptvRecording.getMaxConnections(MultiviewActivity.this, playlistId);
+            if (max <= 0) {
+                return 0;
+            }
+            int before = 0;
+            for (int i = 0; i < index; i++) {
+                Tile tile = mTiles[i];
+                if (tile.isShown() && tile.hasChannel() && tile.playlistId == playlistId) {
+                    before++;
+                }
+            }
+            return before >= max ? max : 0;
         }
 
         /** Plays the channel of the tile, if it has one, is shown and the screen is visible. */
         void startPlayer() {
             mHandler.removeCallbacks(retry);
             releasePlayer();
+            overLimit = false;
             if (!hasChannel() || !isShown() || !mStarted) {
                 return;
             }
@@ -162,8 +218,17 @@ public final class MultiviewActivity extends Activity {
                 saveState();
                 return;
             }
+            int limit = getExceededLimit();
+            if (limit > 0) {
+                // No connection is left: the provider would refuse it, or keep it loading.
+                overLimit = true;
+                showError(getResources().getQuantityString(
+                        R.plurals.livetv_multiview_limit, limit, limit));
+                return;
+            }
             error.setVisibility(View.GONE);
             buffering.setVisibility(View.VISIBLE);
+            mHandler.postDelayed(stalled, LOAD_TIMEOUT_MS);
             DefaultHttpDataSource.Factory httpFactory =
                     new DefaultHttpDataSource.Factory()
                             .setUserAgent(IptvChannels.USER_AGENT)
@@ -202,6 +267,7 @@ public final class MultiviewActivity extends Activity {
 
         void releasePlayer() {
             mHandler.removeCallbacks(retry);
+            mHandler.removeCallbacks(stalled);
             if (player != null) {
                 player.removeListener(this);
                 player.release();
@@ -213,7 +279,10 @@ public final class MultiviewActivity extends Activity {
         @Override
         public void onPlaybackStateChanged(int state) {
             buffering.setVisibility(state == Player.STATE_BUFFERING ? View.VISIBLE : View.GONE);
-            if (state == Player.STATE_READY) {
+            mHandler.removeCallbacks(stalled);
+            if (state == Player.STATE_BUFFERING) {
+                mHandler.postDelayed(stalled, LOAD_TIMEOUT_MS);
+            } else if (state == Player.STATE_READY) {
                 error.setVisibility(View.GONE);
             } else if (state == Player.STATE_ENDED) {
                 // A live stream should not end: the server closed it. Connect again.
@@ -230,21 +299,50 @@ public final class MultiviewActivity extends Activity {
                 return;
             }
             // Not logged: the message can hold the stream URL, with the password of the list.
+            mHandler.removeCallbacks(stalled);
             buffering.setVisibility(View.GONE);
-            error.setVisibility(View.VISIBLE);
+            showError(getString(
+                    isRefused(e)
+                            ? R.string.livetv_multiview_refused
+                            : R.string.livetv_multiview_error));
             mHandler.postDelayed(retry, RETRY_DELAY_MS);
+        }
+
+        /**
+         * Whether the provider refused the connection, as it does over the limit of the account:
+         * not a channel that is down or gone (404).
+         */
+        private boolean isRefused(PlaybackException e) {
+            Throwable cause = e.getCause();
+            if (!(cause instanceof HttpDataSource.InvalidResponseCodeException)) {
+                return false;
+            }
+            int code = ((HttpDataSource.InvalidResponseCodeException) cause).responseCode;
+            // 458 and 509 are what some IPTV panels send for too many connections.
+            return code == 401 || code == 403 || code == 429 || code == 458 || code == 509;
+        }
+
+        /** Loading or stalled too long: tells so and connects again. */
+        private void onStalled() {
+            releasePlayer();
+            showError(getString(R.string.livetv_multiview_stalled));
+            mHandler.postDelayed(retry, RETRY_DELAY_MS);
+        }
+
+        private void showError(String message) {
+            error.setText(message);
+            error.setVisibility(View.VISIBLE);
         }
     }
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final Tile[] mTiles = new Tile[MAX_TILES];
-    private final TextView[] mLayoutButtons = new TextView[LAYOUTS.length];
     private ChannelDataManager mChannelDataManager;
     private MultiviewGrid mGrid;
     private View mSidePanel;
     private TextView mSidePanelTitle;
     private VerticalGridView mSidePanelList;
-    /** Number of tiles shown: 2, 4 or 6. */
+    /** Number of tiles shown: 2 to 6, from the connection limit of the accounts. */
     private int mLayout;
     /** The tile with sound: the selected one, or the last selected while the panel is open. */
     private int mAudioTile;
@@ -307,19 +405,6 @@ public final class MultiviewActivity extends Activity {
                     });
         }
 
-        int[] buttonIds = {
-            R.id.livetv_multiview_layout_2,
-            R.id.livetv_multiview_layout_4,
-            R.id.livetv_multiview_layout_6
-        };
-        for (int i = 0; i < LAYOUTS.length; i++) {
-            int layout = LAYOUTS[i];
-            TextView button = findViewById(buttonIds[i]);
-            button.setText(getString(R.string.livetv_multiview_layout, layout));
-            button.setOnClickListener(v -> setLayout(layout));
-            mLayoutButtons[i] = button;
-        }
-
         mSidePanel = findViewById(R.id.side_panel);
         View sideFragment =
                 inflater.inflate(
@@ -330,12 +415,23 @@ public final class MultiviewActivity extends Activity {
         mSidePanelList = sideFragment.findViewById(R.id.side_panel_list);
 
         loadState();
+        TextView layoutLabel = findViewById(R.id.livetv_multiview_layout);
+        layoutLabel.setText(getString(R.string.livetv_multiview_layout, mLayout));
+        // Drawn as the chosen chip.
+        layoutLabel.setActivated(true);
         applyLayout();
         for (Tile tile : mTiles) {
             tile.bind();
         }
         mTiles[mAudioTile].view.requestFocus();
         mChannelDataManager.addListener(mChannelListener);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // Brought to the front again: whether back leaves the app is the new caller's.
+        setIntent(intent);
     }
 
     @Override
@@ -459,16 +555,24 @@ public final class MultiviewActivity extends Activity {
             hideSidePanel();
             return;
         }
+        if (getIntent().getBooleanExtra(EXTRA_LEAVE_ON_BACK, false)) {
+            // The whole app goes to the background, as back does in the TV. The channel under
+            // this screen is not resumed, so it does not play for a moment. Opened again from
+            // the launcher, the app starts in the multiview.
+            moveTaskToBack(true);
+            return;
+        }
         super.onBackPressed();
     }
 
     private void loadState() {
-        mLayout = getSavedLayout(this);
+        mLayout = getLayout(getChannelLimit(this));
         long[] ids = getSavedChannelIds(this);
         for (int i = 0; i < MAX_TILES; i++) {
             mTiles[i].channelId = ids[i];
         }
-        mAudioTile = 0;
+        int selected = getSharedPreferences(PREFS, MODE_PRIVATE).getInt(KEY_SELECTED, 0);
+        mAudioTile = selected >= 0 && selected < mLayout ? selected : 0;
     }
 
     private void saveState() {
@@ -477,17 +581,56 @@ public final class MultiviewActivity extends Activity {
             ids[i] = mTiles[i].channelId;
         }
         saveState(this, mLayout, ids);
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putInt(KEY_SELECTED, mAudioTile).apply();
     }
 
-    /** The number of channels the multiview shows: 2, 4 or 6. */
+    /** The number of channels the multiview shows: 2 to 6. */
     public static int getSavedLayout(Context context) {
         int layout = context.getSharedPreferences(PREFS, MODE_PRIVATE).getInt(KEY_LAYOUT, 4);
-        return layout == 2 || layout == 4 || layout == 6 ? layout : 4;
+        return layout >= 2 && layout <= MAX_TILES ? layout : 4;
     }
 
     /**
-     * The channel of each place of the multiview, for its 6 places (the layouts of 2 and 4 show
-     * the first ones), or {@link C#INDEX_UNSET} for an empty place.
+     * The most channels the multiview can play at once: the largest connection limit of the
+     * accounts of the lists, or {@link #MAX_TILES} if a list has no limit or does not tell it.
+     */
+    static int getChannelLimit(Context context) {
+        int limit = 0;
+        for (long playlistId : IptvChannels.getPlaylistIds(context)) {
+            int max = IptvRecording.getMaxConnections(context, playlistId);
+            if (max <= 0) {
+                return MAX_TILES;
+            }
+            limit = Math.max(limit, max);
+        }
+        return limit == 0 ? MAX_TILES : limit;
+    }
+
+    /**
+     * The layout for a connection limit: that many channels, at least 2 and at most {@link
+     * #MAX_TILES}. The user fills as many of its places as wanted.
+     */
+    static int getLayout(int limit) {
+        return Math.max(2, Math.min(limit, MAX_TILES));
+    }
+
+    /**
+     * After the channels or the layout changed: the tiles whose account has no connection left
+     * for them stop, and those that have one again start.
+     */
+    private void applyConnectionLimits() {
+        for (Tile tile : mTiles) {
+            if (tile.isShown()
+                    && tile.hasChannel()
+                    && tile.overLimit != (tile.getExceededLimit() > 0)) {
+                tile.startPlayer();
+            }
+        }
+    }
+
+    /**
+     * The channel of each place of the multiview, for its 6 places (a layout of fewer channels
+     * shows the first ones), or {@link C#INDEX_UNSET} for an empty place.
      */
     public static long[] getSavedChannelIds(Context context) {
         long[] ids = new long[MAX_TILES];
@@ -522,43 +665,24 @@ public final class MultiviewActivity extends Activity {
                 .apply();
     }
 
-    /** Whether any place of the multiview, in any of its layouts, has a channel. */
+    /**
+     * Whether a place the multiview shows has a channel. The places past its layout keep theirs
+     * but are not shown, as when the connection limit of the account went down.
+     */
     public static boolean hasSavedChannels(Context context) {
-        for (long id : getSavedChannelIds(context)) {
-            if (id != C.INDEX_UNSET) {
+        long[] ids = getSavedChannelIds(context);
+        int layout = getLayout(getChannelLimit(context));
+        for (int i = 0; i < layout; i++) {
+            if (ids[i] != C.INDEX_UNSET) {
                 return true;
             }
         }
         return false;
     }
 
-    private void setLayout(int layout) {
-        if (layout == mLayout) {
-            return;
-        }
-        int oldLayout = mLayout;
-        mLayout = layout;
-        applyLayout();
-        // Tiles hidden now stop; tiles shown now start. The others go on, with the quality for
-        // their new size the next time they start.
-        for (Tile tile : mTiles) {
-            boolean wasShown = tile.index < oldLayout;
-            if (wasShown != tile.isShown()) {
-                tile.startPlayer();
-            }
-        }
-        if (mAudioTile >= mLayout) {
-            setAudioTile(0);
-        }
-        saveState();
-    }
-
     private void applyLayout() {
         for (Tile tile : mTiles) {
             tile.view.setVisibility(tile.isShown() ? View.VISIBLE : View.GONE);
-        }
-        for (int i = 0; i < LAYOUTS.length; i++) {
-            mLayoutButtons[i].setActivated(LAYOUTS[i] == mLayout);
         }
         mGrid.requestLayout();
     }
@@ -602,12 +726,24 @@ public final class MultiviewActivity extends Activity {
         for (Tile t : mTiles) {
             t.releasePlayer();
         }
+        // Back from the channel, its tile is selected again.
+        mAudioTile = tile.index;
         saveState();
         startActivity(
                 new Intent(Intent.ACTION_VIEW, channel.getUri(), this, MainActivity.class)
                         .putExtra(EXTRA_FROM_MULTIVIEW, true)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         finish();
+    }
+
+    /**
+     * The intent that opens the multiview. If one is already open, it comes to the front instead
+     * of a new one: otherwise back would have to close each of them.
+     */
+    public static Intent newIntent(Context context, boolean leaveOnBack) {
+        return new Intent(context, MultiviewActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                .putExtra(EXTRA_LEAVE_ON_BACK, leaveOnBack);
     }
 
     /** Whether the app opens in the multiview, a switch of the settings. */
@@ -729,6 +865,7 @@ public final class MultiviewActivity extends Activity {
         tile.channelId = channel.getId();
         tile.bind();
         tile.startPlayer();
+        applyConnectionLimits();
         saveState();
     }
 
@@ -747,6 +884,7 @@ public final class MultiviewActivity extends Activity {
                 tile.releasePlayer();
                 tile.channelId = C.INDEX_UNSET;
                 tile.bind();
+                applyConnectionLimits();
                 saveState();
                 break;
         }

@@ -175,7 +175,7 @@
     <string name="msg_tune_failed" msgid="3277419551849972252">"Error al sintonizar"</string>
     <string name="msg_missing_app" msgid="8291542072400042076">"No se encontró ninguna aplicación que pueda realizar esta acción."</string>
     <string name="msg_all_channels_hidden" msgid="777397634062471936">"Todos los canales de salida están ocultos.\nSelecciona al menos un canal para mirar."</string>
-    <string name="msg_channel_unavailable_unknown" msgid="765586450831081871">"El video no está disponible por motivos inesperados."</string>
+    <string name="msg_channel_unavailable_unknown" msgid="765586450831081871">"Este canal no está disponible en estos momentos"</string>
     <string name="msg_back_key_guide" msgid="7404682718828721924">"La tecla ATRÁS es para el dispositivo conectado. Presiona el botón INICIO para salir."</string>
     <string name="msg_read_tv_listing_permission_denied" msgid="8882813301235518909">"\"Canales en vivo\" necesita permiso para leer las listas de canales de televisión."</string>
     <string name="setup_sources_text" msgid="4988039637873759839">"Configura tus fuentes"</string>

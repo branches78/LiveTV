@@ -57,6 +57,15 @@
     <string name="livetv_multiview_remove">Remove from multiview</string>
     <!-- Multiview: shown on a tile whose channel can't be played (it is tried again). [CHAR LIMIT=60] -->
     <string name="livetv_multiview_error">Can\'t play this channel. Trying again…</string>
+    <!-- Multiview: shown on a tile whose channel loads or stalls too long (it is tried again). [CHAR LIMIT=120] -->
+    <string name="livetv_multiview_stalled">This channel isn\'t loading. Your IPTV provider may not allow more channels at once. Trying again…</string>
+    <!-- Multiview: shown on a tile whose provider refused the connection (it is tried again). [CHAR LIMIT=120] -->
+    <string name="livetv_multiview_refused">Your IPTV provider refused this channel. It may not allow more channels at once. Trying again…</string>
+    <!-- Multiview: shown on a tile not played because the account allows no more connections. [CHAR LIMIT=80] -->
+    <plurals name="livetv_multiview_limit">
+        <item quantity="one">Your IPTV provider allows only %1$d channel at once</item>
+        <item quantity="other">Your IPTV provider allows only %1$d channels at once</item>
+    </plurals>
     <!-- Settings: switch that opens the multiview when the app starts. [CHAR LIMIT=40] -->
     <string name="livetv_multiview_open_at_start">Start in multiview</string>
     <!-- Settings: description of the switch that opens the multiview when the app starts. [CHAR LIMIT=80] -->

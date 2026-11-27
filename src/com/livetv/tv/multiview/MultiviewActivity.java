@@ -242,6 +242,9 @@ public final class MultiviewActivity extends Activity {
                                             new DefaultDataSource.Factory(
                                                     MultiviewActivity.this, httpFactory)))
                             .build();
+            // Never match the frame rate of a tile: Media3 asks the surface for it by default,
+            // and the display switching modes (e.g. quick media switching) slows the multiview.
+            player.setVideoChangeFrameRateStrategy(C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF);
             // Several players: none takes the audio focus, which would pause the others.
             player.setAudioAttributes(
                     new AudioAttributes.Builder()
